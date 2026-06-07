@@ -491,10 +491,16 @@ tr:hover td{background:rgba(255,255,255,.025)}
 .kontak-card:hover{border-color:rgba(27,58,140,.3)}
 
 .kontak-avatar{
-  width:40px;height:40px;border-radius:50%;
+  width:48px;height:48px;border-radius:50%;
   background:linear-gradient(135deg,var(--p),var(--a));
   display:flex;align-items:center;justify-content:center;
   font-weight:700;color:#fff;font-size:1rem;flex-shrink:0;
+  overflow:hidden;
+  border:2px solid rgba(212,175,55,.35);
+  box-shadow:0 2px 8px rgba(0,0,0,.3);
+}
+.kontak-avatar img{
+  width:100%;height:100%;object-fit:cover;border-radius:50%;
 }
 
 .kontak-name{font-weight:700;font-size:.9rem;color:#fff;margin-bottom:2px}
@@ -1783,19 +1789,23 @@ function renderKontak(raw) {
   const colJab   = findCol(headers, ["jabatan"]);
   const colNum   = findCol(headers, ["nomor","nomor hp","no hp","kontak"]);
   const colKet   = findCol(headers, ["keterangan"]);
+  const colFoto  = findCol(headers, ["foto","foto url","photo","photo url","gambar"]);
   const filtered = data.filter(r => matchSearch(Object.values(r)));
   if (!filtered.length) return '<div class="empty">Tidak ada hasil pencarian.</div>';
   return `<div class="kontak-grid">${filtered.map(r => {
-    const nama = r[colNama] || "";
-    const inits = nama.split(" ").map(w=>w[0]).join("").toUpperCase().slice(0,2);
-    const num   = r[colNum] || "";
+    const nama    = r[colNama] || "";
+    const fotoUrl = colFoto ? (r[colFoto] || "").trim() : "";
+    const avatarHtml = fotoUrl
+      ? `<div class="kontak-avatar"><img src="${escHtml(fotoUrl)}" alt="${escHtml(nama)}" loading="lazy"></div>`
+      : `<div class="kontak-avatar"><img src="${getInitialsAvatar(nama)}" alt="${escHtml(nama)}"></div>`;
+    const num = r[colNum] || "";
     return `<div class="kontak-card">
-      <div class="kontak-avatar">${inits||"?"}</div>
+      ${avatarHtml}
       <div>
         <div class="kontak-name">${escHtml(nama)}</div>
         ${colJab ? `<div class="kontak-role">${escHtml(r[colJab]||"")}</div>` : ""}
         ${colKet && r[colKet] ? `<div class="kontak-num">${escHtml(r[colKet])}</div>` : ""}
-        ${num ? `<a class="kontak-hp" href="https://wa.me/62${num.replace(/^0/,"").replace(/\D/g,"")}"target="_blank" rel="noopener noreferrer">
+        ${num ? `<a class="kontak-hp" href="https://wa.me/62${num.replace(/^0/,"").replace(/\D/g,"")}" target="_blank" rel="noopener noreferrer">
           📱 ${escHtml(num)}</a>` : ""}
       </div>
     </div>`;
