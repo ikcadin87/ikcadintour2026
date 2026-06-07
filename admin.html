@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin Panel — IKCADIN TOUR 2026</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --dark:#050C1A;--card:#0A1830;--card2:#0D1E3F;
+  --border:rgba(26,45,90,.6);--p:#1B3A8C;--a:#D4AF37;
+  --text:#E8EAF2;--muted:rgba(232,234,242,.45);
+  --r:12px;--r2:8px;--header-h:58px;--sidebar-w:220px;
+  --danger:#EF4444;--success:#10B981;
+}
+body{font-family:system-ui,-apple-system,sans-serif;background:var(--dark);color:var(--text);min-height:100vh}
+
+/* ── LOGIN ─────────────────────────────────────────────────── */
+#loginScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse 80% 60% at 50% 40%,rgba(27,58,140,.18) 0%,transparent 70%)}
+.login-box{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:40px 36px;width:100%;max-width:380px;text-align:center}
+.login-icon{font-size:2.4rem;margin-bottom:10px}
+.login-title{font-size:1.15rem;font-weight:700;color:var(--a);margin-bottom:3px}
+.login-sub{font-size:.78rem;color:var(--muted);margin-bottom:28px}
+.login-input{width:100%;padding:12px 14px;background:var(--dark);border:1px solid var(--border);border-radius:var(--r2);color:var(--text);font-size:.95rem;margin-bottom:12px;transition:border-color .15s}
+.login-input:focus{outline:none;border-color:var(--a)}
+.btn-primary{width:100%;padding:12px;background:var(--p);border:none;border-radius:var(--r2);color:#fff;font-size:.95rem;font-weight:600;cursor:pointer;transition:.2s}
+.btn-primary:hover{background:#2547B0}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed}
+.login-err{color:#fca5a5;font-size:.8rem;margin-top:10px;display:none}
+
+/* ── APP LAYOUT ─────────────────────────────────────────────── */
+#adminApp{display:none;flex-direction:column;min-height:100vh}
+
+.admin-header{
+  position:sticky;top:0;z-index:100;height:var(--header-h);
+  background:rgba(5,12,26,.96);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 20px;gap:14px;
+}
+.sidebar-toggle{display:none;padding:6px 10px;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:6px;color:var(--text);cursor:pointer;font-size:1rem}
+.admin-header-brand{flex:1;font-size:.95rem;font-weight:700}
+.admin-header-brand span{color:var(--a)}
+.btn-logout{padding:6px 14px;background:transparent;border:1px solid var(--border);border-radius:6px;color:var(--muted);font-size:.78rem;cursor:pointer;transition:.2s}
+.btn-logout:hover{border-color:var(--danger);color:#fca5a5}
+
+.admin-body{display:flex;flex:1}
+
+/* Sidebar */
+.admin-sidebar{
+  width:var(--sidebar-w);background:var(--card);border-right:1px solid var(--border);
+  padding:14px 8px;position:sticky;top:var(--header-h);
+  height:calc(100vh - var(--header-h));overflow-y:auto;flex-shrink:0;
+}
+.sb-label{font-size:.6rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;padding:4px 12px 8px}
+.sb-btn{
+  display:block;width:100%;text-align:left;padding:9px 14px;background:transparent;
+  border:none;border-radius:var(--r2);color:var(--text);font-size:.83rem;cursor:pointer;
+  transition:.12s;margin-bottom:2px;
+}
+.sb-btn:hover{background:rgba(255,255,255,.05)}
+.sb-btn.active{background:rgba(27,58,140,.3);color:var(--a);font-weight:600;border-left:3px solid var(--a);padding-left:11px}
+
+/* Main */
+.admin-main{flex:1;padding:24px;overflow-x:hidden;min-width:0}
+.sec-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px}
+.sec-title{font-size:1.05rem;font-weight:700;color:var(--a)}
+.btn-add{padding:8px 18px;background:var(--p);border:none;border-radius:var(--r2);color:#fff;font-size:.83rem;font-weight:600;cursor:pointer;transition:.2s}
+.btn-add:hover{background:#2547B0}
+
+.info-note{background:rgba(27,58,140,.12);border:1px solid rgba(27,58,140,.28);border-radius:var(--r2);padding:9px 14px;font-size:.77rem;color:var(--muted);margin-bottom:14px;line-height:1.55}
+.info-note strong{color:#9ab0ff}
+
+/* Table */
+.tbl-wrap{overflow-x:auto;border-radius:var(--r2);border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;font-size:.8rem}
+thead tr{background:rgba(27,58,140,.15)}
+th{padding:10px 12px;text-align:left;font-weight:700;color:var(--a);white-space:nowrap;font-size:.72rem;text-transform:uppercase;letter-spacing:.04em}
+td{padding:9px 12px;border-top:1px solid var(--border);vertical-align:middle;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+tr:hover td{background:rgba(255,255,255,.02)}
+.tbl-loading,.tbl-empty{text-align:center;padding:48px;color:var(--muted);font-size:.88rem}
+.tbl-actions{display:flex;gap:6px;white-space:nowrap}
+.btn-edit{padding:3px 10px;background:rgba(27,58,140,.22);border:1px solid rgba(27,58,140,.4);border-radius:5px;color:#9ab0ff;font-size:.73rem;cursor:pointer;transition:.12s}
+.btn-edit:hover{background:rgba(27,58,140,.45)}
+.btn-del{padding:3px 10px;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.28);border-radius:5px;color:#fca5a5;font-size:.73rem;cursor:pointer;transition:.12s}
+.btn-del:hover{background:rgba(239,68,68,.28)}
+
+/* Modal */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:200;display:none;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto}
+.modal-bg.open{display:flex}
+.modal-box{background:var(--card2);border:1px solid var(--border);border-radius:var(--r);width:100%;max-width:560px;animation:fadeUp .2s ease both;margin:auto}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.modal-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border);background:var(--card2);border-radius:var(--r) var(--r) 0 0}
+.modal-head-title{font-size:.9rem;font-weight:700;color:var(--a)}
+.modal-x{background:none;border:none;color:var(--muted);font-size:1.25rem;cursor:pointer;padding:0 2px;line-height:1}
+.modal-x:hover{color:var(--text)}
+.modal-body{padding:20px;max-height:calc(85vh - 130px);overflow-y:auto}
+.form-grp{margin-bottom:14px}
+.form-lbl{display:block;font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}
+.form-inp,.form-ta{width:100%;padding:9px 12px;background:var(--dark);border:1px solid var(--border);border-radius:var(--r2);color:var(--text);font-size:.86rem;font-family:inherit;transition:border-color .15s}
+.form-inp:focus,.form-ta:focus{outline:none;border-color:var(--a)}
+.form-ta{resize:vertical;min-height:80px}
+.modal-foot{display:flex;gap:10px;justify-content:flex-end;padding:14px 20px;border-top:1px solid var(--border)}
+.btn-cancel{padding:8px 18px;background:transparent;border:1px solid var(--border);border-radius:var(--r2);color:var(--muted);font-size:.83rem;cursor:pointer;transition:.15s}
+.btn-cancel:hover{border-color:var(--text);color:var(--text)}
+.btn-save{padding:8px 18px;background:var(--p);border:none;border-radius:var(--r2);color:#fff;font-size:.83rem;font-weight:600;cursor:pointer;transition:.2s}
+.btn-save:hover{background:#2547B0}
+.btn-save:disabled{opacity:.45;cursor:not-allowed}
+
+/* Toast */
+.toast{position:fixed;bottom:24px;right:20px;z-index:400;padding:12px 18px;border-radius:var(--r2);font-size:.82rem;font-weight:600;background:var(--card2);border:1px solid var(--border);max-width:300px;animation:fadeUp .2s ease both}
+.toast.ok{border-color:var(--success);color:var(--success)}
+.toast.err{border-color:var(--danger);color:#fca5a5}
+
+/* Row count badge */
+.row-count{font-size:.75rem;color:var(--muted);background:rgba(27,58,140,.15);border:1px solid var(--border);border-radius:999px;padding:2px 10px}
+
+/* Mobile */
+@media(max-width:768px){
+  .sidebar-toggle{display:block}
+  .admin-sidebar{position:fixed;top:var(--header-h);left:-260px;width:260px;z-index:99;transition:left .3s;height:calc(100dvh - var(--header-h))}
+  .admin-sidebar.open{left:0;box-shadow:4px 0 24px rgba(0,0,0,.5)}
+  .admin-main{padding:14px}
+  .sec-header{flex-direction:column;align-items:flex-start}
+}
+</style>
+</head>
+<body>
+
+<!-- ── LOGIN ─────────────────────────────────────────────────── -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-icon">⚙️</div>
+    <div class="login-title">Admin Panel</div>
+    <div class="login-sub">IKCADIN TOUR 2026 — Area Terproteksi</div>
+    <input type="password" id="loginPw" class="login-input" placeholder="Password admin" autocomplete="current-password">
+    <button class="btn-primary" id="loginBtn" onclick="doLogin()">Masuk</button>
+    <div class="login-err" id="loginErr">Password salah. Coba lagi.</div>
+  </div>
+</div>
+
+<!-- ── ADMIN APP ─────────────────────────────────────────────── -->
+<div id="adminApp">
+  <header class="admin-header">
+    <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+    <div class="admin-header-brand"><span>IKCADIN TOUR 2026</span> — Admin</div>
+    <button class="btn-logout" onclick="doLogout()">Keluar</button>
+  </header>
+  <div class="admin-body">
+    <aside class="admin-sidebar" id="adminSidebar"></aside>
+    <main class="admin-main" id="adminMain">
+      <div class="tbl-loading" style="padding-top:80px">← Pilih section dari sidebar</div>
+    </main>
+  </div>
+</div>
+
+<!-- ── MODAL ─────────────────────────────────────────────────── -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal-box">
+    <div class="modal-head">
+      <div class="modal-head-title" id="modalTitle">Form</div>
+      <button class="modal-x" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-foot">
+      <button class="btn-cancel" onclick="closeModal()">Batal</button>
+      <button class="btn-save" id="btnSave" onclick="submitForm()">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── CONFIG ──────────────────────────────────────────────────────
+const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxKveP4Y4ADKfty7jjS-JOUSC-PPpO3WnNq-Agit_SOPldB9HkB_MRjxX_3xBvdyPpKvw/exec';
+
+const SECTIONS = [
+  { key:'pengumuman', label:'📢 Pengumuman',     sheet:'Pengumuman'      },
+  { key:'panitia',    label:'👑 Panitia',         sheet:'Panitia'         },
+  { key:'kontak',     label:'📞 Kontak',          sheet:'Kontak'          },
+  { key:'rules',      label:'📋 Rules',           sheet:'Rules'           },
+  { key:'rundown',    label:'🗓 Rundown',          sheet:'Rundown'         },
+  { key:'bus',        label:'🚌 List Bus',         sheet:'List Bus'        },
+  { key:'mobil',      label:'🚗 Mobil Pribadi',    sheet:'Mobil Pribadi'   },
+  { key:'custom',     label:'✨ Custom Sections',  sheet:'Custom Sections' },
+  { key:'config',     label:'⚙️ Config',           sheet:'Config'          },
+  { key:'games',      label:'🎮 Kelompok Games',   sheet:'Kelompok Games'  },
+  { key:'hadiah',     label:'🎁 Hadiah',           sheet:'Hadiah'          },
+];
+
+// ── STATE ────────────────────────────────────────────────────────
+let token = '';
+let curSection = null;
+let curHeaders = [];
+let curRows    = [];
+let editingIdx = null; // null=add, number=edit
+
+// ── LONG TEXT COLUMNS (pakai textarea) ──────────────────────────
+const LONG_KEYS = ['keterangan','konten','isi','deskripsi','catatan','detail','alamat','pesan','note'];
+
+// ── LOGIN ────────────────────────────────────────────────────────
+function doLogin() {
+  const pw = document.getElementById('loginPw').value.trim();
+  if (!pw) return;
+  const btn = document.getElementById('loginBtn');
+  const err = document.getElementById('loginErr');
+  btn.disabled = true; btn.textContent = 'Memeriksa…';
+  err.style.display = 'none';
+  postGAS({ action:'ping', token:pw })
+    .then(r => {
+      if (r.ok) {
+        token = pw;
+        sessionStorage.setItem('adm', pw);
+        showApp();
+      } else {
+        err.style.display = 'block';
+      }
+    })
+    .catch(() => { err.textContent = 'Gagal koneksi ke server.'; err.style.display = 'block'; })
+    .finally(() => { btn.disabled = false; btn.textContent = 'Masuk'; });
+}
+
+function doLogout() {
+  token = ''; sessionStorage.removeItem('adm');
+  document.getElementById('adminApp').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('loginPw').value = '';
+}
+
+function showApp() {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('adminApp').style.display = 'flex';
+  buildSidebar();
+}
+
+window.addEventListener('DOMContentLoaded', function() {
+  const saved = sessionStorage.getItem('adm');
+  if (saved) { token = saved; showApp(); }
+  document.getElementById('loginPw').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+});
+
+// ── SIDEBAR ──────────────────────────────────────────────────────
+function buildSidebar() {
+  document.getElementById('adminSidebar').innerHTML =
+    '<div class="sb-label">Data Sections</div>' +
+    SECTIONS.map(s =>
+      `<button class="sb-btn" data-key="${s.key}" onclick="loadSection('${s.key}')">${s.label}</button>`
+    ).join('');
+}
+
+function toggleSidebar() {
+  document.getElementById('adminSidebar').classList.toggle('open');
+}
+
+// ── LOAD SECTION ─────────────────────────────────────────────────
+function loadSection(key) {
+  document.querySelectorAll('.sb-btn').forEach(b => b.classList.toggle('active', b.dataset.key === key));
+  if (window.innerWidth <= 768) document.getElementById('adminSidebar').classList.remove('open');
+  curSection = SECTIONS.find(s => s.key === key);
+  if (!curSection) return;
+  document.getElementById('adminMain').innerHTML = `
+    <div class="sec-header">
+      <div>
+        <div class="sec-title">${curSection.label}</div>
+      </div>
+      <button class="btn-add" onclick="openAdd()">+ Tambah Baris</button>
+    </div>
+    <div class="info-note">Sheet: <strong>${curSection.sheet}</strong> — Edit langsung tersimpan ke Google Sheets. Cache otomatis diperbarui.</div>
+    <div id="tblArea"><div class="tbl-loading">⏳ Memuat…</div></div>`;
+  fetchData();
+}
+
+function fetchData() {
+  postGAS({ action:'get_admin_data', token, sheet: curSection.sheet })
+    .then(r => {
+      if (!r.ok) { toast('Gagal memuat: ' + (r.error||'?'), 'err'); return; }
+      curHeaders = r.headers;
+      curRows    = r.rows;
+      renderTable();
+    })
+    .catch(e => toast('Error: ' + e.message, 'err'));
+}
+
+function renderTable() {
+  const area = document.getElementById('tblArea');
+  if (!curRows.length) {
+    area.innerHTML = '<div class="tbl-empty">Belum ada data di sheet ini.</div>';
+    return;
+  }
+  let h = `<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+    <span class="row-count">${curRows.length} baris</span>
+  </div>
+  <div class="tbl-wrap"><table><thead><tr>
+    <th style="min-width:90px">Aksi</th>`;
+  curHeaders.forEach(hd => { h += `<th>${esc(hd)}</th>`; });
+  h += '</tr></thead><tbody>';
+  curRows.forEach(row => {
+    h += `<tr><td><div class="tbl-actions">
+      <button class="btn-edit" onclick="openEdit(${row.rowIndex})">✏️ Edit</button>
+      <button class="btn-del"  onclick="delRow(${row.rowIndex})">🗑 Hapus</button>
+    </div></td>`;
+    row.data.forEach(c => { h += `<td title="${esc(c)}">${esc(c)}</td>`; });
+    h += '</tr>';
+  });
+  h += '</tbody></table></div>';
+  area.innerHTML = h;
+}
+
+// ── MODAL ─────────────────────────────────────────────────────────
+function openAdd() {
+  editingIdx = null;
+  document.getElementById('modalTitle').textContent = `Tambah — ${curSection.label}`;
+  buildForm(curHeaders, curHeaders.map(() => ''));
+  document.getElementById('modalBg').classList.add('open');
+}
+
+function openEdit(rowIndex) {
+  editingIdx = rowIndex;
+  const row = curRows.find(r => r.rowIndex === rowIndex);
+  if (!row) return;
+  document.getElementById('modalTitle').textContent = `Edit baris #${rowIndex} — ${curSection.label}`;
+  buildForm(curHeaders, row.data);
+  document.getElementById('modalBg').classList.add('open');
+}
+
+function buildForm(headers, values) {
+  document.getElementById('modalBody').innerHTML = headers.map((h, i) => {
+    const v   = esc(values[i] || '');
+    const key = h.toLowerCase();
+    const isLong = LONG_KEYS.some(k => key.includes(k));
+    return `<div class="form-grp">
+      <label class="form-lbl">${esc(h)}</label>
+      ${isLong
+        ? `<textarea class="form-ta" name="f${i}">${v}</textarea>`
+        : `<input  class="form-inp" name="f${i}" type="text" value="${v}">`
+      }
+    </div>`;
+  }).join('');
+}
+
+function closeModal() {
+  document.getElementById('modalBg').classList.remove('open');
+}
+
+function submitForm() {
+  const btn = document.getElementById('btnSave');
+  btn.disabled = true; btn.textContent = 'Menyimpan…';
+  const data = curHeaders.map((_, i) => {
+    const el = document.querySelector(`[name="f${i}"]`);
+    return el ? el.value : '';
+  });
+  const payload = editingIdx === null
+    ? { action:'create', token, sheet: curSection.sheet, data }
+    : { action:'update', token, sheet: curSection.sheet, rowIndex: editingIdx, data };
+  postGAS(payload)
+    .then(r => {
+      btn.disabled = false; btn.textContent = 'Simpan';
+      if (r.ok) {
+        closeModal();
+        toast(editingIdx ? 'Baris berhasil diperbarui ✓' : 'Baris baru ditambahkan ✓', 'ok');
+        fetchData();
+      } else {
+        toast('Gagal: ' + (r.error||'?'), 'err');
+      }
+    })
+    .catch(e => { btn.disabled = false; btn.textContent = 'Simpan'; toast('Error: ' + e.message, 'err'); });
+}
+
+function delRow(rowIndex) {
+  if (!confirm('Hapus baris ini dari Google Sheets?\n\nTindakan tidak bisa dibatalkan.')) return;
+  postGAS({ action:'delete', token, sheet: curSection.sheet, rowIndex })
+    .then(r => {
+      if (r.ok) { toast('Baris dihapus ✓', 'ok'); fetchData(); }
+      else toast('Gagal hapus: ' + (r.error||'?'), 'err');
+    })
+    .catch(e => toast('Error: ' + e.message, 'err'));
+}
+
+// ── HELPERS ───────────────────────────────────────────────────────
+function postGAS(payload) {
+  return fetch(WEB_APP_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain' }, // text/plain menghindari CORS preflight
+    body: JSON.stringify(payload),
+    redirect: 'follow'
+  }).then(r => r.json());
+}
+
+function esc(s) {
+  return String(s||'')
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+let _tTimer;
+function toast(msg, type) {
+  document.querySelectorAll('.toast').forEach(e => e.remove());
+  clearTimeout(_tTimer);
+  const el = Object.assign(document.createElement('div'), { className:'toast '+(type||''), textContent:msg });
+  document.body.appendChild(el);
+  _tTimer = setTimeout(() => el.remove(), 3800);
+}
+
+// Tutup modal jika klik di luar
+document.getElementById('modalBg').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+</script>
+</body>
+</html>
