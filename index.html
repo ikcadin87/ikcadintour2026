@@ -1,0 +1,2181 @@
+<!DOCTYPE html>
+
+<html lang="id">
+
+<head>
+
+<meta charset="UTF-8"/>
+
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=5,viewport-fit=cover"/>
+<meta name="HandheldFriendly" content="true"/>
+<meta name="MobileOptimized" content="width"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+
+<!-- JS viewport fix: runs before CSS, corrects iframe/WebView desktop-width inheritance -->
+<script>
+(function(){
+  try {
+    var sw = Math.min(window.screen.width, window.screen.availWidth);
+    var iw = window.innerWidth || document.documentElement.clientWidth;
+    // If viewport is wider than physical screen → we're in a desktop-forced GAS iframe
+    if (iw > sw + 40) {
+      var m = document.querySelector('meta[name="viewport"]');
+      if (m) m.content = 'width='+sw+',initial-scale=1,minimum-scale=1,maximum-scale=5,viewport-fit=cover';
+    }
+  } catch(e) {}
+})();
+</script>
+
+<title>IKCADIN TOUR 2026</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+
+<style>
+
+/* ─── Reset & Variables ─────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --p:#1B3A8C;--p2:#112770;--a:#D4AF37;--a2:#B8941F;
+  --dark:#050C1A;--card:#0A1830;--card2:#0F2040;--card3:#142550;
+  --text:#E8EFF8;--muted:#7088B8;--border:#1A2D5A;
+  --r:16px;--r2:12px;--header-h:60px;
+  --font-head:'Sora',system-ui,-apple-system,sans-serif;
+  --font-body:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;
+}
+html{scroll-behavior:smooth;scroll-padding-top:var(--header-h)}
+body{font-family:var(--font-body);background:var(--dark);color:var(--text);min-height:100dvh;width:100%;touch-action:pan-y;-webkit-overflow-scrolling:touch}
+
+/* ─── App Header ─────────────────────────────────────────────── */
+.app-header{
+  position:sticky;top:0;z-index:100;
+  height:calc(var(--header-h) + env(safe-area-inset-top,0px));
+  padding-top:env(safe-area-inset-top,0px);
+  background:rgba(5,12,26,.94);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(26,45,90,.8);
+  box-shadow:0 2px 20px rgba(0,0,0,.3);
+}
+.app-header-inner{
+  max-width:1800px;margin:0 auto;padding:0 20px;
+  height:100%;display:flex;align-items:center;gap:12px;
+}
+.app-brand{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.header-logo{
+  height:44px;width:44px;border-radius:50%;object-fit:cover;
+  border:2px solid rgba(212,175,55,.45);
+  box-shadow:0 2px 8px rgba(212,175,55,.2);
+}
+.header-brand-name{
+  font-family:var(--font-head);font-weight:700;font-size:.82rem;
+  background:linear-gradient(135deg,#FFFACD 0%,#F5D060 30%,#D4AF37 60%,#B8860B 100%);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  white-space:nowrap;letter-spacing:.01em;
+}
+.header-nav{
+  flex:1;display:flex;align-items:center;gap:4px;
+  overflow-x:auto;-ms-overflow-style:none;scrollbar-width:none;
+  justify-content:flex-end;
+}
+.header-nav::-webkit-scrollbar{display:none}
+
+/* ─── Hamburger ─────────────────────────────────────────────── */
+.hamburger{
+  display:none;flex-direction:column;justify-content:center;gap:5px;
+  width:36px;height:36px;
+  background:rgba(255,255,255,.06);border:1px solid var(--border);
+  border-radius:8px;cursor:pointer;padding:8px;
+  margin-left:auto;flex-shrink:0;transition:background .2s;
+}
+.hamburger:hover{background:rgba(255,255,255,.1)}
+.hamburger span{
+  display:block;width:100%;height:2px;
+  background:var(--text);border-radius:2px;transition:.3s;transform-origin:center;
+}
+.hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.hamburger.open span:nth-child(2){opacity:0;transform:scaleX(0)}
+.hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+/* ─── Mobile Drawer ─────────────────────────────────────────── */
+.drawer{
+  position:fixed;top:var(--header-h);right:-100%;
+  width:min(280px,80vw);height:calc(100dvh - var(--header-h));
+  background:var(--card);border-left:1px solid var(--border);
+  z-index:99;transition:right .3s cubic-bezier(.4,0,.2,1);
+  overflow-y:auto;padding:12px;
+}
+.drawer.open{right:0}
+.drawer-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.65);
+  z-index:98;opacity:0;pointer-events:none;transition:opacity .3s;
+}
+.drawer-overlay.open{opacity:1;pointer-events:all}
+.drawer-nav{display:flex;flex-direction:column;gap:4px}
+.drawer-nav .nav-btn{width:100%;justify-content:flex-start;border-radius:var(--r2);padding:11px 14px}
+@media(max-width:768px){.header-nav{display:none}.hamburger{display:flex}}
+
+/* ─── Hero Panel ─────────────────────────────────────────────── */
+.hero-panel{
+  position:relative;
+  display:grid;
+  background-color:var(--p2);
+}
+/* Banner img — full-width, natural aspect ratio, no cropping */
+.hero-banner-bg{
+  grid-area:1/1;width:100%;display:block;
+  background-color:var(--p2);
+  /* fallback jika tidak ada gambar */
+  min-height:280px;
+}
+.hero-banner-img{
+  width:100%;height:auto;display:block;
+  object-fit:fill; /* full image, no crop */
+}
+.hero-overlay{
+  grid-area:1/1;
+  background:linear-gradient(to bottom,rgba(5,12,26,.45) 0%,rgba(5,12,26,.82) 100%);
+  pointer-events:none;
+}
+.hero-content{
+  grid-area:1/1;
+  position:relative;z-index:2;text-align:center;
+  padding:20px 24px 40px;width:100%;max-width:800px;
+  margin:0 auto;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  animation:fadeDown .6s ease both;
+}
+.hero-logo-img{
+  height:150px;width:150px;border-radius:50%;object-fit:cover;
+  margin:0 auto 16px;display:block;
+  border:3px solid rgba(212,175,55,.65);
+  box-shadow:0 6px 32px rgba(212,175,55,.35);
+}
+.hero-emoji{font-size:60px;line-height:1;margin-bottom:16px;display:block;animation:bounce 2.5s ease infinite}
+.hero-panel h1{
+  font-family:var(--font-head);
+  font-size:clamp(1.8rem,5vw,2.8rem);
+  font-weight:700;line-height:1.15;margin-bottom:10px;
+}
+.hero-panel h1 span{
+  background:linear-gradient(135deg,#FFFACD 0%,#F5D060 18%,#D4AF37 38%,#B8860B 58%,#C8A030 78%,#8B6914 100%);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+}
+.hero-sub{color:rgba(232,239,248,.8);font-size:.95rem;font-weight:400;margin-bottom:10px}
+.hero-meta{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:12px}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);
+  border-radius:999px;padding:5px 14px;font-size:.8rem;color:rgba(232,239,248,.9);
+  backdrop-filter:blur(8px);
+}
+.hero-badge span{font-size:1em}
+
+/* ─── Countdown ─────────────────────────────────────────────── */
+.countdown-wrap{display:flex;justify-content:center;gap:10px;margin-top:20px;flex-wrap:wrap}
+.countdown-item{
+  background:rgba(26,45,90,.6);border:1px solid rgba(212,175,55,.3);
+  border-radius:10px;padding:10px 14px;min-width:60px;
+  text-align:center;backdrop-filter:blur(8px);
+}
+.countdown-num{font-family:var(--font-head);font-size:1.4rem;font-weight:800;color:var(--a);line-height:1;display:block}
+.countdown-label{font-size:.55rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-top:3px;display:block}
+.countdown-done{font-family:var(--font-head);font-size:.95rem;color:var(--a);font-weight:700;margin-top:14px}
+
+/* ─── Main Body ─────────────────────────────────────────────── */
+.main-body{background:var(--dark);position:relative;z-index:1;overflow-x:hidden;overflow-y:visible;width:100%}
+.main-body::before{
+  content:'';position:fixed;inset:0;
+  background:
+    radial-gradient(ellipse 80% 50% at 20% -10%, rgba(27,58,140,.22) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 110%, rgba(212,175,55,.14) 0%, transparent 55%);
+  pointer-events:none;z-index:0;
+}
+.content-area{max-width:1800px;width:100%;margin:0 auto;padding:24px 16px calc(60px + env(safe-area-inset-bottom,0px));position:relative;z-index:1;overflow-x:hidden}
+
+/* ─── Search ─────────────────────────────────────────────────── */
+.search-wrap{position:relative;margin:0 0 20px}
+.search-wrap input{
+  width:100%;padding:12px 20px 12px 44px;
+  background:var(--card);border:1px solid var(--border);
+  border-radius:999px;color:var(--text);font-size:.9rem;
+  font-family:var(--font-body);outline:none;transition:.2s;
+}
+.search-wrap input:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(27,58,140,.15)}
+.search-ico{
+  position:absolute;left:15px;top:50%;transform:translateY(-50%);
+  width:17px;height:17px;color:var(--muted);pointer-events:none;
+}
+
+/* ─── Nav Pills ─────────────────────────────────────────────── */
+.nav-btn{
+  flex-shrink:0;display:inline-flex;align-items:center;gap:6px;
+  padding:7px 14px;border-radius:999px;font-size:.78rem;font-weight:600;
+  border:1.5px solid var(--border);background:transparent;color:var(--muted);
+  cursor:pointer;transition:.2s;white-space:nowrap;font-family:var(--font-body);
+}
+.nav-btn:hover{border-color:var(--p);color:var(--p)}
+.nav-btn.active{background:var(--p);border-color:var(--p);color:#fff;box-shadow:0 4px 14px rgba(27,58,140,.35)}
+.nav-btn .dot{width:7px;height:7px;border-radius:50%;background:currentColor;opacity:.6}
+
+/* ─── Section Cards ─────────────────────────────────────────── */
+.section-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r);margin-bottom:12px;overflow:hidden;
+  animation:fadeUp .4s ease both;transition:border-color .2s,box-shadow .2s;
+  max-width:100%;width:100%;
+}
+.section-card:hover{border-color:rgba(27,58,140,.5);box-shadow:0 4px 20px rgba(0,0,0,.2)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.card-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:15px 18px;cursor:pointer;user-select:none;
+  border-bottom:1px solid transparent;transition:.2s;
+}
+.card-header:hover{background:rgba(255,255,255,.03)}
+.card-header.open{border-bottom-color:var(--border)}
+.card-title{display:flex;align-items:center;gap:8px}
+.card-emoji{display:none}
+.card-label{font-family:var(--font-head);font-weight:700;font-size:.95rem}
+.card-count{background:rgba(27,58,140,.15);color:var(--p);font-size:.7rem;font-weight:700;border-radius:999px;padding:2px 8px;margin-left:4px}
+.chevron{color:var(--muted);font-size:.8rem;transition:transform .25s}
+.card-header.open .chevron{transform:rotate(180deg)}
+.card-body{display:none;padding:16px 18px;max-width:100%;overflow-x:hidden}
+.card-body.open{display:block;animation:fadeUp .25s ease both}
+
+/* ─── Table ─────────────────────────────────────────────────── */
+.tbl-wrap{overflow-x:auto;border-radius:var(--r2);border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;font-size:.84rem}
+thead tr{background:rgba(27,58,140,.12)}
+th{padding:10px 14px;text-align:left;font-weight:700;color:var(--p);white-space:nowrap;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em}
+td{padding:10px 14px;border-top:1px solid var(--border);vertical-align:top;color:var(--text)}
+tr:hover td{background:rgba(255,255,255,.025)}
+.td-em{font-weight:600;color:#fff}
+
+/* ─── Rules List ────────────────────────────────────────────── */
+
+.rule-list{display:flex;flex-direction:column;gap:10px}
+
+.rule-item{
+  display:flex;align-items:flex-start;gap:12px;
+  background:var(--card2);border-radius:var(--r2);
+  padding:14px 16px;border:1px solid var(--border);
+  transition:.2s;
+}
+
+.rule-item:hover{border-color:rgba(27,58,140,.3)}
+
+.rule-num{
+  min-width:26px;height:26px;border-radius:50%;
+  background:var(--p);color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.78rem;font-weight:700;flex-shrink:0;margin-top:1px;
+}
+
+.rule-emoji{font-size:1.3rem;flex-shrink:0}
+
+.rule-text h4{font-weight:700;font-size:.9rem;margin-bottom:3px;color:#fff}
+
+.rule-text p{color:var(--muted);font-size:.83rem;line-height:1.55}
+
+/* ─── Rundown ────────────────────────────────────────────────── */
+
+.timeline{position:relative;padding-left:28px}
+
+.timeline::before{
+  content:'';position:absolute;left:10px;top:0;bottom:0;
+  width:2px;background:linear-gradient(to bottom,var(--p),transparent);
+}
+
+.tl-item{position:relative;margin-bottom:16px}
+
+.tl-dot{
+  position:absolute;left:-28px;top:12px;
+  width:12px;height:12px;border-radius:50%;
+  background:var(--p);border:2px solid var(--dark);
+  box-shadow:0 0 0 3px rgba(27,58,140,.25);
+}
+
+.tl-box{
+  background:var(--card2);border:1px solid var(--border);
+  border-radius:var(--r2);padding:12px 16px;
+}
+
+.tl-time{
+  font-size:.75rem;font-weight:700;color:var(--a);
+  text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px;
+}
+
+.tl-act{font-weight:700;font-size:.92rem;color:#fff;margin-bottom:3px}
+
+.tl-note{font-size:.8rem;color:var(--muted)}
+
+.tl-loc{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:.75rem;color:var(--muted);margin-top:6px;
+}
+
+/* ─── Kelompok Cards (Bus/generic) ──────────────────────────── */
+
+.group-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+
+.group-card{
+  background:var(--card2);border:1px solid var(--border);
+  border-radius:var(--r2);padding:16px;transition:.2s;
+}
+
+.group-card:hover{border-color:rgba(27,58,140,.3);transform:translateY(-2px)}
+
+.group-name{font-family:var(--font-head);font-weight:700;font-size:1rem;color:#fff;margin-bottom:4px}
+
+.group-leader{font-size:.78rem;color:var(--a);font-weight:600;margin-bottom:8px}
+
+.group-members{font-size:.8rem;color:var(--muted);line-height:1.6}
+
+.group-label{
+  display:inline-block;font-size:.7rem;font-weight:700;
+  padding:2px 8px;border-radius:999px;
+  background:rgba(27,58,140,.15);color:var(--p);
+  margin-bottom:8px;
+}
+
+/* ─── Games Horizontal Layout ───────────────────────────────── */
+
+.games-judul{
+  font-family:var(--font-head);font-size:.85rem;font-weight:600;
+  color:var(--a);text-align:center;margin-bottom:16px;
+  padding:8px 14px;background:rgba(212,175,55,.08);
+  border-radius:var(--r2);border:1px solid rgba(212,175,55,.2);
+}
+
+/* Tab selector kelompok */
+
+.kel-tabs{
+  display:flex;gap:6px;overflow-x:auto;margin-bottom:14px;
+  padding-bottom:2px;-ms-overflow-style:none;scrollbar-width:none;
+}
+
+.kel-tabs::-webkit-scrollbar{display:none}
+
+.kel-tab{
+  flex-shrink:0;padding:7px 14px;border-radius:999px;
+  font-size:.78rem;font-weight:700;cursor:pointer;border:1.5px solid var(--border);
+  background:transparent;color:var(--muted);transition:.18s;font-family:var(--font-body);
+}
+
+.kel-tab:hover{border-color:var(--p);color:var(--p)}
+
+.kel-tab.active{background:var(--p);border-color:var(--p);color:#fff;
+  box-shadow:0 3px 10px rgba(27,58,140,.3)}
+/* Rules — Do's (green) */
+.kel-tab--dos{border-color:rgba(34,197,94,.45);color:rgba(134,239,172,.9)}
+.kel-tab--dos:hover{border-color:#22c55e;color:#22c55e}
+.kel-tab--dos.active{background:#16a34a;border-color:#16a34a;color:#fff;box-shadow:0 3px 10px rgba(22,163,74,.4)}
+/* Rules — Don'ts (red) */
+.kel-tab--donts{border-color:rgba(239,68,68,.45);color:rgba(252,165,165,.9)}
+.kel-tab--donts:hover{border-color:#ef4444;color:#ef4444}
+.kel-tab--donts.active{background:#dc2626;border-color:#dc2626;color:#fff;box-shadow:0 3px 10px rgba(220,38,38,.4)}
+
+/* Panel */
+
+.kel-panel{display:none}
+
+.kel-panel.active{display:block;animation:fadeUp .2s ease both}
+
+/* Stats bar */
+
+.kel-stats{
+  display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap;
+}
+
+.kel-stat{
+  display:flex;align-items:center;gap:6px;
+  background:rgba(255,255,255,.04);border:1px solid var(--border);
+  border-radius:8px;padding:6px 12px;font-size:.78rem;
+}
+
+.kel-stat strong{color:#fff;font-weight:700}
+
+.kel-stat span{color:var(--muted)}
+
+/* Member list */
+
+.member-list{display:flex;flex-direction:column;gap:6px}
+
+.member-row{
+  display:flex;align-items:center;gap:10px;
+  background:var(--card2);border:1px solid var(--border);
+  border-radius:9px;padding:9px 13px;transition:.15s;
+}
+
+.member-row:hover{border-color:rgba(27,58,140,.25)}
+
+.member-row.highlight{
+  background:rgba(212,175,55,.08);
+  border-color:rgba(212,175,55,.35);
+}
+
+.member-no{
+  min-width:24px;height:24px;border-radius:50%;
+  background:rgba(27,58,140,.15);color:var(--p);
+  display:flex;align-items:center;justify-content:center;
+  font-size:.7rem;font-weight:700;flex-shrink:0;
+}
+
+.member-row.highlight .member-no{background:rgba(212,175,55,.2);color:var(--a)}
+
+.member-nama{font-weight:600;font-size:.85rem;color:#fff;flex:1}
+
+.member-row.highlight .member-nama{color:var(--a)}
+
+.member-kode{font-size:.73rem;color:var(--muted);background:rgba(255,255,255,.05);
+  padding:2px 7px;border-radius:5px;white-space:nowrap}
+
+.member-status{
+  font-size:.7rem;font-weight:600;padding:2px 8px;border-radius:5px;
+  white-space:nowrap;
+}
+
+.status-single{background:rgba(27,58,140,.12);color:var(--p)}
+
+.status-double{background:rgba(212,175,55,.18);color:var(--a)}
+
+.status-keluarga{background:rgba(167,139,250,.12);color:#a78bfa}
+
+/* Search highlight */
+
+.member-row.hidden{display:none}
+
+/* Games search */
+
+.games-search{
+  position:relative;margin-bottom:12px;
+}
+
+.games-search input{
+  width:100%;padding:9px 14px 9px 36px;
+  background:rgba(255,255,255,.05);border:1px solid var(--border);
+  border-radius:8px;color:var(--text);font-size:.82rem;
+  font-family:var(--font-body);outline:none;transition:.2s;
+}
+
+.games-search input:focus{border-color:var(--p)}
+
+.games-search .ico{
+  position:absolute;left:12px;top:50%;transform:translateY(-50%);
+  color:var(--muted);font-size:.85rem;pointer-events:none;
+}
+
+/* ─── Kontak ─────────────────────────────────────────────────── */
+
+.kontak-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+
+.kontak-card{
+  background:var(--card2);border:1px solid var(--border);
+  border-radius:var(--r2);padding:16px;display:flex;gap:14px;
+  align-items:flex-start;transition:.2s;
+}
+
+.kontak-card:hover{border-color:rgba(27,58,140,.3)}
+
+.kontak-avatar{
+  width:40px;height:40px;border-radius:50%;
+  background:linear-gradient(135deg,var(--p),var(--a));
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;color:#fff;font-size:1rem;flex-shrink:0;
+}
+
+.kontak-name{font-weight:700;font-size:.9rem;color:#fff;margin-bottom:2px}
+
+.kontak-role{font-size:.75rem;color:var(--a);font-weight:600;margin-bottom:4px}
+
+.kontak-num{font-size:.82rem;color:var(--muted)}
+
+.kontak-hp{
+  display:inline-flex;align-items:center;gap:5px;
+  background:rgba(27,58,140,.1);color:var(--p);
+  border-radius:6px;padding:3px 8px;font-size:.78rem;
+  font-weight:600;margin-top:6px;text-decoration:none;
+  border:1px solid rgba(27,58,140,.2);transition:.2s;
+}
+
+.kontak-hp:hover{background:var(--p);color:#fff}
+
+/* ─── Custom Section ─────────────────────────────────────────── */
+
+.custom-list{display:flex;flex-direction:column;gap:10px}
+
+.custom-item{
+  background:var(--card2);border:1px solid var(--border);
+  border-radius:var(--r2);padding:14px 16px;
+}
+
+.custom-title{font-weight:700;font-size:.9rem;color:#fff;margin-bottom:4px}
+
+.custom-body{font-size:.83rem;color:var(--muted);line-height:1.6}
+
+.custom-body a{color:var(--p);text-decoration:none}
+
+.custom-body a:hover{text-decoration:underline}
+
+/* ─── Loading / Error ────────────────────────────────────────── */
+
+.loading{
+  text-align:center;padding:32px;color:var(--muted);
+  display:flex;flex-direction:column;align-items:center;gap:12px;
+}
+
+.spinner{
+  width:28px;height:28px;border:3px solid var(--border);
+  border-top-color:var(--p);border-radius:50%;
+  animation:spin .7s linear infinite;
+}
+
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.error-box{
+  background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);
+  border-radius:var(--r2);padding:14px 16px;color:#fca5a5;font-size:.85rem;
+}
+
+/* ─── Footer ─────────────────────────────────────────────────── */
+
+footer{text-align:center;padding:32px 0 8px;color:var(--muted);font-size:.8rem}
+
+/* ─── Empty ──────────────────────────────────────────────────── */
+
+.empty{text-align:center;padding:28px;color:var(--muted);font-size:.85rem}
+
+/* ─── Mobile ─────────────────────────────────────────────────── */
+
+@media(max-width:480px){
+  .group-grid,.kontak-grid{grid-template-columns:1fr}
+}
+
+/* ─── Peta Kamar — 2D Floor Plan Grid ───────────────── */
+.fpm-outer{overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:8px;width:100%;max-width:100%;display:block}
+.fpm-grid{
+  display:grid;
+  /* Cols: D-Y (22 room cols × 68px) + Z gap (8px) + AA-AB (2 floral cols × 68px) */
+  grid-template-columns:repeat(22,68px) 8px repeat(2,68px);
+  /* Rows: 1-10 room rows + 12px gap separator + rows 12-13 annex blocks */
+  grid-template-rows:repeat(10,auto) 12px repeat(2,auto);
+  gap:3px;
+  width:max-content;
+}
+.fpm-legend{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;padding:8px 12px;background:var(--card3);border-radius:var(--r2);border:1px solid var(--border)}
+.fpm-legend-item{display:flex;align-items:center;gap:5px;font-size:.7rem;color:var(--text)}
+.fpm-legend-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0;border:1px solid rgba(255,255,255,.18)}
+.fpm-hint{font-size:.6rem;color:var(--muted);text-align:center;margin-bottom:6px;display:none}
+@media(max-width:700px){.fpm-hint{display:block}}
+.fpm-room{border-radius:5px;border:1px solid;overflow:hidden;transition:.12s;min-width:0}
+.fpm-room:hover{opacity:.8;transform:translateY(-1px)}
+.fpm-num{font-size:.66rem;font-weight:700;padding:3px 3px;color:#fff;text-align:center;font-family:var(--font-head);background:#073763;letter-spacing:.01em}
+.fpm-body{padding:3px 4px;min-height:26px}
+.fpm-name{font-size:.54rem;line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500}
+.fpm-empty{font-size:.5rem;opacity:.28;text-align:center;padding:3px 0;color:#999;font-style:italic}
+.fpm-pool{
+  border-radius:7px;
+  background:rgba(207,226,243,.1);
+  border:1.5px dashed #5fa8c8;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:4px;min-height:80px;
+}
+.fpm-pool-lbl{font-size:.72rem;font-weight:700;color:#78c8e8;letter-spacing:.05em;font-family:var(--font-head)}
+
+/* ─── Sub Tabs (di dalam grup tab) ─────────────────────────── */
+.sub-tabs{
+  display:flex;gap:6px;margin-bottom:16px;
+  flex-wrap:wrap;padding-bottom:2px;
+  border-bottom:1px solid var(--border);
+  padding-bottom:12px;
+}
+.sub-tab{
+  padding:7px 18px;border-radius:999px;font-size:.78rem;font-weight:600;
+  border:1.5px solid var(--border);background:transparent;color:var(--muted);
+  cursor:pointer;transition:.2s;white-space:nowrap;font-family:var(--font-body);
+}
+.sub-tab:hover{border-color:var(--p);color:var(--text)}
+.sub-tab.active{background:var(--p);border-color:var(--p);color:#fff;box-shadow:0 3px 12px rgba(27,58,140,.3)}
+
+/* ─── Papan Pengumuman ──────────────────────────────────────── */
+.pengumuman-wrap{margin-bottom:28px}
+.pengumuman-board-header{
+  display:flex;align-items:center;gap:8px;margin-bottom:14px;
+  font-family:var(--font-head);font-weight:800;font-size:1.05rem;color:#fff;
+}
+.pengumuman-empty{
+  background:var(--card2);border:1px dashed var(--border);
+  border-radius:var(--r2);padding:20px;
+  text-align:center;color:var(--muted);font-size:.85rem;
+}
+.pengumuman-item{
+  border-radius:var(--r);padding:16px 18px;
+  margin-bottom:10px;transition:.2s;
+  border-left:5px solid var(--p);
+  background:linear-gradient(105deg,rgba(27,58,140,.22) 0%,rgba(10,24,48,.5) 100%);
+  box-shadow:0 2px 16px rgba(0,0,0,.25);
+  position:relative;overflow:hidden;
+}
+.pengumuman-item::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,var(--p),transparent);
+}
+.pengumuman-item:hover{transform:translateX(4px);box-shadow:0 4px 24px rgba(0,0,0,.4)}
+.pengumuman-item.warning{
+  border-left-color:#EAB308;
+  background:linear-gradient(105deg,rgba(234,179,8,.18) 0%,rgba(10,24,48,.5) 100%);
+}
+.pengumuman-item.warning::before{background:linear-gradient(90deg,#EAB308,transparent)}
+.pengumuman-item.urgent{
+  border-left-color:#EF4444;
+  background:linear-gradient(105deg,rgba(239,68,68,.18) 0%,rgba(10,24,48,.5) 100%);
+  animation:pulseUrgent 2.5s ease-in-out infinite;
+}
+.pengumuman-item.urgent::before{background:linear-gradient(90deg,#EF4444,transparent)}
+@keyframes pulseUrgent{0%,100%{box-shadow:0 2px 16px rgba(0,0,0,.25)}50%{box-shadow:0 4px 28px rgba(239,68,68,.35)}}
+.pengumuman-item.info{border-left-color:var(--p)}
+.pengumuman-badge{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;
+  padding:2px 8px;border-radius:999px;margin-bottom:8px;
+}
+.pengumuman-badge.info{background:rgba(27,58,140,.4);color:#7ba7ff;border:1px solid rgba(27,58,140,.6)}
+.pengumuman-badge.warning{background:rgba(234,179,8,.25);color:#EAB308;border:1px solid rgba(234,179,8,.4)}
+.pengumuman-badge.urgent{background:rgba(239,68,68,.25);color:#f87171;border:1px solid rgba(239,68,68,.4)}
+.pengumuman-tanggal{font-size:.68rem;color:var(--muted);margin-bottom:6px;display:flex;align-items:center;gap:4px}
+.pengumuman-judul{font-weight:800;font-size:1rem;color:#fff;margin-bottom:7px;font-family:var(--font-head);line-height:1.3}
+.pengumuman-isi{font-size:.85rem;color:rgba(232,239,248,.82);line-height:1.65}
+.pengumuman-board-header svg{filter:drop-shadow(0 0 6px rgba(212,175,55,.6))}
+
+/* ─── Panitia ────────────────────────────────────────────────── */
+.pnt-section-title {
+  font-family: var(--font-head);
+  font-weight: 700;
+  color: var(--p);
+  font-size: .95rem;
+  margin: 20px 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-left: 3px solid var(--p);
+  padding-left: 10px;
+}
+.pnt-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+  margin-bottom: 20px;
+}
+@media (max-width: 520px) {
+  .pnt-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+}
+.pnt-card {
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: var(--r2);
+  padding: 16px 10px 12px;
+  text-align: center;
+  transition: .2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.pnt-card:hover { border-color: rgba(214,175,55,.4); transform: translateY(-2px); }
+.pnt-avatar-wrap {
+  width: 72px; height: 72px;
+  margin-bottom: 8px;
+  flex-shrink: 0;
+}
+.pnt-avatar {
+  width: 100%; height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--border);
+  background: var(--card);
+}
+.pnt-card.lead-box {
+  border: 1px solid rgba(214,175,55,.35);
+  background: linear-gradient(180deg, rgba(214,175,55,.05) 0%, var(--card2) 100%);
+}
+.pnt-card.lead-box .pnt-avatar { border-color: #e5c158; box-shadow: 0 0 0 3px rgba(229,193,88,.2); }
+.pnt-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: .6rem;
+  font-weight: 800;
+  padding: 3px 9px;
+  border-radius: 999px;
+  white-space: nowrap;
+  margin-bottom: 7px;
+}
+.pnt-badge.coord { background: linear-gradient(90deg,#D4AF37,#B8941F); color: #06101E; }
+.pnt-badge.aa-tag { background: #7C5CFC; color: #fff; }
+.pnt-nama {
+  font-weight: 700;
+  font-size: .82rem;
+  color: #fff;
+  margin-bottom: 2px;
+  line-height: 1.35;
+  word-break: break-word;
+  width: 100%;
+}
+.pnt-role {
+  font-size: .68rem;
+  color: var(--muted);
+  margin-bottom: 6px;
+  line-height: 1.3;
+}
+.pnt-ket {
+  font-size: .68rem;
+  color: var(--muted);
+  margin-bottom: 8px;
+  flex: 1;
+  line-height: 1.35;
+  width: 100%;
+}
+.pnt-wa {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: .68rem;
+  font-weight: 700;
+  background: rgba(27,58,140,.1);
+  color: var(--p);
+  border: 1px solid rgba(27,58,140,.25);
+  padding: 4px 10px;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: .2s;
+  margin-top: auto;
+}
+.pnt-wa:hover { background: var(--p); color: #fff; }
+.pnt-card.all-access-box { border: 1px solid rgba(124,92,252,.3); }
+.pnt-card.all-access-box .pnt-avatar { border-color: #7C5CFC; box-shadow: 0 0 0 3px rgba(124,92,252,.2); }
+
+/* ─── Beranda ────────────────────────────────────────────────── */
+.beranda-banner-img {
+  width: 100%;
+  border-radius: var(--r);
+  margin-bottom: 28px;
+  display: block;
+  box-shadow: 0 8px 32px rgba(0,0,0,.5);
+}
+.hadiah-title {
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: .78rem;
+  color: var(--a);
+  text-align: center;
+  margin-bottom: 20px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.hadiah-title::before,.hadiah-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--a), transparent);
+}
+
+/* ── Rank Badge (CSS, no emoji) ─── */
+.hadiah-rank-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  min-width: 64px;
+  flex-shrink: 0;
+}
+.hadiah-rank-num {
+  width: 46px; height: 46px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-head);
+  font-weight: 800;
+  font-size: 1rem;
+  letter-spacing: -.02em;
+}
+.hadiah-rank-num.gold {
+  background: linear-gradient(135deg, #F5D060, #B8941F);
+  color: #06101E;
+  box-shadow: 0 4px 16px rgba(212,175,55,.45);
+}
+.hadiah-rank-num.silver {
+  background: linear-gradient(135deg, #D8D8D8, #909090);
+  color: #1a1a1a;
+  box-shadow: 0 3px 10px rgba(0,0,0,.3);
+}
+.hadiah-rank-num.bronze {
+  background: linear-gradient(135deg, #E09050, #9E6024);
+  color: #fff;
+  box-shadow: 0 3px 10px rgba(0,0,0,.3);
+}
+.hadiah-rank-label {
+  font-size: .58rem;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.hadiah-rank-badge.gold .hadiah-rank-label { color: var(--a); }
+.hadiah-rank-badge.silver .hadiah-rank-label { color: #B0B0B0; }
+.hadiah-rank-badge.bronze .hadiah-rank-label { color: #CD7F32; }
+
+/* ── Product Image Frame ─── */
+.hadiah-img-frame {
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: rgba(255,255,255,.95);
+}
+.hadiah-img-frame.grand {
+  width: 160px; height: 160px;
+  border: 2px solid rgba(212,175,55,.55);
+  box-shadow: 0 6px 28px rgba(212,175,55,.22), 0 4px 16px rgba(0,0,0,.45);
+}
+.hadiah-img-frame.mid {
+  width: 120px; height: 120px;
+  margin: 10px auto;
+}
+.hadiah-img-frame.mid.rank-2 { border: 1.5px solid rgba(192,192,192,.55); box-shadow: 0 4px 14px rgba(0,0,0,.3); }
+.hadiah-img-frame.mid.rank-3 { border: 1.5px solid rgba(205,127,50,.55); box-shadow: 0 4px 14px rgba(0,0,0,.3); }
+
+/* Grand Prize */
+.hadiah-grand-card {
+  background: linear-gradient(135deg, #0D1E3F 0%, #162745 60%, #0D1E3F 100%);
+  border: 1.5px solid rgba(212,175,55,.6);
+  border-radius: var(--r);
+  padding: 24px 20px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  position: relative;
+  overflow: hidden;
+}
+.hadiah-grand-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 55% 80% at 88% 50%, rgba(212,175,55,.1) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hadiah-grand-card::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #D4AF37 40%, #D4AF37 60%, transparent);
+}
+.hadiah-grand-img {
+  width: 130px; height: 130px;
+  object-fit: contain;
+}
+.hadiah-grand-info { flex: 1; min-width: 0; }
+.hadiah-grand-nama {
+  font-family: var(--font-head);
+  font-size: clamp(1rem, 2.5vw, 1.25rem);
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 10px;
+  line-height: 1.3;
+}
+.hadiah-grand-qty {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(212,175,55,.14);
+  border: 1px solid rgba(212,175,55,.35);
+  color: var(--a);
+  border-radius: 999px;
+  padding: 4px 16px;
+  font-size: .8rem;
+  font-weight: 600;
+}
+
+/* Rank 2-3 */
+.hadiah-mid-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.hadiah-mid-card {
+  background: var(--card);
+  border-radius: var(--r);
+  padding: 22px 16px 18px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  transition: transform .2s;
+}
+.hadiah-mid-card:hover { transform: translateY(-3px); }
+.hadiah-mid-card.rank-2 { border: 1.5px solid rgba(192,192,192,.4); }
+.hadiah-mid-card.rank-3 { border: 1.5px solid rgba(205,127,50,.4); }
+.hadiah-mid-card.rank-2::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #C0C0C0, transparent);
+}
+.hadiah-mid-card.rank-3::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #CD7F32, transparent);
+}
+.hadiah-mid-rank-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+.hadiah-mid-img {
+  width: 100px; height: 100px;
+  object-fit: contain;
+}
+.hadiah-mid-nama {
+  font-weight: 700;
+  font-size: .88rem;
+  color: #fff;
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+.hadiah-mid-qty {
+  font-size: .75rem;
+  font-weight: 600;
+  padding: 3px 12px;
+  border-radius: 999px;
+  display: inline-block;
+}
+.rank-2 .hadiah-mid-qty { color: #C0C0C0; background: rgba(192,192,192,.1); border: 1px solid rgba(192,192,192,.2); }
+.rank-3 .hadiah-mid-qty { color: #CD7F32; background: rgba(205,127,50,.1); border: 1px solid rgba(205,127,50,.2); }
+/* Remaining prizes — compact list */
+.hadiah-other-wrap {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 16px;
+}
+.hadiah-other-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: .78rem;
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.hadiah-other-header::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+.hadiah-other-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.hadiah-other-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-left: 3px solid rgba(212,175,55,.35);
+  border-radius: var(--r2);
+  padding: 9px 12px;
+  transition: border-color .15s, background .15s;
+}
+.hadiah-other-item:hover { border-color: rgba(212,175,55,.6); background: rgba(212,175,55,.04); }
+.hadiah-other-num {
+  font-size: .65rem;
+  font-weight: 800;
+  color: var(--a);
+  background: rgba(212,175,55,.12);
+  border: 1px solid rgba(212,175,55,.25);
+  border-radius: 999px;
+  padding: 2px 8px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  min-width: 56px;
+  text-align: center;
+}
+.hadiah-other-nama {
+  flex: 1;
+  font-size: .83rem;
+  font-weight: 600;
+  color: var(--text);
+  min-width: 0;
+}
+.hadiah-other-qty {
+  font-size: .72rem;
+  font-weight: 700;
+  color: var(--a);
+  background: rgba(212,175,55,.1);
+  border-radius: 999px;
+  padding: 2px 9px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+@media (max-width: 480px) {
+  .hadiah-grand-card { flex-wrap: wrap; }
+  .hadiah-mid-grid { grid-template-columns: 1fr 1fr; }
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- ── APP HEADER ──────────────────────────────────────────────────── -->
+<header class="app-header" id="appHeader">
+  <div class="app-header-inner">
+    <div class="app-brand">
+      <img id="headerLogo" class="header-logo" src="" alt="" style="display:none">
+      <span id="headerTitle" class="header-brand-name">IKCADIN TOUR 2026</span>
+    </div>
+    <nav class="header-nav" id="navPills"></nav>
+    <button class="hamburger" id="hamburger" onclick="toggleDrawer()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- ── MOBILE DRAWER ────────────────────────────────────────────────── -->
+<div class="drawer" id="drawer">
+  <nav class="drawer-nav" id="drawerNav"></nav>
+</div>
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+
+<!-- ── HERO ─────────────────────────────────────────────────────────── -->
+<div class="hero-panel" id="hero">
+  <div class="hero-banner-bg" id="heroBannerBg">
+    <img id="heroBannerImg" class="hero-banner-img" src="" alt="" style="display:none">
+  </div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <img class="hero-logo-img" id="heroLogo" src="" alt="Logo" style="display:none"/>
+    <span class="hero-emoji" id="heroEmoji" style="display:none">&#127881;</span>
+    <h1 id="heroTitle"><span>IKCADIN TOUR 2026</span></h1>
+    <p class="hero-sub" id="heroSub">Memuat data&#8230;</p>
+    <div class="hero-meta" id="heroMeta"></div>
+    <div id="heroCountdown" class="countdown-wrap"></div>
+  </div>
+</div>
+
+<!-- ── MAIN ──────────────────────────────────────────────────────────── -->
+<div class="main-body">
+  <div class="content-area">
+    <div class="search-wrap">
+      <svg class="search-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" id="searchInput" placeholder="Cari nama, kegiatan, kamar&#8230;"/>
+    </div>
+    <main id="content">
+      <div class="loading">
+        <div class="spinner"></div>
+        <span>Tunggu Sebentar ya&#8230;</span>
+      </div>
+    </main>
+    <footer id="footer">&#169; Panitia IKCADIN TOUR 2026</footer>
+  </div>
+</div>
+<script>
+
+// ── CONFIG ─────────────────────────────────────────────────────
+
+// Ganti URL di bawah setelah deploy Web App
+
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwaDSYxaYFYtSrYqxQAURaI9eIVtkjEIeVh9Sm43ZS3pUB4xXfXzrJRSJTNXLIxKe-v/exec";
+
+// ── SECTION DEFINITIONS ────────────────────────────────────────
+
+const SECTION_META = {
+  beranda: { label:"Beranda",    emoji:"🏠", render: renderBeranda },
+  rules:   { label:"Peraturan",  emoji:"📋", render: renderRules   },
+  rundown: { label:"Rundown",    emoji:"🗓️", render: renderRundown },
+  kamar:   { label:"Kamar",      emoji:"🛏️", render: renderKamar   },
+  games:   { label:"Tim Games",  emoji:"🎮", render: renderGamesTabbed  },
+  bus:     { label:"List Bus",    emoji:"🚌", render: renderGroups  },
+  kontak:  { label:"Kontak",     emoji:"📞", render: renderKontak  },
+  custom:  { label:"Lainnya",    emoji:"✨", render: renderCustom  },
+  mobil:   { label:"Mobil Pribadi", emoji:"🚗", render: renderTable },
+  denah:   { label:"Peta Kamar", emoji:"🗺️", render: renderDenah },
+  panitia: { label:"Panitia",    emoji:"👑", render: renderPanitia },
+};
+
+function renderGamesTabbed(raw) {
+  if (!raw || raw.format !== "horizontal" || !raw.kelompok) return '<div class="empty">Format data belum disesuaikan.</div>';
+  const groups = raw.kelompok;
+  if (!groups.length) return '<div class="empty">Belum ada data kelompok games.</div>';
+  let html = `<div class="games-judul">Susunan Tim & Status Akomodasi</div>`;
+  html += `<div class="games-search">
+             <span class="ico">🔍</span>
+             <input type="text" placeholder="Cari nama atau departemen di sini..." onkeyup="filterGamesTab(this.value)">
+           </div>`;
+  html += `<div class="kel-tabs">`;
+  groups.forEach((g, i) => {
+    html += `<button class="kel-tab ${i===0?'active':''}" onclick="switchKelTab(${i}, this)">${escHtml(g.nama)}</button>`;
+  });
+  html += `</div>`;
+  html += `<div class="kel-panels-wrap">`;
+  groups.forEach((g, i) => {
+    html += `
+    <div class="kel-panel ${i===0?'active':''}" id="panel-kel-${i}">
+      <div class="kel-stats">
+        <div class="kel-stat"><strong>${g.stats.total_main}</strong> <span>Pemain</span></div>
+        ${g.stats.total_panitia > 0 ? `<div class="kel-stat" style="border-color:rgba(239,68,68,0.4)"><strong>${g.stats.total_panitia}</strong> <span style="color:#ef4444">Panitia</span></div>` : ''}
+        <div class="kel-stat"><strong>${g.stats.single}</strong> <span>Single</span></div>
+        <div class="kel-stat"><strong>${g.stats.keluarga}</strong> <span>Keluarga</span></div>
+      </div>
+      <div class="member-list">
+        ${g.members.map((m, idx) => {
+           let statClass = "status-single";
+           let s = String(m.status).toLowerCase();
+           if (s.includes("keluarga")) statClass = "status-keluarga";
+           else if (s.includes("double") || s.includes("pav")) statClass = "status-double";
+           return `
+           <div class="member-row games-member-item" data-search="${escHtml(m.nama).toLowerCase()} ${escHtml(m.dept).toLowerCase()}">
+             <div class="member-no">${idx + 1}</div>
+             <div class="member-nama">${escHtml(m.nama)}</div>
+             ${/* Label Panitia */ m.isPanitia ? `<div class="member-status" style="background:rgba(239, 68, 68, 0.15); color:#ef4444; border: 1px solid rgba(239,68,68,0.3)">⭐ Panitia</div>` : ''}
+             ${m.dept ? `<div class="member-kode">${escHtml(m.dept)}</div>` : ''}
+             ${m.status ? `<div class="member-status ${statClass}">${escHtml(m.status)}</div>` : ''}
+           </div>`;
+        }).join("")}
+      </div>
+    </div>`;
+  });
+  html += `</div>`;
+  return html;
+}
+
+// ── FUNGSI BANTUAN TAB GAMES ───────────────────────────────────
+
+function switchKelTab(index, btn) {
+  // Reset semua tab & panel
+  document.querySelectorAll('.kel-tab').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.kel-panel').forEach(p => p.classList.remove('active'));
+  // Aktifkan tab & panel yang dipilih
+  btn.classList.add('active');
+  const panel = document.getElementById(`panel-kel-${index}`);
+  if (panel) panel.classList.add('active');
+}
+
+function filterGamesTab(query) {
+  const q = query.toLowerCase().trim();
+  document.querySelectorAll('.games-member-item').forEach(row => {
+    const text = row.getAttribute('data-search');
+    if (text.includes(q)) {
+      row.style.display = "flex";
+    } else {
+      row.style.display = "none";
+    }
+  });
+}
+
+// ── BERANDA ────────────────────────────────────────────────────
+
+function renderBeranda(raw) {
+  const items = raw?.data || [];
+  let html    = '';
+
+  // ── PAPAN PENGUMUMAN ──────────────────────────────────────────
+  const pengItems = (allData.pengumuman?.data || []);
+  if (pengItems.length) {
+    const ICO_ANNOUNCE = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 17H2a3 3 0 0 0 3-3V9a7 7 0 0 1 14 0v5a3 3 0 0 0 3 3z"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>`;
+    const BADGE_LABEL = {info:'INFO',warning:'⚠ PERHATIAN',urgent:'🔴 PENTING'};
+    html += `<div class="pengumuman-wrap">`;
+    html += `<div class="pengumuman-board-header">${ICO_ANNOUNCE} Papan Pengumuman</div>`;
+    pengItems.forEach(p => {
+      const tipe    = (p['Tipe'] || p['tipe'] || 'info').toLowerCase().trim();
+      const judul   = p['Judul']  || p['judul']  || '';
+      const isi     = p['Isi']    || p['isi']    || '';
+      const tanggal = p['Tanggal']|| p['tanggal']|| '';
+      html += `<div class="pengumuman-item ${escHtml(tipe)}">`;
+      html += `<div class="pengumuman-badge ${escHtml(tipe)}">${BADGE_LABEL[tipe]||'INFO'}</div>`;
+      if (tanggal) html += `<div class="pengumuman-tanggal">📅 ${escHtml(tanggal)}</div>`;
+      if (judul)   html += `<div class="pengumuman-judul">${escHtml(judul)}</div>`;
+      if (isi)     html += `<div class="pengumuman-isi">${linkify(escHtml(isi))}</div>`;
+      html += `</div>`;
+    });
+    html += `</div>`;
+  }
+
+  if (!items.length) {
+    return html + '<div class="empty">Belum ada data hadiah.</div>';
+  }
+
+  html += `<div class="hadiah-title">Lucky Draw &amp; Hadiah</div>`;
+
+  // Grand Prize (rank 1)
+  const grand = items[0];
+  const grandFoto = grand['Foto URL'] || grand['foto_url'] || grand['foto'] || '';
+  html += `
+  <div class="hadiah-grand-card">
+    <div class="hadiah-rank-badge gold">
+      <div class="hadiah-rank-num gold">01</div>
+      <span class="hadiah-rank-label">Grand Prize</span>
+    </div>
+    ${grandFoto
+      ? `<div class="hadiah-img-frame grand"><img class="hadiah-grand-img" src="${escHtml(grandFoto)}" alt="${escHtml(grand['Nama Hadiah']||'')}"></div>`
+      : `<div class="hadiah-img-frame grand" style="font-size:3.5rem;color:#D4AF37">★</div>`}
+    <div class="hadiah-grand-info">
+      <div class="hadiah-grand-nama">${escHtml(grand['Nama Hadiah'] || grand['nama_hadiah'] || 'Grand Prize')}</div>
+      <div class="hadiah-grand-qty">× ${escHtml(grand['QTY'] || grand['qty'] || '1')} Unit</div>
+    </div>
+  </div>`;
+
+  // Rank 2 & 3
+  const rankMeta = [
+    { num:'02', cls:'silver', label:'Hadiah 2' },
+    { num:'03', cls:'bronze', label:'Hadiah 3' },
+  ];
+  const mid = items.slice(1, 3);
+  if (mid.length) {
+    html += `<div class="hadiah-mid-grid">`;
+    mid.forEach((item, i) => {
+      const rank = i + 2;
+      const foto = item['Foto URL'] || item['foto_url'] || '';
+      const rm   = rankMeta[i];
+      html += `
+      <div class="hadiah-mid-card rank-${rank}">
+        <div class="hadiah-mid-rank-wrap">
+          <div class="hadiah-rank-badge ${rm.cls}">
+            <div class="hadiah-rank-num ${rm.cls}">${rm.num}</div>
+            <span class="hadiah-rank-label">${rm.label}</span>
+          </div>
+        </div>
+        ${foto
+          ? `<div class="hadiah-img-frame mid rank-${rank}"><img class="hadiah-mid-img" src="${escHtml(foto)}" alt=""></div>`
+          : `<div class="hadiah-img-frame mid rank-${rank}" style="font-size:2.8rem;color:#aaa">★</div>`}
+        <div class="hadiah-mid-nama">${escHtml(item['Nama Hadiah'] || item['nama_hadiah'] || '')}</div>
+        <div class="hadiah-mid-qty">× ${escHtml(item['QTY'] || '1')} Unit</div>
+      </div>`;
+    });
+    html += `</div>`;
+  }
+
+  // Rank 4+ — compact list, no photos
+  const rest = items.slice(3);
+  if (rest.length) {
+    html += `<div class="hadiah-other-wrap">`;
+    html += `<div class="hadiah-other-header">Hadiah Lainnya</div>`;
+    html += `<div class="hadiah-other-grid">`;
+    rest.forEach((item, i) => {
+      const label = item['Jenis Hadiah'] || item['jenis_hadiah'] || `Hadiah ${i + 4}`;
+      const qty   = item['QTY'] || item['qty'] || '1';
+      const nama  = item['Nama Hadiah'] || item['nama_hadiah'] || '';
+      html += `
+      <div class="hadiah-other-item">
+        <span class="hadiah-other-num">${escHtml(label)}</span>
+        <span class="hadiah-other-nama" title="${escHtml(nama)}">${escHtml(nama)}</span>
+        <span class="hadiah-other-qty">×${escHtml(qty)}</span>
+      </div>`;
+    });
+    html += `</div></div>`;
+  }
+
+  return html;
+}
+
+// ── STATE ──────────────────────────────────────────────────────
+
+let allData      = {};
+let activeKey    = "beranda";
+let searchQuery  = "";
+const activeSubTabs = {}; // menyimpan sub-tab aktif per grup
+
+// ── INIT ───────────────────────────────────────────────────────
+
+// ── INIT ───────────────────────────────────────────────────────
+
+window.addEventListener("DOMContentLoaded", function() {
+  var content = document.getElementById("content");
+  if (!WEB_APP_URL || WEB_APP_URL.indexOf("YOUR_DEPLOYMENT") !== -1) {
+    content.innerHTML = '<div class="error-box">&#9888;&#65039; Isi <strong>WEB_APP_URL</strong> di baris atas dengan URL deployment GAS kamu.</div>';
+    return;
+  }
+  fetch(WEB_APP_URL, { redirect: 'follow' })
+    .then(function(r) {
+      if (!r.ok) throw new Error("HTTP " + r.status + " " + r.statusText);
+      return r.json();
+    })
+    .then(function(json) {
+      try {
+        if (!json) {
+          content.innerHTML = '<div class="error-box">&#9888;&#65039; Server mengembalikan data kosong. Pastikan GAS sudah di-deploy ulang dengan versi terbaru.</div>';
+          return;
+        }
+        allData = json;
+        var cfg = (json.config && json.config.data) ? json.config.data : {};
+        applyConfig(cfg);
+        buildNav(cfg.sections_aktif || "rules,rundown,kamar,games,bus,kontak,custom");
+        renderAll("beranda");
+      } catch(renderErr) {
+        content.innerHTML = '<div class="error-box">&#9888;&#65039; Error saat render data:<br><br><code>' + renderErr.message + '</code></div>';
+      }
+    })
+    .catch(function(err) {
+      content.innerHTML = '<div class="error-box">&#9888;&#65039; Gagal mengambil data dari GAS API:<br><br><code>' + (err.message || String(err)) + '</code><br><br>Cek: (1) URL benar, (2) GAS sudah di-deploy sebagai JSON API, (3) akses diset "Anyone".</div>';
+    });
+});
+
+// ── CONFIG ─────────────────────────────────────────────────────
+
+// ── CONFIG ─────────────────────────────────────────────────────
+
+function applyConfig(cfg) {
+  document.title = cfg.nama_acara || "Website Resmi IKCADIN TOUR 2026";
+  document.getElementById("heroTitle").innerHTML = `<span>${cfg.nama_acara || "IKCADIN TOUR 2026"}</span>`;
+  document.getElementById("heroSub").textContent = cfg.subtitle || "";
+  document.getElementById("footer").textContent = cfg.footer || "\u00a9 Panitia IKCADIN TOUR 2026";
+  // Header brand name
+  const headerTitle = document.getElementById("headerTitle");
+  if (headerTitle) headerTitle.textContent = cfg.nama_acara || "IKCADIN TOUR 2026";
+  // LOGIKA LOGO VS EMOJI
+  const logoImg   = document.getElementById("heroLogo");
+  const emojiSpan = document.getElementById("heroEmoji");
+  const headerLogoEl = document.getElementById("headerLogo");
+  if (cfg.logo_url && cfg.logo_url.trim() !== "") {
+    logoImg.src = cfg.logo_url.trim();
+    logoImg.style.display = "block";
+    emojiSpan.style.display = "none";
+    if (headerLogoEl) { headerLogoEl.src = cfg.logo_url.trim(); headerLogoEl.style.display = "block"; }
+  } else {
+    logoImg.style.display = "none";
+    emojiSpan.style.display = "block";
+    emojiSpan.textContent = cfg.logo_emoji || "\u2728";
+    if (headerLogoEl) headerLogoEl.style.display = "none";
+  }
+  // Hero banner background — pakai <img> agar tidak terpotong
+  const heroBannerImg = document.getElementById("heroBannerImg");
+  if (heroBannerImg && cfg.banner_url && cfg.banner_url.trim()) {
+    heroBannerImg.src = cfg.banner_url.trim();
+    heroBannerImg.style.display = "block";
+  }
+  // Countdown timer
+  if (cfg.tanggal_event) initCountdown(cfg.tanggal_event);
+  // Hero meta badges
+  const meta = document.getElementById("heroMeta");
+  meta.innerHTML = "";
+  if (cfg.tanggal) meta.innerHTML += badge("", cfg.tanggal);
+  if (cfg.lokasi)  meta.innerHTML += badge("", cfg.lokasi);
+  // LOGIKA WARNA
+  if (cfg.warna_primer && cfg.warna_primer !== "#d4af37") {
+    document.documentElement.style.setProperty("--p",  cfg.warna_primer);
+    document.documentElement.style.setProperty("--p2", shadeColor(cfg.warna_primer, -20));
+  }
+  if (cfg.warna_aksen) {
+    document.documentElement.style.setProperty("--a", cfg.warna_aksen);
+  }
+}
+
+const badge = (ico, txt) =>
+  `<span class="hero-badge">${ico ? `<span>${ico}</span>` : ''}${escHtml(txt)}</span>`;
+
+// ── NAV ────────────────────────────────────────────────────────
+
+// Grup tab: key grup → daftar section keys di dalamnya
+const TAB_GROUPS = {
+  acara:     { label: "Acara",                     keys: ["rundown", "games"] },
+  akomodasi: { label: "Akomodasi & Transportasi",  keys: ["kamar", "bus", "mobil", "denah"] }
+};
+const GROUPED_KEYS = ["rundown","games","kamar","bus","mobil","denah"];
+
+function buildNav(aktif) {
+  const keys = aktif.split(",").map(s=>s.trim()).filter(Boolean);
+  const desktopNav = document.getElementById("navPills");
+  const mobileNav  = document.getElementById("drawerNav");
+
+  // Beranda selalu pertama
+  let btns = `<button class="nav-btn active" data-key="beranda" onclick="switchTab('beranda',this);closeDrawer()">Beranda</button>`;
+
+  // Grup tab — tampil jika minimal 1 key-nya aktif
+  Object.entries(TAB_GROUPS).forEach(([gKey, g]) => {
+    if (g.keys.some(k => keys.includes(k))) {
+      btns += `<button class="nav-btn" data-key="${gKey}" onclick="switchTab('${gKey}',this);closeDrawer()">${g.label}</button>`;
+    }
+  });
+
+  // Section individual yang tidak masuk grup
+  keys.forEach(k => {
+    if (k === 'beranda' || GROUPED_KEYS.includes(k)) return;
+    const m = SECTION_META[k];
+    if (!m) return;
+    btns += `<button class="nav-btn" data-key="${k}" onclick="switchTab('${k}',this);closeDrawer()">${m.label}</button>`;
+  });
+
+  if (desktopNav) desktopNav.innerHTML = btns;
+  if (mobileNav)  mobileNav.innerHTML  = btns;
+}
+
+function switchTab(key, btn) {
+  activeKey = key;
+  document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  renderAll(key);
+}
+
+// ── SEARCH ─────────────────────────────────────────────────────
+
+document.addEventListener("DOMContentLoaded", () => {
+  const inp = document.getElementById("searchInput");
+  if (inp) inp.addEventListener("input", e => {
+    searchQuery = e.target.value.toLowerCase().trim();
+    if (searchQuery) {
+      renderGlobalSearch(searchQuery);
+    } else {
+      renderAll(activeKey);
+    }
+  });
+});
+
+// ── RENDER DISPATCHER ──────────────────────────────────────────
+
+function renderAll(key) {
+  const content = document.getElementById("content");
+  if (!allData || !allData.config) return;
+
+  // Beranda: tanpa collapsible card
+  if (key === "beranda") {
+    content.innerHTML = `<div style="animation:fadeUp .4s ease both">${renderBeranda(allData.beranda || {data:[]})}</div>`;
+    return;
+  }
+
+  const aktif = (allData.config?.data?.sections_aktif || "rules,rundown,kamar,games,bus,kontak,custom")
+    .split(",").map(s=>s.trim()).filter(Boolean);
+
+  if (TAB_GROUPS[key]) {
+    // ── TAB GRUP: tampilkan sub-tabs ──
+    const groupKeys = TAB_GROUPS[key].keys.filter(k => aktif.includes(k));
+    if (!groupKeys.length) { content.innerHTML = '<div class="empty">Tidak ada section aktif.</div>'; return; }
+    // Tentukan sub-tab aktif
+    if (!activeSubTabs[key] || !groupKeys.includes(activeSubTabs[key])) {
+      activeSubTabs[key] = groupKeys[0];
+    }
+    const subKey = activeSubTabs[key];
+    // Render sub-tab buttons
+    let subHtml = '<div class="sub-tabs">';
+    groupKeys.forEach(k => {
+      const m = SECTION_META[k];
+      if (!m) return;
+      subHtml += `<button class="sub-tab${k === subKey ? ' active' : ''}" onclick="switchSubTab('${key}','${k}',this)">${m.label}</button>`;
+    });
+    subHtml += '</div>';
+    // Render konten sub-tab aktif
+    const sm = SECTION_META[subKey];
+    const sraw = allData[subKey];
+    subHtml += (sm && sraw) ? buildCard(subKey, sm, sraw, 0) : '<div class="empty">Data tidak tersedia.</div>';
+    content.innerHTML = subHtml;
+    const h = content.querySelector(".card-header");
+    if (h && !h.classList.contains("open")) toggleCard(h);
+    return;
+  }
+
+  // ── SECTION INDIVIDUAL ──
+  const m = SECTION_META[key];
+  if (!m) { content.innerHTML = '<div class="empty">Section tidak ditemukan.</div>'; return; }
+  const raw = allData[key];
+  if (!raw) { content.innerHTML = '<div class="empty">Data tidak tersedia.</div>'; return; }
+  content.innerHTML = buildCard(key, m, raw, 0);
+  const h = content.querySelector(".card-header");
+  if (h && !h.classList.contains("open")) toggleCard(h);
+}
+
+function switchSubTab(groupKey, subKey, btn) {
+  activeSubTabs[groupKey] = subKey;
+  // Update tombol active state
+  btn.closest('.sub-tabs').querySelectorAll('.sub-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  // Ganti konten card (biarkan sub-tabs tetap)
+  const content = document.getElementById("content");
+  const oldCard = content.querySelector('.section-card');
+  if (oldCard) oldCard.remove();
+  const m = SECTION_META[subKey];
+  const raw = allData[subKey];
+  const cardHtml = (m && raw) ? buildCard(subKey, m, raw, 0) : '<div class="empty">Data tidak tersedia.</div>';
+  content.insertAdjacentHTML('beforeend', cardHtml);
+  const h = content.querySelector(".card-header");
+  if (h && !h.classList.contains("open")) toggleCard(h);
+}
+
+// ── CARD BUILDER ───────────────────────────────────────────────
+
+function buildCard(key, meta, raw, idx) {
+  let count = 0;
+  if (raw && raw.format === "horizontal") {
+    count = (raw.kelompok || []).length;
+  } else {
+    count = Array.isArray(raw && raw.data) ? raw.data.length : 0;
+  }
+  const delay = idx * 60;
+  const badge = count ? `<span class="card-count">${count} kelompok</span>` : "";
+  return `
+  <div class="section-card" style="animation-delay:${delay}ms">
+    <div class="card-header" onclick="toggleCard(this)" data-key="${key}">
+      <div class="card-title">
+        <span class="card-emoji">${meta.emoji}</span>
+        <span class="card-label">${meta.label}</span>
+        ${badge}
+      </div>
+      <span class="chevron">&#9660;</span>
+    </div>
+    <div class="card-body" id="body-${key}">
+      ${meta.render(raw, key)}
+    </div>
+  </div>`;
+}
+
+function toggleCard(el) {
+  const key  = el.dataset.key;
+  const body = document.getElementById("body-" + key);
+  if (!body) return;
+  el.classList.toggle("open");
+  body.classList.toggle("open");
+}
+
+// ── RENDERERS ──────────────────────────────────────────────────
+
+function renderRules(raw) {
+  const data = raw?.data || [];
+  if (!data.length) return '<div class="empty">Belum ada peraturan.</div>';
+  // 1. Kelompokkan data
+  const groups = { "Do's": [], "Dont's": [], "Ground Rules": [] };
+  data.forEach(r => {
+    let cat = (r["Kategori"] || "Ground Rules").trim();
+    if (groups[cat]) groups[cat].push(r);
+    else groups["Ground Rules"].push(r);
+  });
+  const activeCats = Object.keys(groups).filter(cat => groups[cat].length > 0);
+  // 2. Render Tabs (Tombol-tombol)
+  let html = `<div class="kel-tabs" style="margin-bottom:15px;">`;
+  activeCats.forEach((cat, i) => {
+    const colorCls = cat === "Do's" ? "kel-tab--dos" : cat === "Dont's" ? "kel-tab--donts" : "";
+    html += `<button class="kel-tab ${colorCls} ${i === 0 ? 'active' : ''}" onclick="switchRulesTab(${i}, this)">${cat}</button>`;
+  });
+  html += `</div>`;
+  // 3. Render Panels (Isi list)
+  html += `<div class="rules-panels-wrap">`;
+  activeCats.forEach((cat, i) => {
+    html += `<div class="kel-panel ${i === 0 ? 'active' : ''}" id="rule-panel-${i}">`;
+    html += `<div class="rule-list">${groups[cat].map((r, idx) => `
+        <div class="rule-item">
+          <span class="rule-num">${idx + 1}</span>
+          <span class="rule-emoji">${r["Emoji"]||r["emoji"]||"📌"}</span>
+          <div class="rule-text">
+            <h4>${escHtml(r["Judul"]||r["judul"]||"")}</h4>
+            <p>${escHtml(r["Deskripsi"]||r["deskripsi"]||"")}</p>
+          </div>
+        </div>`).join("")}</div>`;
+    html += `</div>`;
+  });
+  html += `</div>`;
+  return html;
+}
+function switchRulesTab(index, btn) {
+  const container = btn.closest('.card-body');
+  container.querySelectorAll('.kel-tab').forEach(b => b.classList.remove('active'));
+  container.querySelectorAll('.kel-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  container.querySelector(`#rule-panel-${index}`).classList.add('active');
+}
+
+// ── RENDERER KHUSUS RUNDOWN (TABBED) ───────────────────────────
+function renderRundown(raw) {
+  const data = raw?.data || [];
+  if (!data.length) return '<div class="empty">Belum ada data Rundown.</div>';
+  // 1. Cari kolom Hari (asumsi header baris ke-1)
+  const headers = Object.keys(data[0] || {});
+  // Mencari nama kolom yang mengandung 'hari' (bisa 'Hari', 'hari', 'Day')
+  const colHari = headers.find(h => h.toLowerCase().trim() === "hari") || headers[0];
+  // 2. Kelompokkan berdasarkan Hari
+  const groups = {};
+  const urutanHari = [];
+  data.forEach(r => {
+    const hari = String(r[colHari] || "Lainnya");
+    if (!groups[hari]) { groups[hari] = []; urutanHari.push(hari); }
+    groups[hari].push(r);
+  });
+  // 3. Render Tabs
+  let html = `<div class="kel-tabs" style="margin-bottom: 18px;">`;
+  urutanHari.forEach((hari, i) => {
+    html += `<button class="kel-tab ${i === 0 ? 'active' : ''}" onclick="switchRundownTab(${i}, this)">${escHtml(hari)}</button>`;
+  });
+  html += `</div>`;
+  // 4. Render Panels
+  html += `<div class="rundown-panels-wrap">`;
+  urutanHari.forEach((hari, i) => {
+    html += `
+    <div class="rundown-panel" id="panel-rundown-${i}" style="display: ${i === 0 ? 'block' : 'none'}; animation: fadeUp 0.25s ease both;">
+      ${buildTimelineHTML(groups[hari])}
+    </div>`;
+  });
+  html += `</div>`;
+  return html;
+}
+
+// ── FUNGSI BANTUAN RUNDOWN ─────────────────────────────────────
+
+// Pembuat elemen HTML timeline agar rapi dan tidak berulang
+
+function buildTimelineHTML(items) {
+  // Fungsi pembantu untuk mencari data tanpa peduli huruf besar/kecil
+  const getVal = (obj, key) => {
+    const k = Object.keys(obj).find(x => x.toLowerCase() === key.toLowerCase());
+    return k ? obj[k] : "";
+  };
+  return `<div class="timeline">${items.map(r => {
+    const waktu = getVal(r, "waktu");
+    const akt   = getVal(r, "kegiatan");
+    const ket   = getVal(r, "keterangan");
+    const lok   = getVal(r, "lokasi");
+    return `<div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-box">
+        <div class="tl-time">${escHtml(waktu)}</div>
+        <div class="tl-act">${escHtml(akt)}</div>
+        ${ket ? `<div class="tl-note">${escHtml(ket)}</div>` : ""}
+        ${lok ? `<div class="tl-loc">📍 ${escHtml(lok)}</div>` : ""}
+      </div>
+    </div>`;
+  }).join("")}</div>`;
+}
+
+// Fungsi animasi pindah tab rundown
+
+function switchRundownTab(index, btn) {
+  // Ambil elemen pembungkus terdekat agar tidak bentrok dengan tab Games
+  const wrapper = btn.closest('.card-body');
+  // Matikan semua tab rundown
+  wrapper.querySelectorAll('.kel-tab').forEach(b => b.classList.remove('active'));
+  wrapper.querySelectorAll('.rundown-panel').forEach(p => p.style.display = 'none');
+  // Hidupkan tab yang dipilih
+  btn.classList.add('active');
+  const panel = wrapper.querySelector(`#panel-rundown-${index}`);
+  if (panel) panel.style.display = 'block';
+}
+
+function renderTable(raw) {
+  const data = raw?.data || [];
+  if (!data.length) return '<div class="empty">Belum ada data.</div>';
+  const headers = Object.keys(data[0]);
+  const filtered = data.filter(r => matchSearch(Object.values(r)));
+  if (!filtered.length) return '<div class="empty">Tidak ada hasil pencarian.</div>';
+  return `<div class="tbl-wrap"><table>
+    <thead><tr>${headers.map(h=>`<th>${escHtml(h)}</th>`).join("")}</tr></thead>
+    <tbody>${filtered.map(r =>
+      `<tr>${headers.map((h,i)=>`<td ${i===0?'class="td-em"':''}>${escHtml(r[h]||"")}</td>`).join("")}</tr>`
+    ).join("")}</tbody>
+  </table></div>`;
+}
+
+function renderGroups(raw) {
+  const data = raw?.data || [];
+  if (!data.length) return '<div class="empty">Belum ada data bus.</div>';
+  return `<div class="group-grid">${data.map(bus => `
+    <div class="group-card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+         <div class="group-name" style="margin-bottom:0;">${escHtml(bus.nama)}</div>
+         <div style="background:var(--p); color:white; padding:2px 10px; border-radius:15px; font-size:0.75rem; font-weight:700;">
+            Total: ${bus.Kapasitas || 0} Orang
+         </div>
+      </div>
+      <div class="member-list">
+        ${bus.Anggota.map((p, i) => `
+          <div class="member-row">
+            <div class="member-no">${i + 1}</div>
+            <div class="member-nama">${escHtml(p.nama)}</div>
+            <div style="font-size:0.65rem; color:#888; margin: 0 8px;">(D:${p.dewasa} A:${p.anak})</div>
+            ${p.department ? `<div class="member-kode">${escHtml(p.department)}</div>` : ""}
+          </div>
+        `).join("")}
+      </div>
+      <!-- Keterangan Notasi -->
+      <div style="font-size: 0.65rem; color: var(--muted); margin-top: 12px; border-top: 1px solid var(--border); padding-top: 8px; font-style: italic;">
+        *D = Dewasa, A = Anak >5 tahun
+      </div>
+    </div>`).join("")}</div>`;
+}
+
+function renderKontak(raw) {
+  const data = raw?.data || [];
+  if (!data.length) return '<div class="empty">Belum ada kontak.</div>';
+  const headers = Object.keys(data[0]);
+  const colNama  = findCol(headers, ["nama"]);
+  const colJab   = findCol(headers, ["jabatan"]);
+  const colNum   = findCol(headers, ["nomor","nomor hp","no hp","kontak"]);
+  const colKet   = findCol(headers, ["keterangan"]);
+  const filtered = data.filter(r => matchSearch(Object.values(r)));
+  if (!filtered.length) return '<div class="empty">Tidak ada hasil pencarian.</div>';
+  return `<div class="kontak-grid">${filtered.map(r => {
+    const nama = r[colNama] || "";
+    const inits = nama.split(" ").map(w=>w[0]).join("").toUpperCase().slice(0,2);
+    const num   = r[colNum] || "";
+    return `<div class="kontak-card">
+      <div class="kontak-avatar">${inits||"?"}</div>
+      <div>
+        <div class="kontak-name">${escHtml(nama)}</div>
+        ${colJab ? `<div class="kontak-role">${escHtml(r[colJab]||"")}</div>` : ""}
+        ${colKet && r[colKet] ? `<div class="kontak-num">${escHtml(r[colKet])}</div>` : ""}
+        ${num ? `<a class="kontak-hp" href="https://wa.me/62${num.replace(/^0/,"").replace(/\D/g,"")}"target="_blank" rel="noopener noreferrer">
+          📱 ${escHtml(num)}</a>` : ""}
+      </div>
+    </div>`;
+  }).join("")}</div>`;
+}
+
+function renderCustom(raw) {
+  const sections = raw?.data || [];
+  if (!sections.length) return '<div class="empty">Belum ada section tambahan.</div>';
+  return sections.map(sec => {
+    const items = (sec.items||[]).filter(it => matchSearch([it.judul,it.konten]));
+    if (!items.length && searchQuery) return "";
+    return `
+    <div style="margin-bottom:20px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="font-size:1.3rem">${sec.emoji||"📌"}</span>
+        <span style="font-family:var(--font-head);font-weight:700;font-size:.95rem;color:#fff">${escHtml(sec.nama)}</span>
+      </div>
+      <div class="custom-list">${items.map(it => `
+        <div class="custom-item">
+          ${it.judul ? `<div class="custom-title">${escHtml(it.judul)}</div>` : ""}
+          ${it.konten ? `<div class="custom-body">${linkify(escHtml(it.konten))}</div>` : ""}
+        </div>`).join("")}
+      </div>
+    </div>`;
+  }).join("");
+}
+
+// ── HELPERS ────────────────────────────────────────────────────
+
+function filterData(data, cols) {
+  if (!searchQuery) return data;
+  return data.filter(r => matchSearch(Object.values(r)));
+}
+
+function matchSearch(vals) {
+  if (!searchQuery) return true;
+  return vals.some(v => String(v||"").toLowerCase().includes(searchQuery));
+}
+
+// ── GLOBAL SEARCH ──────────────────────────────────────────────
+
+function renderGlobalSearch(q) {
+  var content = document.getElementById("content");
+  var hits = [];
+
+  function addHit(section, icon, title, sub, tabKey) {
+    hits.push({ section: section, icon: icon, title: title, sub: sub || '', tabKey: tabKey });
+  }
+
+  // 1. Kamar
+  var kamarData = (allData.kamar && allData.kamar.data) ? allData.kamar.data : [];
+  kamarData.forEach(function(r) {
+    var name = String(r['Name']||'').trim();
+    var room = String(r['Room Number']||'').trim();
+    var type = String(r['Room Type']||'').trim();
+    if (!name) return;
+    if ((name+room+type).toLowerCase().indexOf(q) !== -1) {
+      var sub = room ? ('Kamar '+room) : '';
+      addHit('Kamar', '🛏️', name, sub, 'kamar');
+    }
+  });
+
+  // 2. Bus
+  var busData = (allData.bus && allData.bus.data) ? allData.bus.data : [];
+  busData.forEach(function(bus) {
+    var anggota = bus.Anggota || [];
+    anggota.forEach(function(a) {
+      var name = String(a.nama||'').trim();
+      var dept = String(a.department||'').trim();
+      var busNama = String(bus.nama||'');
+      if (!name) return;
+      if ((name+dept+busNama).toLowerCase().indexOf(q) !== -1) {
+        addHit('Bus', '🚌', name, (dept ? dept+' — ' : '')+busNama, 'akomodasi');
+      }
+    });
+  });
+
+  // 3. Games
+  var kelompok = (allData.games && allData.games.kelompok) ? allData.games.kelompok : [];
+  kelompok.forEach(function(grp) {
+    var members = grp.members || [];
+    members.forEach(function(m) {
+      var name = String(m.nama||'').trim();
+      var dept = String(m.dept||'').trim();
+      var grpNama = String(grp.nama||'');
+      if (!name) return;
+      if ((name+dept+grpNama).toLowerCase().indexOf(q) !== -1) {
+        addHit('Games', '🎮', name, grpNama+(dept ? ' — '+dept : ''), 'acara');
+      }
+    });
+  });
+
+  // 4. Rundown
+  var rundownData = (allData.rundown && allData.rundown.data) ? allData.rundown.data : [];
+  rundownData.forEach(function(r) {
+    var waktu    = String(r['Waktu']||r['waktu']||'').trim();
+    var kegiatan = String(r['Kegiatan']||r['kegiatan']||r['Agenda']||'').trim();
+    var hari     = String(r['Hari']||r['hari']||'').trim();
+    if (!kegiatan) return;
+    if ((kegiatan+waktu+hari).toLowerCase().indexOf(q) !== -1) {
+      var sub = [hari,waktu].filter(function(x){return x;}).join(' · ');
+      addHit('Rundown', '🗓️', kegiatan, sub, 'acara');
+    }
+  });
+
+  // 5. Kontak
+  var kontakData = (allData.kontak && allData.kontak.data) ? allData.kontak.data : [];
+  kontakData.forEach(function(r) {
+    var vals = Object.values(r).map(function(v){return String(v||'');});
+    var combined = vals.join(' ').toLowerCase();
+    if (combined.indexOf(q) === -1) return;
+    var nama = String(r['Nama']||r['nama']||vals[0]||'').trim();
+    var hp   = String(r['No HP']||r['no_hp']||r['Telepon']||'').trim();
+    if (!nama) return;
+    addHit('Kontak', '📞', nama, hp, 'kontak');
+  });
+
+  // Render hasil
+  var html = '<div style="margin-bottom:14px">'
+    + '<div style="font-size:.78rem;color:var(--muted);margin-bottom:12px">'
+    + hits.length + ' hasil untuk <strong style="color:var(--a)">&ldquo;' + escHtml(q) + '&rdquo;</strong>'
+    + '</div>';
+
+  if (!hits.length) {
+    html += '<div class="empty">Tidak ada hasil yang ditemukan.</div></div>';
+    content.innerHTML = html;
+    return;
+  }
+
+  // Kelompokkan per section
+  var bySection = {};
+  hits.forEach(function(h) {
+    if (!bySection[h.section]) bySection[h.section] = [];
+    bySection[h.section].push(h);
+  });
+
+  Object.keys(bySection).forEach(function(sec) {
+    var items = bySection[sec];
+    var icon = items[0].icon;
+    html += '<div style="margin-bottom:16px">'
+      + '<div style="font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;padding-left:2px">'
+      + icon + ' ' + sec + ' (' + items.length + ')'
+      + '</div>'
+      + '<div style="display:flex;flex-direction:column;gap:5px">';
+
+    items.forEach(function(item) {
+      var tabKey = item.tabKey;
+      var onclick = "var btn=document.querySelector('[data-key=" + tabKey + "]');if(btn){switchTab('" + tabKey + "',btn);}document.getElementById('searchInput').value='';searchQuery='';";
+      var subHtml = item.sub ? ('<div style="font-size:.72rem;color:var(--muted)">'+escHtml(item.sub)+'</div>') : '';
+      html += '<div onclick="' + onclick + '"'
+        + ' style="background:var(--card2);border:1px solid var(--border);border-radius:var(--r2);padding:10px 14px;cursor:pointer;transition:.15s;display:flex;flex-direction:column;gap:2px"'
+        + ' onmouseover="this.style.borderColor=\'var(--p)\'" onmouseout="this.style.borderColor=\'var(--border)\'">'
+        + '<div style="font-size:.85rem;font-weight:600;color:var(--text)">' + escHtml(item.title) + '</div>'
+        + subHtml
+        + '</div>';
+    });
+
+    html += '</div></div>';
+  });
+
+  html += '</div>';
+  content.innerHTML = html;
+}
+
+function findCol(headers, candidates) {
+  for (const c of candidates) {
+    const h = headers.find(h => h.toLowerCase().trim() === c);
+    if (h) return h;
+  }
+  return headers[0] || null;
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+
+function linkify(text) {
+  return text.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank">$1</a>');
+}
+
+function shadeColor(hex, pct) {
+  try {
+    let r=parseInt(hex.slice(1,3),16), g=parseInt(hex.slice(3,5),16), b=parseInt(hex.slice(5,7),16);
+    r=Math.max(0,Math.min(255,r+pct)); g=Math.max(0,Math.min(255,g+pct)); b=Math.max(0,Math.min(255,b+pct));
+    return "#"+[r,g,b].map(x=>x.toString(16).padStart(2,"0")).join("");
+  } catch(e){ return hex; }
+}
+
+// ── RENDERER KHUSUS KAMAR ──────────────────────────────────────
+
+function renderKamar(raw) {
+  const data = raw?.data || [];
+  if (!data.length) return '<div class="empty">Belum ada data kamar.</div>';
+  // Cek pengaturan admin di Sheet Config
+  const cfgSembunyikanTipe = (allData.config?.data?.tampilkan_tipe_kamar || "ya").toLowerCase();
+  const showType = cfgSembunyikanTipe === "ya";
+  const filtered = data.filter(r => matchSearch(Object.values(r)));
+  if (!filtered.length) return '<div class="empty">Tidak ada hasil pencarian.</div>';
+  let html = `<div class="tbl-wrap"><table><thead><tr>`;
+  if (showType) html += `<th>Tipe Kamar</th>`;
+  html += `<th>No. Kamar</th><th>Kode</th><th>PAX</th><th>Nama Penghuni</th>`;
+  html += `</tr></thead><tbody>`;
+  filtered.forEach(r => {
+    html += `<tr>`;
+    if (showType) html += `<td>${escHtml(r["Room Type"])}</td>`;
+    html += `<td class="td-em">${escHtml(r["Room Number"])}</td>`;
+    html += `<td><span class="member-kode">${escHtml(r["Kode Room"])}</span></td>`;
+    html += `<td>${escHtml(r["PAX"])}</td>`;
+    html += `<td><strong>${escHtml(r["Name"])}</strong></td>`;
+    html += `</tr>`;
+  });
+  html += `</tbody></table></div>`;
+  return html;
+}
+
+// ── RENDERER KHUSUS PETA KAMAR (FLOOR PLAN) ─────────────────────
+
+function renderDenah(raw) {
+  // Bangun peta nomor kamar → penghuni
+  var occ={};
+  Object.entries(raw?.rooms||{}).forEach(function(kv){if(kv[1]&&kv[1].length)occ[kv[0]]=kv[1];});
+  if(!Object.keys(occ).length){
+    var cur='';
+    (allData.kamar?.data||[]).forEach(function(r){
+      var n=String(r['Room Number']||'').trim();if(n)cur=n;
+      var nm=String(r['Name']||'').trim();
+      if(cur&&nm&&nm!=='#NAME?'&&nm!=='#N/A'){
+        if(!occ[cur])occ[cur]=[];occ[cur].push(nm);
+      }
+    });
+  }
+
+  // Warna tipe kamar — persis warna fill Excel
+  var TY={
+    sd:{bg:'rgba(106,168,79,.26)',bdr:'#5A9040',txt:'#b8f0a0'},
+    dl:{bg:'rgba(193,216,47,.2)', bdr:'#8fa010',txt:'#d8ee80'},
+    su:{bg:'rgba(120,231,255,.18)',bdr:'#2daac4',txt:'#a0eeff'},
+    fa:{bg:'rgba(111,168,220,.2)',bdr:'#4a8ab8',txt:'#b8d8f8'},
+    fl:{bg:'rgba(217,210,233,.22)',bdr:'#8879a8',txt:'#d8d0f0'},
+    th:{bg:'rgba(255,192,0,.18)', bdr:'#b08000',txt:'#ffe080'},
+  };
+
+  // rm(nomor, tipe, grid-col, grid-row)
+  function rm(num,t,col,row){
+    var c=TY[t]||TY.dl;
+    var names=occ[String(num)]||[];
+    var body=names.length
+      ? names.map(function(n){return '<div class="fpm-name" style="color:'+c.txt+'">'+escHtml(n)+'</div>';}).join('')
+      : '<div class="fpm-empty">—</div>';
+    return '<div class="fpm-room" style="grid-column:'+col+';grid-row:'+row+';border-color:'+c.bdr+'">'
+      +'<div class="fpm-num">'+num+'</div>'
+      +'<div class="fpm-body" style="background:'+c.bg+'">'+body+'</div>'
+      +'</div>';
+  }
+
+  var h='';
+
+  // ── Row 1: Koridor Luar Lt.2 (Excel row 7, cols F-Y + AA-AB) ─────
+  [242,241,240,239,238,237,236,235,234,233,232,231,230,229,228,227,226,225,224,223]
+    .forEach(function(n,i){h+=rm(n,'dl',3+i,1);});
+  h+=rm(218,'fl',24,1); h+=rm(219,'fl',25,1);
+
+  // ── Row 2: Koridor Dalam Lt.1 (Excel row 11, cols D-Y + AA-AB) ───
+  h+=rm(243,'th',1,2); h+=rm(121,'th',2,2);
+  [120,119,118,117,116,115,114,113,112,111,110,109,108,107,106,105,104,103,102,101]
+    .forEach(function(n,i){h+=rm(n,'dl',3+i,2);});
+  h+=rm(220,'fl',24,2); h+=rm(221,'fl',25,2);
+
+  // ── Rows 3-10: Sayap Kiri, pasangan 2F/1F (cols D=1, E=2) ────────
+  [[244,122,'th','th'],[245,123,'dl','dl'],[246,124,'dl','dl'],[247,125,'dl','dl'],
+   [248,126,'dl','dl'],[249,127,'dl','dl'],[250,128,'dl','dl'],[251,129,'dl','dl']]
+  .forEach(function(p,i){
+    h+=rm(p[0],p[2],1,3+i);
+    h+=rm(p[1],p[3],2,3+i);
+  });
+
+  // ─��� Swimming Pool: I17:R25 → cols 6-15 (span 10), rows 3-6 ───────
+  h+='<div style="grid-column:6/span 10;grid-row:3/span 4" class="fpm-pool">'
+    +'<svg width="36" height="20" viewBox="0 0 36 20" fill="none" stroke="#78c8e8" stroke-width="1.8" stroke-linecap="round">'
+    +'<path d="M1 6c3-4.5 6-4.5 9 0s6 4.5 9 0 6-4.5 9 0 6 4.5 9 0"/>'
+    +'<path d="M1 14c3-4.5 6-4.5 9 0s6 4.5 9 0 6-4.5 9 0 6 4.5 9 0"/>'
+    +'</svg>'
+    +'<div class="fpm-pool-lbl">SWIMMING POOL</div>'
+    +'</div>';
+
+  // ── Row 7: Super Deluxe 130-137 (Excel row 28, H-O = cols 5-12) ──
+  [130,131,132,133,134,135,136,137].forEach(function(n,i){h+=rm(n,'sd',5+i,7);});
+
+  // ── Row 8: Superior Lt.2 252-266 (Excel row 32, H-V = cols 5-19) ─
+  [252,253,254,255,256,257,258,259,260,261,262,263,264,265,266]
+    .forEach(function(n,i){h+=rm(n,'su',5+i,8);});
+
+  // ── Row 9: Family Lt.3 267-281 (Excel row 35, H-V = cols 5-19) ───
+  [267,268,269,270,271,272,273,274,275,276,277,278,279,280,281]
+    .forEach(function(n,i){h+=rm(n,'fa',5+i,9);});
+
+  // ── Row 12: Superior Lt.1 138-152 (Excel row 41, H-V = cols 5-19)
+  // Row 11 = 12px gap separator (dari grid-template-rows)
+  [138,139,140,141,142,143,144,145,146,147,148,149,150,151,152]
+    .forEach(function(n,i){h+=rm(n,'su',5+i,12);});
+
+  // ── Row 13: Superior GF 915→901 (Excel row 44, H-V = cols 5-19) ─
+  [915,914,913,912,911,910,909,908,907,906,905,904,903,902,901]
+    .forEach(function(n,i){h+=rm(n,'su',5+i,13);});
+
+  return '<div>'
+    +'<div class="fpm-hint">&#8592; Geser kiri/kanan untuk lihat peta lengkap &#8594;</div>'
+    +'<div class="fpm-outer"><div class="fpm-grid">'+h+'</div></div>'
+    +'</div>';
+}
+
+// ── RENDERER KHUSUS PANITIA (STRUCTURED ROSTER) ────────────────
+
+// SVG icons for panitia section
+const ICO_PEOPLE = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`;
+const ICO_BOLT  = `<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>`;
+const ICO_CROWN = `<svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M2 19h20v2H2zM2 6l5 5.5L12 2l5 9.5L22 6v11H2V6z"/></svg>`;
+const ICO_CHAT  = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`;
+
+function renderPanitia(raw) {
+  const groups = raw?.data || [];
+  if (!groups.length) return '<div class="empty">Belum ada data struktur panitia.</div>';
+  let html = '';
+  groups.forEach(g => {
+    const isAllAccessGroup = g.nama_jabatan.toUpperCase() === "ALL ACCESS";
+    const iconHeader = isAllAccessGroup ? ICO_BOLT : ICO_PEOPLE;
+    html += `<div class="pnt-section-title">${iconHeader} Divisi ${escHtml(g.nama_jabatan)}</div>`;
+    html += `<div class="pnt-grid">`;
+
+    // 1. Koordinator / Ketua
+    g.koordinator.forEach(m => {
+      const imgUrl = (m.foto && m.foto.trim()) ? m.foto.trim() : getInitialsAvatar(m.nama);
+      const waHtml = m.hp
+        ? `<a class="pnt-wa" href="https://wa.me/62${m.hp.replace(/^0/,'').replace(/\D/g,'')}" target="_blank">${ICO_CHAT} Chat</a>`
+        : '';
+      html += `
+      <div class="pnt-card lead-box">
+        <div class="pnt-avatar-wrap">
+          <img class="pnt-avatar" src="${imgUrl}" alt="${escHtml(m.nama)}" loading="lazy">
+        </div>
+        <span class="pnt-badge coord">${ICO_CROWN} ${escHtml(m.role || 'Koordinator')}</span>
+        <div class="pnt-nama">${escHtml(m.nama)}</div>
+        <div class="pnt-ket">${escHtml(m.keterangan || '')}</div>
+        ${waHtml}
+      </div>`;
+    });
+
+    // 2. Anggota divisi
+    g.anggota.forEach(m => {
+      const imgUrl = (m.foto && m.foto.trim()) ? m.foto.trim() : getInitialsAvatar(m.nama);
+      const cardClass = isAllAccessGroup ? "pnt-card all-access-box" : "pnt-card";
+      const badgeHtml = isAllAccessGroup
+        ? `<span class="pnt-badge aa-tag">${ICO_BOLT} All Access</span>`
+        : '';
+      const waHtml = m.hp
+        ? `<a class="pnt-wa" href="https://wa.me/62${m.hp.replace(/^0/,'').replace(/\D/g,'')}" target="_blank">${ICO_CHAT} Chat</a>`
+        : '';
+      const ketText = escHtml(m.keterangan || (isAllAccessGroup ? 'Multi Divisi' : ''));
+      const roleText = m.role ? `<div class="pnt-role">${escHtml(m.role)}</div>` : '';
+      html += `
+      <div class="${cardClass}">
+        <div class="pnt-avatar-wrap">
+          <img class="pnt-avatar" src="${imgUrl}" alt="${escHtml(m.nama)}" loading="lazy">
+        </div>
+        ${badgeHtml}
+        <div class="pnt-nama">${escHtml(m.nama)}</div>
+        ${roleText}
+        <div class="pnt-ket">${ketText}</div>
+        ${waHtml}
+      </div>`;
+    });
+
+    html += `</div>`;
+  });
+  return html;
+}
+
+
+
+// ── DRAWER ─────────────────────────────────────────────────────
+function toggleDrawer() {
+  const drawer  = document.getElementById('drawer');
+  const overlay = document.getElementById('drawerOverlay');
+  const btn     = document.getElementById('hamburger');
+  if (drawer.classList.contains('open')) { closeDrawer(); return; }
+  drawer.classList.add('open');
+  overlay.classList.add('open');
+  if (btn) btn.classList.add('open');
+}
+function closeDrawer() {
+  const drawer  = document.getElementById('drawer');
+  const overlay = document.getElementById('drawerOverlay');
+  const btn     = document.getElementById('hamburger');
+  if (drawer)  drawer.classList.remove('open');
+  if (overlay) overlay.classList.remove('open');
+  if (btn)     btn.classList.remove('open');
+}
+
+// ── COUNTDOWN ──────────────────────────────────────────────────
+function initCountdown(dateStr) {
+  let target;
+  try { target = new Date(dateStr); if (isNaN(target.getTime())) return; } catch(e) { return; }
+  const container = document.getElementById('heroCountdown');
+  if (!container) return;
+  function pad(n) { return String(n).padStart(2,'0'); }
+  function update() {
+    const diff = target - new Date();
+    if (diff <= 0) {
+      container.innerHTML = '<div class="countdown-done">&#127881; Event sedang berlangsung!</div>';
+      return;
+    }
+    const d = Math.floor(diff / 864e5);
+    const h = Math.floor((diff % 864e5) / 36e5);
+    const m = Math.floor((diff % 36e5) / 6e4);
+    const s = Math.floor((diff % 6e4) / 1e3);
+    container.innerHTML =
+      `<div class="countdown-item"><span class="countdown-num">${pad(d)}</span><span class="countdown-label">Hari</span></div>` +
+      `<div class="countdown-item"><span class="countdown-num">${pad(h)}</span><span class="countdown-label">Jam</span></div>` +
+      `<div class="countdown-item"><span class="countdown-num">${pad(m)}</span><span class="countdown-label">Menit</span></div>` +
+      `<div class="countdown-item"><span class="countdown-num">${pad(s)}</span><span class="countdown-label">Detik</span></div>`;
+  }
+  update();
+  setInterval(update, 1000);
+}
+
+// ── INITIALS AVATAR (pengganti DiceBear, tanpa request external) ─
+function getInitialsAvatar(nama) {
+  const colors = ['#1B3A8C','#2E4EAD','#0D6E6E','#7C5CFC','#9B3A3A','#2E7D32','#C47700'];
+  const idx = (nama || 'X').charCodeAt(0) % colors.length;
+  const inits = (nama || '?').trim().split(/\s+/).slice(0,2).map(w => w[0] || '').join('').toUpperCase() || '?';
+  const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="72" height="72" viewBox="0 0 72 72">' +
+    '<circle cx="36" cy="36" r="36" fill="' + colors[idx] + '"/>' +
+    '<text x="36" y="36" dy=".35em" text-anchor="middle" fill="white" font-family="system-ui" font-size="26" font-weight="700">' + inits + '</text>' +
+    '</svg>';
+  try { return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg))); }
+  catch(e) { return 'data:image/svg+xml;base64,' + btoa(svg); }
+}
+
+</script>
+
+</body>
+
+</html>
