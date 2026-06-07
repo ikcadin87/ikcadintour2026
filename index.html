@@ -107,8 +107,11 @@ body{font-family:var(--font-body);background:var(--dark);color:var(--text);min-h
 }
 .drawer.open{right:0}
 .drawer-overlay{
-  position:fixed;inset:0;background:rgba(0,0,0,.65);
+  position:fixed;top:0;left:0;right:0;bottom:0;
+  width:100%;height:100%;
+  background:rgba(0,0,0,.65);
   z-index:98;opacity:0;pointer-events:none;transition:opacity .3s;
+  -webkit-tap-highlight-color:transparent;
 }
 .drawer-overlay.open{opacity:1;pointer-events:all}
 .drawer-nav{display:flex;flex-direction:column;gap:4px}
@@ -127,17 +130,16 @@ body{font-family:var(--font-body);background:var(--dark);color:var(--text);min-h
 .hero-banner-bg{
   grid-area:1/1;width:100%;display:block;
   background-color:var(--p2);
-  min-height:280px;
-  /* stretch ke tinggi grid cell (ditentukan oleh .hero-content) */
+  min-height:clamp(160px,40vw,280px);
   align-self:stretch;
 }
 .hero-banner-img{
   width:100%;
-  height:100%;        /* isi penuh tinggi .hero-banner-bg */
-  min-height:280px;
+  height:100%;
+  min-height:clamp(160px,40vw,280px); /* responsive: mengecil di layar kecil */
   display:block;
-  object-fit:cover;   /* cover = isi penuh tanpa distorsi, sedikit crop jika perlu */
-  object-position:center top; /* prioritas tampilkan bagian atas gambar */
+  object-fit:cover;
+  object-position:center top;
 }
 .hero-overlay{
   grid-area:1/1;
@@ -550,6 +552,9 @@ tr:hover td{background:rgba(255,255,255,.025)}
 /* ─── Footer ─────────────────────────────────────────────────── */
 
 footer{text-align:center;padding:32px 0 8px;color:var(--muted);font-size:.8rem}
+.footer-credit{margin-top:4px;font-size:.7rem;color:rgba(255,255,255,.25)}
+.footer-credit a{color:rgba(212,175,55,.5);text-decoration:none}
+.footer-credit a:hover{color:rgba(212,175,55,.8)}
 
 /* ─── Empty ──────────────────────────────────────────────────── */
 
@@ -1112,7 +1117,7 @@ footer{text-align:center;padding:32px 0 8px;color:var(--muted);font-size:.8rem}
         <span>Tunggu Sebentar ya&#8230;</span>
       </div>
     </main>
-    <footer id="footer">&#169; Panitia IKCADIN TOUR 2026</footer>
+    <footer id="footer">&#169; Panitia IKCADIN TOUR 2026<div class="footer-credit">Developed by <span style="color:rgba(212,175,55,.55);font-weight:600">Rico</span> &mdash; Acc Dept</div></footer>
   </div>
 </div>
 <script>
