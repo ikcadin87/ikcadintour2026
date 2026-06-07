@@ -119,18 +119,25 @@ body{font-family:var(--font-body);background:var(--dark);color:var(--text);min-h
 .hero-panel{
   position:relative;
   display:grid;
+  width:100%;
   background-color:var(--p2);
+  overflow:hidden; /* pastikan tidak ada overflow ke kanan */
 }
-/* Banner img — full-width, natural aspect ratio, no cropping */
+/* Banner img — full bleed, mengikuti tinggi hero panel */
 .hero-banner-bg{
   grid-area:1/1;width:100%;display:block;
   background-color:var(--p2);
-  /* fallback jika tidak ada gambar */
   min-height:280px;
+  /* stretch ke tinggi grid cell (ditentukan oleh .hero-content) */
+  align-self:stretch;
 }
 .hero-banner-img{
-  width:100%;height:auto;display:block;
-  object-fit:fill; /* full image, no crop */
+  width:100%;
+  height:100%;        /* isi penuh tinggi .hero-banner-bg */
+  min-height:280px;
+  display:block;
+  object-fit:cover;   /* cover = isi penuh tanpa distorsi, sedikit crop jika perlu */
+  object-position:center top; /* prioritas tampilkan bagian atas gambar */
 }
 .hero-overlay{
   grid-area:1/1;
@@ -1067,11 +1074,11 @@ footer{text-align:center;padding:32px 0 8px;color:var(--muted);font-size:.8rem}
 <!-- ── HERO ─────────────────────────────────────────────────────────── -->
 <div class="hero-panel" id="hero">
   <div class="hero-banner-bg" id="heroBannerBg">
-    <img id="heroBannerImg" class="hero-banner-img" src="" alt="" style="display:none">
+    <img id="heroBannerImg" class="hero-banner-img" src="" alt="" style="display:none" fetchpriority="high" decoding="async">
   </div>
   <div class="hero-overlay"></div>
   <div class="hero-content">
-    <img class="hero-logo-img" id="heroLogo" src="" alt="Logo" style="display:none"/>
+    <img class="hero-logo-img" id="heroLogo" src="" alt="Logo" style="display:none" fetchpriority="high" decoding="async"/>
     <span class="hero-emoji" id="heroEmoji" style="display:none">&#127881;</span>
     <h1 id="heroTitle"><span>IKCADIN TOUR 2026</span></h1>
     <p class="hero-sub" id="heroSub">Memuat data&#8230;</p>
@@ -1234,7 +1241,7 @@ function renderBeranda(raw) {
       <span class="hadiah-rank-label">Grand Prize</span>
     </div>
     ${grandFoto
-      ? `<div class="hadiah-img-frame grand"><img class="hadiah-grand-img" src="${escHtml(grandFoto)}" alt="${escHtml(grand['Nama Hadiah']||'')}"></div>`
+      ? `<div class="hadiah-img-frame grand"><img class="hadiah-grand-img" src="${escHtml(grandFoto)}" alt="${escHtml(grand['Nama Hadiah']||'')}" fetchpriority="high" decoding="async"></div>`
       : `<div class="hadiah-img-frame grand" style="font-size:3.5rem;color:#D4AF37">★</div>`}
     <div class="hadiah-grand-info">
       <div class="hadiah-grand-nama">${escHtml(grand['Nama Hadiah'] || grand['nama_hadiah'] || 'Grand Prize')}</div>
@@ -1263,7 +1270,7 @@ function renderBeranda(raw) {
           </div>
         </div>
         ${foto
-          ? `<div class="hadiah-img-frame mid rank-${rank}"><img class="hadiah-mid-img" src="${escHtml(foto)}" alt=""></div>`
+          ? `<div class="hadiah-img-frame mid rank-${rank}"><img class="hadiah-mid-img" src="${escHtml(foto)}" alt="" loading="lazy" decoding="async"></div>`
           : `<div class="hadiah-img-frame mid rank-${rank}" style="font-size:2.8rem;color:#aaa">★</div>`}
         <div class="hadiah-mid-nama">${escHtml(item['Nama Hadiah'] || item['nama_hadiah'] || '')}</div>
         <div class="hadiah-mid-qty">× ${escHtml(item['QTY'] || '1')} Unit</div>
@@ -1312,6 +1319,34 @@ window.addEventListener("DOMContentLoaded", function() {
     content.innerHTML = '<div class="error-box">&#9888;&#65039; Isi <strong>WEB_APP_URL</strong> di baris atas dengan URL deployment GAS kamu.</div>';
     return;
   }
+
+  var LS_KEY  = "ikcadin_cache_v1";
+  var LS_TTL  = 5 * 60 * 1000; // 5 menit dalam ms
+
+  function renderFromData(json) {
+    if (!json) return false;
+    allData = json;
+    var cfg = (json.config && json.config.data) ? json.config.data : {};
+    applyConfig(cfg);
+    buildNav(cfg.sections_aktif || "rules,rundown,kamar,games,bus,kontak,custom");
+    renderAll("beranda");
+    return true;
+  }
+
+  // ── 1. Coba ambil dari localStorage (instan) ──────────────────
+  var rendered = false;
+  try {
+    var raw = localStorage.getItem(LS_KEY);
+    if (raw) {
+      var cached = JSON.parse(raw);
+      var age    = Date.now() - (cached._savedAt || 0);
+      if (age < LS_TTL && cached.data) {
+        rendered = renderFromData(cached.data);
+      }
+    }
+  } catch(lsErr) { /* private-mode / storage-penuh → lanjut ke fetch */ }
+
+  // ── 2. Fetch di background (selalu, agar data fresh) ──────────
   fetch(WEB_APP_URL, { redirect: 'follow' })
     .then(function(r) {
       if (!r.ok) throw new Error("HTTP " + r.status + " " + r.statusText);
@@ -1319,21 +1354,29 @@ window.addEventListener("DOMContentLoaded", function() {
     })
     .then(function(json) {
       try {
-        if (!json) {
-          content.innerHTML = '<div class="error-box">&#9888;&#65039; Server mengembalikan data kosong. Pastikan GAS sudah di-deploy ulang dengan versi terbaru.</div>';
-          return;
+        if (!json) throw new Error("Data kosong dari server");
+        // Simpan ke localStorage untuk kunjungan berikutnya
+        try {
+          localStorage.setItem(LS_KEY, JSON.stringify({ data: json, _savedAt: Date.now() }));
+        } catch(e) {}
+        // Render hanya jika belum render dari cache, ATAU data berubah
+        if (!rendered) {
+          renderFromData(json);
+        } else {
+          // Update silent: cukup refresh data di memori, user tetap di tab yg sama
+          allData = json;
         }
-        allData = json;
-        var cfg = (json.config && json.config.data) ? json.config.data : {};
-        applyConfig(cfg);
-        buildNav(cfg.sections_aktif || "rules,rundown,kamar,games,bus,kontak,custom");
-        renderAll("beranda");
       } catch(renderErr) {
-        content.innerHTML = '<div class="error-box">&#9888;&#65039; Error saat render data:<br><br><code>' + renderErr.message + '</code></div>';
+        if (!rendered) {
+          content.innerHTML = '<div class="error-box">&#9888;&#65039; Error saat render data:<br><br><code>' + renderErr.message + '</code></div>';
+        }
       }
     })
     .catch(function(err) {
-      content.innerHTML = '<div class="error-box">&#9888;&#65039; Gagal mengambil data dari GAS API:<br><br><code>' + (err.message || String(err)) + '</code><br><br>Cek: (1) URL benar, (2) GAS sudah di-deploy sebagai JSON API, (3) akses diset "Anyone".</div>';
+      if (!rendered) {
+        content.innerHTML = '<div class="error-box">&#9888;&#65039; Gagal mengambil data dari GAS API:<br><br><code>' + (err.message || String(err)) + '</code><br><br>Cek: (1) URL benar, (2) GAS sudah di-deploy sebagai JSON API, (3) akses diset "Anyone".</div>';
+      }
+      // Jika sudah rendered dari cache, error network diabaikan (offline grace)
     });
 });
 
