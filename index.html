@@ -193,7 +193,7 @@ body{font-family:var(--font-body);background:var(--dark);color:var(--text);min-h
 .countdown-done{font-family:var(--font-head);font-size:.95rem;color:var(--a);font-weight:700;margin-top:14px}
 
 /* ─── Main Body ─────────────────────────────────────────────── */
-.main-body{background:var(--dark);position:relative;z-index:1;overflow-x:hidden;overflow-y:visible;width:100%}
+.main-body{background:var(--dark);position:relative;z-index:1;overflow:clip visible;width:100%}
 .main-body::before{
   content:'';position:fixed;inset:0;
   background:
@@ -201,7 +201,7 @@ body{font-family:var(--font-body);background:var(--dark);color:var(--text);min-h
     radial-gradient(ellipse 60% 40% at 80% 110%, rgba(212,175,55,.14) 0%, transparent 55%);
   pointer-events:none;z-index:0;
 }
-.content-area{max-width:1800px;width:100%;margin:0 auto;padding:24px 16px calc(60px + env(safe-area-inset-bottom,0px));position:relative;z-index:1;overflow-x:hidden}
+.content-area{max-width:1800px;width:100%;margin:0 auto;padding:24px 16px calc(80px + env(safe-area-inset-bottom,0px));position:relative;z-index:1;overflow-x:hidden}
 
 /* ─── Search ─────────────────────────────────────────────────── */
 .search-wrap{position:relative;margin:0 0 20px}
@@ -2198,13 +2198,8 @@ function toggleDrawer() {
   drawer.classList.add('open');
   overlay.classList.add('open');
   if (btn) btn.classList.add('open');
-  // Bekukan scroll background agar konten tidak terlihat bergeser
-  var sy = window.scrollY || document.documentElement.scrollTop || 0;
-  document.body._drawerScrollY = sy;
-  document.body.style.position = 'fixed';
-  document.body.style.top      = '-' + sy + 'px';
-  document.body.style.width    = '100%';
-  document.body.style.overflow = 'hidden';
+  // Cegah scroll background — cukup lock overflow di html saja
+  document.documentElement.style.overflowY = 'hidden';
 }
 function closeDrawer() {
   const drawer  = document.getElementById('drawer');
@@ -2213,13 +2208,7 @@ function closeDrawer() {
   if (drawer)  drawer.classList.remove('open');
   if (overlay) overlay.classList.remove('open');
   if (btn)     btn.classList.remove('open');
-  // Kembalikan scroll ke posisi semula
-  var sy = document.body._drawerScrollY || 0;
-  document.body.style.position = '';
-  document.body.style.top      = '';
-  document.body.style.width    = '';
-  document.body.style.overflow = '';
-  window.scrollTo(0, sy);
+  document.documentElement.style.overflowY = '';
 }
 
 // ── COUNTDOWN ──────────────────────────────────────────────────
