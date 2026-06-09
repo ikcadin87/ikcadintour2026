@@ -648,22 +648,14 @@ footer{text-align:center;padding:28px 16px calc(20px + env(safe-area-inset-botto
 .bus-tab:hover{border-color:rgba(27,58,140,.65);color:var(--text);background:rgba(27,58,140,.12)}
 .bus-tab.active{background:var(--p);border-color:var(--p);color:#fff;box-shadow:0 3px 14px rgba(27,58,140,.45)}
 .bus-panel-header{
-  display:flex;justify-content:space-between;align-items:center;
-  margin-bottom:14px;padding:12px 16px;
+  display:flex;flex-direction:column;gap:5px;
+  margin-bottom:14px;padding:14px 16px;
   background:rgba(27,58,140,.2);border-radius:12px;
   border:1px solid rgba(212,175,55,.22);
 }
-.bus-panel-name{font-family:var(--font-head);font-weight:800;font-size:.98rem;color:#fff;}
-.bus-panel-count{background:var(--p);color:#fff;padding:3px 14px;border-radius:20px;font-size:.74rem;font-weight:700;}
-.bus-pic-row{
-  display:flex;align-items:center;gap:8px;
-  margin-bottom:14px;padding:10px 16px;
-  background:rgba(212,175,55,.1);border-radius:10px;
-  border:1px solid rgba(212,175,55,.3);
-}
-.bus-pic-icon{font-size:1.1rem}
-.bus-pic-label{font-size:.78rem;color:rgba(212,175,55,.7);font-weight:600;text-transform:uppercase;letter-spacing:.06em}
-.bus-pic-name{font-family:var(--font-head);font-weight:800;font-size:.95rem;color:rgba(212,175,55,.95)}
+.bus-panel-name{font-family:var(--font-head);font-weight:800;font-size:1.05rem;color:#fff;}
+.bus-panel-pic{font-size:.84rem;color:rgba(212,175,55,.95);font-weight:600;}
+.bus-panel-count{font-size:.78rem;color:var(--muted);font-weight:500;}
 
 /* ─── Papan Pengumuman ──────────────────────────────────────── */
 .pengumuman-wrap{margin-bottom:28px}
@@ -1806,7 +1798,7 @@ function renderGroups(raw) {
   // Tab bar
   let html = `<div class="bus-tabs">`;
   data.forEach((bus, i) => {
-    html += `<button class="bus-tab${i === 0 ? ' active' : ''}" onclick="switchBusTab(${i}, this)">🚌 ${escHtml(bus.nama)}</button>`;
+    html += `<button class="bus-tab${i === 0 ? ' active' : ''}" onclick="switchBusTab(${i}, this)">${escHtml(bus.nama)}</button>`;
   });
   html += `</div>`;
 
@@ -1817,10 +1809,10 @@ function renderGroups(raw) {
     const filtered = anggota.filter(p => matchSearch(Object.values(p)));
     html += `<div class="bus-panel" id="bus-panel-${i}" style="display:${i===0?'block':'none'}">
       <div class="bus-panel-header">
-        <span class="bus-panel-name">🚌 ${escHtml(bus.nama)}</span>
-        <span class="bus-panel-count">Total: ${total} Orang</span>
+        <div class="bus-panel-name">${escHtml(bus.nama)}</div>
+        ${bus.pic ? `<div class="bus-panel-pic">PIC Bus: <strong>${escHtml(bus.pic)}</strong></div>` : ""}
+        <div class="bus-panel-count">Total: ${total} Orang</div>
       </div>
-      ${bus.pic ? `<div class="bus-pic-row"><span class="bus-pic-icon">👤</span><span class="bus-pic-label">PIC&nbsp;Bus:</span><span class="bus-pic-name">${escHtml(bus.pic)}</span></div>` : ""}
       <div class="member-list">
         ${filtered.length ? filtered.map((p, j) => `
           <div class="member-row">
