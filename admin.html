@@ -668,6 +668,22 @@ const MEAL_LABELS_ADMIN = {
   none:        'Tutup'
 };
 
+function formatClaimTime(ts) {
+  var s = String(ts == null ? '' : ts).trim();
+  if (!s) return '-';
+  var hari  = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+  var bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli',
+               'Agustus','September','Oktober','November','Desember'];
+  var d;
+  var m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})[ T]+(\d{1,2}):(\d{2})/);
+  if (m) { d = new Date(+m[3], +m[2]-1, +m[1], +m[4], +m[5]); }
+  else   { d = new Date(s); }
+  if (isNaN(d.getTime())) return esc(s);
+  var hh = ('0'+d.getHours()).slice(-2), mm = ('0'+d.getMinutes()).slice(-2);
+  return hari[d.getDay()] + ', ' + d.getDate() + ' ' + bulan[d.getMonth()] +
+    ' ' + d.getFullYear() + ', ' + hh + ':' + mm + ' WIB';
+}
+
 function renderClaimPanel() {
   return `
 <div class="claim-panel">
@@ -846,7 +862,7 @@ function showClaimResult(r, nama, inisial) {
 
   if (r.already_claimed) {
     statusDiv.innerHTML = '<div class="cres-status-already">' + svgIcon('x-circle','1rem') +
-      ' Sudah claim pada: <strong>' + r.claimed_at + '</strong></div>';
+      ' Sudah claim pada: <strong>' + formatClaimTime(r.claimed_at) + '</strong></div>';
     confirmBtn.style.display = 'none';
   } else {
     statusDiv.innerHTML = '<div class="cres-status-ok">' + svgIcon('check-circle','1rem') +
@@ -873,11 +889,11 @@ function confirmClaimAdmin() {
         var statusDiv = document.getElementById('cresStatus');
         if (statusDiv) {
           statusDiv.innerHTML = '<div class="cres-status-ok">' + svgIcon('check-circle','1rem') +
-            ' Claim dikonfirmasi: <strong>' + r.claimed_at + '</strong></div>';
+            ' Claim dikonfirmasi: <strong>' + formatClaimTime(r.claimed_at) + '</strong></div>';
         }
         btn.style.display = 'none';
       } else if (!r.ok && r.error && r.error.includes('Sudah')) {
-        toast('Sudah pernah claim: ' + (r.claimed_at||''), 'err');
+        toast('Sudah pernah claim: ' + formatClaimTime(r.claimed_at), 'err');
         btn.disabled = false;
         btn.innerHTML = svgIcon('check-circle','1rem') + ' Konfirmasi Claim';
       } else {

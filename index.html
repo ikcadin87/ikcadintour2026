@@ -201,7 +201,7 @@ body{font-family:var(--font-body);background:var(--dark);color:var(--text);min-h
     radial-gradient(ellipse 60% 40% at 80% 110%, rgba(212,175,55,.14) 0%, transparent 55%);
   pointer-events:none;z-index:0;
 }
-.content-area{max-width:1800px;width:100%;margin:0 auto;padding:24px 16px 16px;position:relative;z-index:1;overflow-x:hidden}
+.content-area{max-width:1800px;width:100%;margin:0 auto;padding:24px 16px 16px;position:relative;z-index:1;overflow-x:clip}
 
 /* ─── Search ─────────────────────────────────────────────────── */
 .search-wrap{position:relative;margin:0 0 20px;transition:opacity .2s,max-height .25s;overflow:hidden}
@@ -238,6 +238,7 @@ body{font-family:var(--font-body);background:var(--dark);color:var(--text);min-h
 }
 .section-card:hover{border-color:rgba(27,58,140,.5);box-shadow:0 4px 20px rgba(0,0,0,.2)}
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeInOnly{from{opacity:0}to{opacity:1}}
 @keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
 @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
 .card-header{
@@ -1336,16 +1337,9 @@ html[data-theme="light"] .footer-credit a:hover { color:#7A5600; }
 /* ── HERO CLAIM MODE ─────────────────────────────────────── */
 .hero-panel { transition: opacity .25s ease, max-height .3s ease; overflow:hidden; }
 .hero-panel.claim-mode { max-height:0 !important; opacity:0; pointer-events:none; }
-/* Claim tab: content area mengisi ruang, footer tetap di bawah */
-body.claim-active { display:flex; flex-direction:column; min-height:100dvh; }
-body.claim-active .content-area { flex:1; display:flex; flex-direction:column; padding-bottom:0; }
-body.claim-active #content { flex:1; display:flex; flex-direction:column; }
-body.claim-active #content > div { flex:1; display:flex; flex-direction:column; }
-body.claim-active .claim-wrap { flex:1; }
 
 /* ── CLAIM SECTION ─────────────────────────────────────────── */
-.claim-wrap { max-width:480px; margin:0 auto; padding:8px 0 0; display:flex; flex-direction:column; }
-#claimStep1 { display:flex; flex-direction:column; flex:1; }
+.claim-wrap { max-width:480px; margin:0 auto; padding:8px 0; }
 .claim-active-badge {
   display:inline-flex;align-items:center;gap:6px;
   padding:6px 14px;border-radius:20px;font-size:.78rem;font-weight:700;
@@ -1363,9 +1357,10 @@ body.claim-active .claim-wrap { flex:1; }
 }
 .claim-search:focus { border-color:var(--a);box-shadow:0 0 0 3px rgba(212,175,55,.12); }
 .claim-dropdown {
-  position:absolute;top:calc(100% + 4px);left:0;right:0;
+  position:absolute;
+  top:calc(100% + 4px);left:0;right:0;
   background:var(--card);border:1px solid var(--border);border-radius:var(--r2);
-  max-height:240px;overflow-y:auto;z-index:200;display:none;
+  max-height:260px;overflow-y:auto;z-index:500;display:none;
   box-shadow:0 8px 32px rgba(0,0,0,.4);
 }
 .claim-dropdown.open { display:block; }
@@ -1377,6 +1372,38 @@ body.claim-active .claim-wrap { flex:1; }
 .claim-drop-item:hover,.claim-drop-item:active { background:rgba(27,58,140,.2); }
 .claim-drop-nama { font-weight:600;font-size:.88rem;color:var(--text); }
 .claim-drop-dept { font-size:.72rem;color:var(--muted);margin-top:2px; }
+
+/* Tutorial / Cara Claim */
+.claim-guide {
+  margin-top:18px;padding:18px 16px 14px;
+  background:var(--card2);border:1px solid var(--border);border-radius:var(--r);
+}
+.claim-guide-title {
+  display:flex;align-items:center;gap:7px;
+  font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--a);margin-bottom:14px;
+}
+.claim-guide-title .svg-icon { width:1em;height:1em; }
+.claim-guide-step {
+  display:grid;grid-template-columns:auto auto 1fr;align-items:center;
+  gap:12px;padding:11px 0;border-top:1px solid var(--border);
+}
+.claim-guide-step:first-of-type { border-top:none;padding-top:2px; }
+.claim-guide-num {
+  width:26px;height:26px;border-radius:50%;flex-shrink:0;
+  background:var(--p);color:#fff;font-size:.82rem;font-weight:800;
+  display:flex;align-items:center;justify-content:center;
+}
+.claim-guide-ico {
+  width:44px;height:44px;border-radius:12px;flex-shrink:0;
+  background:rgba(212,175,55,.12);border:1px solid rgba(212,175,55,.25);
+  display:flex;align-items:center;justify-content:center;color:var(--a);
+}
+.claim-guide-ico .svg-icon { width:22px;height:22px; }
+.claim-guide-text { font-size:.84rem;line-height:1.45;color:var(--muted); }
+.claim-guide-text strong { color:var(--text);font-weight:700; }
+html[data-theme="light"] .claim-guide { background:#fff;border-color:#D0D6E8; }
+html[data-theme="light"] .claim-guide-ico { background:rgba(154,110,0,.1);border-color:rgba(154,110,0,.25); }
 
 /* Modal — fullscreen bottom sheet di mobile */
 .claim-modal-overlay {
@@ -1426,9 +1453,20 @@ body.claim-active .claim-wrap { flex:1; }
   background:var(--card2);border:1px solid var(--border);border-radius:var(--r);
   padding:16px;margin-bottom:14px;
 }
-.claim-info-name  { font-size:1.05rem;font-weight:800;color:var(--text);margin-bottom:2px; }
-.claim-info-dept  { font-size:.78rem;color:var(--muted);margin-bottom:10px; }
-.claim-info-pax   { font-size:.8rem;color:var(--a);font-weight:700;margin-bottom:14px; }
+.claim-info-head {
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  margin-bottom:16px;
+}
+.claim-info-id { min-width:0; }
+.claim-info-name  { font-size:1.35rem;font-weight:800;color:var(--text);margin-bottom:3px;line-height:1.1; }
+.claim-info-dept  { font-size:.82rem;color:var(--p);font-weight:600; }
+.claim-info-pax   {
+  flex-shrink:0;background:linear-gradient(135deg,var(--a),var(--a2));color:#fff;
+  font-size:1.7rem;font-weight:800;line-height:1;
+  padding:14px 20px;border-radius:14px;box-shadow:0 4px 14px rgba(212,175,55,.3);
+  display:flex;align-items:baseline;gap:5px;
+}
+.claim-info-pax span { font-size:1.05rem;font-weight:800; }
 .claim-status-grid { display:flex;flex-direction:column;gap:8px; }
 .claim-status-row  {
   display:flex;align-items:center;justify-content:space-between;
@@ -1452,13 +1490,39 @@ body.claim-active .claim-wrap { flex:1; }
 
 /* Realtime confirmed state */
 .claim-confirmed-box {
-  text-align:center;padding:28px 20px;border-radius:var(--r);
-  background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.35);
+  text-align:center;padding:32px 24px 24px;border-radius:var(--r);
+  background:var(--card2);border:1px solid var(--border);
   animation:fadeUp .4s ease both;
 }
-.claim-confirmed-icon { font-size:3rem;margin-bottom:12px; }
-.claim-confirmed-title { font-size:1.15rem;font-weight:800;color:#22c55e;margin-bottom:6px; }
-.claim-confirmed-sub   { font-size:.84rem;color:var(--muted);margin-bottom:20px; }
+.claim-confirmed-icon {
+  width:84px;height:84px;border-radius:50%;margin:0 auto 18px;
+  background:rgba(34,197,94,.18);
+  display:flex;align-items:center;justify-content:center;color:#22c55e;
+  animation:popIn .45s cubic-bezier(.34,1.56,.64,1) both;
+}
+.claim-confirmed-icon .svg-icon { width:42px;height:42px;stroke-width:2.5; }
+@keyframes popIn { from{transform:scale(.4);opacity:0} to{transform:scale(1);opacity:1} }
+.claim-confirmed-thanks { font-size:1.35rem;font-weight:500;color:var(--muted);line-height:1.2; }
+.claim-confirmed-title { font-size:1.9rem;font-weight:800;color:#22c55e;margin:2px 0; }
+.claim-confirmed-sub   { font-size:1.2rem;font-weight:500;color:var(--muted);margin-bottom:22px; }
+.claim-confirmed-info {
+  text-align:left;background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r2);padding:14px 16px;margin-bottom:16px;
+  display:flex;flex-direction:column;gap:11px;
+}
+.claim-cinfo-row { display:grid;grid-template-columns:auto 64px 1fr;align-items:center;gap:8px; }
+.claim-cinfo-row .svg-icon { width:16px;height:16px;color:var(--muted); }
+.claim-cinfo-label { font-size:.85rem;font-weight:700;color:var(--text); }
+.claim-cinfo-value { font-size:.85rem;color:var(--muted); }
+.claim-home-btn {
+  width:100%;padding:14px;border-radius:var(--r2);border:none;
+  background:var(--p);color:#fff;cursor:pointer;font-size:.92rem;font-weight:700;
+  transition:.15s;
+}
+.claim-home-btn:hover { background:#2547B0; }
+html[data-theme="light"] .claim-confirmed-box { background:#fff;border-color:#D0D6E8; }
+html[data-theme="light"] .claim-confirmed-info { background:#F7F8FB;border-color:#D0D6E8; }
+html[data-theme="light"] .claim-cinfo-label { color:#0F1E3D; }
 .claim-poll-indicator  {
   display:inline-flex;align-items:center;gap:6px;
   font-size:.75rem;color:var(--muted);margin-top:12px;margin-bottom:8px;
@@ -2070,13 +2134,9 @@ function switchTab(key, btn) {
   activeKey = key;
   document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));
   btn.classList.add("active");
-  // Sembunyikan hero, search & footer saat tab Claim aktif
   var isClaim = key === 'claim';
-  var hero = document.getElementById('hero');
-  if (hero) hero.classList.toggle('claim-mode', isClaim);
-  var sw = document.querySelector('.search-wrap');
-  if (sw) sw.classList.toggle('hidden', isClaim);
-  document.body.classList.toggle('claim-active', isClaim);
+  document.getElementById('hero').style.display   = isClaim ? 'none' : '';
+  document.querySelector('.search-wrap').style.display = isClaim ? 'none' : '';
   renderAll(key);
 }
 
@@ -2138,7 +2198,7 @@ function renderAll(key) {
 
   // ── CLAIM (special standalone, no card wrapper) ──
   if (key === 'claim') {
-    content.innerHTML = '<div style="animation:fadeUp .4s ease both">' + renderClaim() + '</div>';
+    content.innerHTML = '<div style="animation:fadeInOnly .4s ease both">' + renderClaim() + '</div>';
     setTimeout(initClaimSection, 0);
     return;
   }
@@ -2889,6 +2949,34 @@ function renderClaim() {
         autocomplete="off" spellcheck="false">
       <div class="claim-dropdown" id="claimDropdown"></div>
     </div>
+
+    <div class="claim-guide">
+      <div class="claim-guide-title">${svgIcon('info','14px')} Cara Claim</div>
+      <div class="claim-guide-step">
+        <div class="claim-guide-num">1</div>
+        <div class="claim-guide-ico">${svgIcon('search','22px')}</div>
+        <div class="claim-guide-text">
+          <strong>Input nama</strong> pada kolom pencarian, lalu pastikan
+          <strong>nama dan departemen</strong> kamu sudah sesuai.
+        </div>
+      </div>
+      <div class="claim-guide-step">
+        <div class="claim-guide-num">2</div>
+        <div class="claim-guide-ico">${svgIcon('check-circle','22px')}</div>
+        <div class="claim-guide-text">
+          Untuk verifikasi, masukkan <strong>3 huruf inisial</strong> sesuai
+          dengan pencatatan <strong>HCA</strong>.
+        </div>
+      </div>
+      <div class="claim-guide-step">
+        <div class="claim-guide-num">3</div>
+        <div class="claim-guide-ico">${svgIcon('ticket','22px')}</div>
+        <div class="claim-guide-text">
+          Tunjukkan <strong>Barcode</strong> kepada Panitia untuk melakukan
+          <strong>Claim</strong>.
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Modal inisial — bottom sheet -->
@@ -2954,8 +3042,9 @@ function updateClaimBadge(meal) {
 }
 
 function filterClaimSearch(val) {
-  var dd = document.getElementById('claimDropdown');
-  if (!dd) return;
+  var dd  = document.getElementById('claimDropdown');
+  var inp = document.getElementById('claimSearchInput');
+  if (!dd || !inp) return;
   var q = val.trim().toLowerCase();
   if (!q) { dd.classList.remove('open'); dd.innerHTML = ''; return; }
   var matches = claimList.filter(function(p) {
@@ -2977,6 +3066,9 @@ function selectClaimPerson(nama, dept) {
   claimSelected = { nama: nama, dept: dept };
   var inp = document.getElementById('claimSearchInput');
   if (inp) inp.value = nama;
+  // Tutup dropdown
+  var dd = document.getElementById('claimDropdown');
+  if (dd) { dd.classList.remove('open'); dd.innerHTML = ''; }
   // Open modal
   var modal = document.getElementById('claimModal');
   var modalName = document.getElementById('claimModalName');
@@ -3020,10 +3112,17 @@ function submitClaimVerify() {
 function showClaimResult(r) {
   var step1    = document.getElementById('claimStep1');
   var result   = document.getElementById('claimResult');
+  if (step1)  step1.style.display  = 'none';
+  if (result) {
+    // Rebuild skeleton — confirmed-state mungkin sudah menimpa isinya
+    result.innerHTML =
+      '<div class="claim-qr-wrap" id="claimQrWrap"></div>' +
+      '<div class="claim-info-card" id="claimInfoCard"></div>' +
+      '<button class="claim-reset-btn" onclick="resetClaim()">↩ Cari nama lain</button>';
+    result.style.display = 'block';
+  }
   var qrWrap   = document.getElementById('claimQrWrap');
   var infoCard = document.getElementById('claimInfoCard');
-  if (step1)  step1.style.display  = 'none';
-  if (result) result.style.display = 'block';
 
   // Generate QR code
   if (qrWrap) {
@@ -3070,7 +3169,7 @@ function renderClaimInfoCard(r) {
     var claimed = !!m.val;
     return '<div class="claim-status-row">' +
       '<div><div class="claim-status-label">' + m.label + '</div>' +
-      (claimed ? '<div class="claim-status-ts">' + escHtml(m.val) + '</div>' : '') +
+      (claimed ? '<div class="claim-status-ts">' + formatClaimTime(m.val) + '</div>' : '') +
       '</div>' +
       '<span class="claim-status-badge ' + (claimed ? 'claimed' : 'unclaimed') + '">' +
       svgIcon(claimed ? 'check-circle' : 'x-circle', '12px') +
@@ -3078,9 +3177,13 @@ function renderClaimInfoCard(r) {
       '</div>';
   }).join('');
   infoCard.innerHTML =
-    '<div class="claim-info-name">' + escHtml(r.nama) + '</div>' +
-    '<div class="claim-info-dept">' + escHtml(r.dept||'') + '</div>' +
-    '<div class="claim-info-pax">' + svgIcon('sparkles','13px') + ' ' + r.pax + ' Pax</div>' +
+    '<div class="claim-info-head">' +
+      '<div class="claim-info-id">' +
+        '<div class="claim-info-name">' + escHtml(r.nama) + '</div>' +
+        '<div class="claim-info-dept">Department: ' + escHtml(r.dept||'-') + '</div>' +
+      '</div>' +
+      '<div class="claim-info-pax">' + r.pax + ' <span>PAX</span></div>' +
+    '</div>' +
     '<div class="claim-status-grid">' + rows + '</div>';
 }
 
@@ -3117,15 +3220,53 @@ function stopClaimPoll() {
   if (claimPollTimer) { clearInterval(claimPollTimer); claimPollTimer = null; }
 }
 
+var MEAL_WISH = {
+  snack:       'Enjoy Your Trip !',
+  makan_siang: 'Bon appétit !',
+  makan_malam: 'Enjoy the evening'
+};
+
+function formatClaimTime(ts) {
+  var s = String(ts).trim();
+  var hari  = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+  var bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli',
+               'Agustus','September','Oktober','November','Desember'];
+  var d;
+  // Format backend: dd/MM/yyyy HH:mm(:ss)
+  var m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})[ T]+(\d{1,2}):(\d{2})/);
+  if (m) {
+    d = new Date(+m[3], +m[2]-1, +m[1], +m[4], +m[5]);
+  } else {
+    d = new Date(s);
+  }
+  if (isNaN(d.getTime())) return escHtml(s);
+  var hh = ('0'+d.getHours()).slice(-2), mm = ('0'+d.getMinutes()).slice(-2);
+  return hari[d.getDay()] + ', ' + d.getDate() + ' ' + bulan[d.getMonth()] +
+    ' ' + d.getFullYear() + ', ' + hh + ':' + mm + ' WIB';
+}
+
 function showClaimConfirmed(nama, mealType, timestamp) {
   var result = document.getElementById('claimResult');
   if (!result) return;
+  var wish = MEAL_WISH[mealType] || 'Enjoy Your Trip !';
   result.innerHTML =
     '<div class="claim-confirmed-box">' +
-    '<div class="claim-confirmed-icon">' + svgIcon('check-circle', '3rem') + '</div>' +
-    '<div class="claim-confirmed-title">Claim Berhasil!</div>' +
-    '<div class="claim-confirmed-sub">' + escHtml(nama) + ' · ' + (MEAL_LABELS[mealType]||mealType) + '<br><small>' + timestamp + '</small></div>' +
-    '<button class="claim-reset-btn" onclick="resetClaim()" style="margin-top:16px">↩ Kembali</button>' +
+      '<div class="claim-confirmed-icon">' + svgIcon('check-circle') + '</div>' +
+      '<div class="claim-confirmed-thanks">Terima kasih,</div>' +
+      '<div class="claim-confirmed-title">Claim Berhasil !</div>' +
+      '<div class="claim-confirmed-sub">' + wish + '</div>' +
+      '<div class="claim-confirmed-info">' +
+        '<div class="claim-cinfo-row">' + svgIcon('user') +
+          '<span class="claim-cinfo-label">Nama</span>' +
+          '<span class="claim-cinfo-value">' + escHtml(nama) + '</span></div>' +
+        '<div class="claim-cinfo-row">' + svgIcon('gift') +
+          '<span class="claim-cinfo-label">Item</span>' +
+          '<span class="claim-cinfo-value">' + (MEAL_LABELS[mealType]||mealType) + '</span></div>' +
+        '<div class="claim-cinfo-row">' + svgIcon('calendar') +
+          '<span class="claim-cinfo-label">Waktu</span>' +
+          '<span class="claim-cinfo-value">' + formatClaimTime(timestamp) + '</span></div>' +
+      '</div>' +
+      '<button class="claim-home-btn" onclick="resetClaim()">← Kembali Ke Menu Utama</button>' +
     '</div>';
 }
 
@@ -3136,7 +3277,7 @@ function resetClaim() {
   var step1  = document.getElementById('claimStep1');
   var result = document.getElementById('claimResult');
   var inp    = document.getElementById('claimSearchInput');
-  if (step1) step1.style.display = 'flex';
+  if (step1) step1.style.display = 'block';
   if (result) result.style.display = 'none';
   if (inp) { inp.value = ''; inp.focus(); }
   var dd = document.getElementById('claimDropdown');
