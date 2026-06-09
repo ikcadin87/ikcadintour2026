@@ -86,7 +86,7 @@ body{font-family:var(--font-body);background:var(--dark);color:var(--text);min-h
   width:36px;height:36px;
   background:rgba(255,255,255,.06);border:1px solid var(--border);
   border-radius:8px;cursor:pointer;padding:8px;
-  margin-left:auto;flex-shrink:0;transition:background .2s;
+  margin-right:4px;flex-shrink:0;transition:background .2s;
 }
 .hamburger:hover{background:rgba(255,255,255,.1)}
 .hamburger span{
@@ -99,14 +99,14 @@ body{font-family:var(--font-body);background:var(--dark);color:var(--text);min-h
 
 /* ─── Mobile Drawer ─────────────────────────────────────────── */
 .drawer{
-  position:fixed;top:var(--header-h);right:-100%;bottom:0;
+  position:fixed;top:var(--header-h);left:-100%;bottom:0;
   width:min(300px,85vw);
-  background:var(--card);border-left:1px solid var(--border);
-  z-index:99;transition:right .3s cubic-bezier(.4,0,.2,1);
+  background:var(--card);border-right:1px solid var(--border);
+  z-index:99;transition:left .3s cubic-bezier(.4,0,.2,1);
   overflow-y:auto;-webkit-overflow-scrolling:touch;
   padding:12px 12px calc(20px + env(safe-area-inset-bottom,0px));
 }
-.drawer.open{right:0}
+.drawer.open{left:0}
 .drawer-overlay{
   position:fixed;top:0;left:0;right:0;bottom:0;
   width:100%;height:100%;
@@ -655,6 +655,15 @@ footer{text-align:center;padding:28px 16px calc(20px + env(safe-area-inset-botto
 }
 .bus-panel-name{font-family:var(--font-head);font-weight:800;font-size:.98rem;color:#fff;}
 .bus-panel-count{background:var(--p);color:#fff;padding:3px 14px;border-radius:20px;font-size:.74rem;font-weight:700;}
+.bus-pic-row{
+  display:flex;align-items:center;gap:8px;
+  margin-bottom:14px;padding:10px 16px;
+  background:rgba(212,175,55,.1);border-radius:10px;
+  border:1px solid rgba(212,175,55,.3);
+}
+.bus-pic-icon{font-size:1.1rem}
+.bus-pic-label{font-size:.78rem;color:rgba(212,175,55,.7);font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+.bus-pic-name{font-family:var(--font-head);font-weight:800;font-size:.95rem;color:rgba(212,175,55,.95)}
 
 /* ─── Papan Pengumuman ──────────────────────────────────────── */
 .pengumuman-wrap{margin-bottom:28px}
@@ -1115,14 +1124,14 @@ footer{text-align:center;padding:28px 16px calc(20px + env(safe-area-inset-botto
 <!-- ── APP HEADER ──────────────────────────────────────────────────── -->
 <header class="app-header" id="appHeader">
   <div class="app-header-inner">
+    <button class="hamburger" id="hamburger" onclick="toggleDrawer()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
     <div class="app-brand">
       <img id="headerLogo" class="header-logo" src="" alt="" style="display:none">
       <span id="headerTitle" class="header-brand-name">IKCADIN TOUR 2026</span>
     </div>
     <nav class="header-nav" id="navPills"></nav>
-    <button class="hamburger" id="hamburger" onclick="toggleDrawer()" aria-label="Menu">
-      <span></span><span></span><span></span>
-    </button>
   </div>
 </header>
 
@@ -1811,6 +1820,7 @@ function renderGroups(raw) {
         <span class="bus-panel-name">🚌 ${escHtml(bus.nama)}</span>
         <span class="bus-panel-count">Total: ${total} Orang</span>
       </div>
+      ${bus.pic ? `<div class="bus-pic-row"><span class="bus-pic-icon">👤</span><span class="bus-pic-label">PIC&nbsp;Bus:</span><span class="bus-pic-name">${escHtml(bus.pic)}</span></div>` : ""}
       <div class="member-list">
         ${filtered.length ? filtered.map((p, j) => `
           <div class="member-row">
