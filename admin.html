@@ -126,10 +126,50 @@ tr:hover td{background:rgba(255,255,255,.02)}
 </head>
 <body>
 
+<!-- ── SVG ICON SPRITE ───────────────────────────────────────── -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+  <symbol id="icon-settings" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+  </symbol>
+  <symbol id="icon-megaphone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M22 17H2a3 3 0 0 0 3-3V9a7 7 0 0 1 14 0v5a3 3 0 0 0 3 3z"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+  </symbol>
+  <symbol id="icon-crown" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7z"/><line x1="5" y1="20" x2="19" y2="20"/>
+  </symbol>
+  <symbol id="icon-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.6 3.4 2 2 0 0 1 3.6 1.2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.37a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+  </symbol>
+  <symbol id="icon-clipboard" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/>
+  </symbol>
+  <symbol id="icon-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+  </symbol>
+  <symbol id="icon-bus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M8 6v6"/><path d="M15 6v6"/><path d="M2 12h19.6"/><path d="M18 18h2a2 2 0 0 0 2-2V8A6 6 0 0 0 12 2H8a6 6 0 0 0-6 6v8a2 2 0 0 0 2 2h2"/><circle cx="7" cy="18" r="2"/><circle cx="16" cy="18" r="2"/><path d="M9 18h5"/>
+  </symbol>
+  <symbol id="icon-car" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M5 17H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1l3-4h10l3 4h1a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/><path d="M9 17h6"/>
+  </symbol>
+  <symbol id="icon-sparkles" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 3l1.45 4.45L18 9l-4.55 1.55L12 15l-1.45-4.45L6 9l4.55-1.55z"/><path d="M19 3l.5 1.5L21 5l-1.5.5L19 7l-.5-1.5L17 5l1.5-.5z"/>
+  </symbol>
+  <symbol id="icon-gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/>
+  </symbol>
+  <symbol id="icon-pencil" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+  </symbol>
+  <symbol id="icon-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+  </symbol>
+</svg>
+
 <!-- ── LOGIN ─────────────────────────────────────────────────── -->
 <div id="loginScreen">
   <div class="login-box">
-    <div class="login-icon">⚙️</div>
+    <div class="login-icon"><svg style="width:2rem;height:2rem;color:var(--p,#1b3a8c)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-settings"/></svg></div>
     <div class="login-title">Admin Panel</div>
     <div class="login-sub">IKCADIN TOUR 2026 — Area Terproteksi</div>
     <input type="password" id="loginPw" class="login-input" placeholder="Password admin" autocomplete="current-password">
@@ -141,7 +181,9 @@ tr:hover td{background:rgba(255,255,255,.02)}
 <!-- ── ADMIN APP ─────────────────────────────────────────────── -->
 <div id="adminApp">
   <header class="admin-header">
-    <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+    <button class="sidebar-toggle" onclick="toggleSidebar()" style="display:inline-flex;align-items:center;justify-content:center">
+      <svg style="width:1.1rem;height:1.1rem" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
     <div class="admin-header-brand"><span>IKCADIN TOUR 2026</span> — Admin</div>
     <button class="btn-logout" onclick="doLogout()">Keluar</button>
   </header>
@@ -172,17 +214,22 @@ tr:hover td{background:rgba(255,255,255,.02)}
 // ── CONFIG ──────────────────────────────────────────────────────
 const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxKveP4Y4ADKfty7jjS-JOUSC-PPpO3WnNq-Agit_SOPldB9HkB_MRjxX_3xBvdyPpKvw/exec';
 
+function svgIcon(id, size) {
+  var s = size || '1rem';
+  return '<svg style="width:'+s+';height:'+s+';display:inline-block;vertical-align:middle;flex-shrink:0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-'+id+'"/></svg>';
+}
+
 const SECTIONS = [
-  { key:'pengumuman', label:'📢 Pengumuman',     sheet:'Pengumuman'      },
-  { key:'panitia',    label:'👑 Panitia',         sheet:'Panitia'         },
-  { key:'kontak',     label:'📞 Kontak',          sheet:'Kontak'          },
-  { key:'rules',      label:'📋 Rules',           sheet:'Rules'           },
-  { key:'rundown',    label:'🗓 Rundown',          sheet:'Rundown'         },
-  { key:'bus',        label:'🚌 List Bus',         sheet:'List Bus'        },
-  { key:'mobil',      label:'🚗 Mobil Pribadi',    sheet:'Mobil Pribadi'   },
-  { key:'custom',     label:'✨ Custom Sections',  sheet:'Custom Sections' },
-  { key:'config',     label:'⚙️ Config',           sheet:'Config'          },
-  { key:'hadiah',     label:'🎁 Hadiah',           sheet:'Hadiah'          },
+  { key:'pengumuman', icon:'megaphone', label:'Pengumuman',     sheet:'Pengumuman'      },
+  { key:'panitia',    icon:'crown',     label:'Panitia',         sheet:'Panitia'         },
+  { key:'kontak',     icon:'phone',     label:'Kontak',          sheet:'Kontak'          },
+  { key:'rules',      icon:'clipboard', label:'Rules',           sheet:'Rules'           },
+  { key:'rundown',    icon:'calendar',  label:'Rundown',          sheet:'Rundown'         },
+  { key:'bus',        icon:'bus',       label:'List Bus',         sheet:'List Bus'        },
+  { key:'mobil',      icon:'car',       label:'Mobil Pribadi',    sheet:'Mobil Pribadi'   },
+  { key:'custom',     icon:'sparkles',  label:'Custom Sections',  sheet:'Custom Sections' },
+  { key:'config',     icon:'settings',  label:'Config',           sheet:'Config'          },
+  { key:'hadiah',     icon:'gift',      label:'Hadiah',           sheet:'Hadiah'          },
 ];
 
 // ── STATE ────────────────────────────────────────────────────────
@@ -241,7 +288,7 @@ function buildSidebar() {
   document.getElementById('adminSidebar').innerHTML =
     '<div class="sb-label">Data Sections</div>' +
     SECTIONS.map(s =>
-      `<button class="sb-btn" data-key="${s.key}" onclick="loadSection('${s.key}')">${s.label}</button>`
+      `<button class="sb-btn" data-key="${s.key}" onclick="loadSection('${s.key}')" style="display:flex;align-items:center;gap:8px">${svgIcon(s.icon,'1rem')} ${s.label}</button>`
     ).join('');
 }
 
@@ -293,8 +340,8 @@ function renderTable() {
   h += '</tr></thead><tbody>';
   curRows.forEach(row => {
     h += `<tr><td><div class="tbl-actions">
-      <button class="btn-edit" onclick="openEdit(${row.rowIndex})">✏️ Edit</button>
-      <button class="btn-del"  onclick="delRow(${row.rowIndex})">🗑 Hapus</button>
+      <button class="btn-edit" onclick="openEdit(${row.rowIndex})" style="display:inline-flex;align-items:center;gap:4px">${svgIcon('pencil','.8rem')} Edit</button>
+      <button class="btn-del"  onclick="delRow(${row.rowIndex})" style="display:inline-flex;align-items:center;gap:4px">${svgIcon('trash','.8rem')} Hapus</button>
     </div></td>`;
     row.data.forEach(c => { h += `<td title="${esc(c)}">${esc(c)}</td>`; });
     h += '</tr>';
