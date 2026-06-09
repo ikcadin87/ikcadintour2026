@@ -1295,12 +1295,7 @@ function renderGamesTabbed(raw) {
   if (!raw || raw.format !== "horizontal" || !raw.kelompok) return '<div class="empty">Format data belum disesuaikan.</div>';
   const groups = raw.kelompok;
   if (!groups.length) return '<div class="empty">Belum ada data kelompok games.</div>';
-  let html = `<div class="games-judul">Susunan Tim & Status Akomodasi</div>`;
-  html += `<div class="games-search">
-             <span class="ico">${svgIcon("search")}</span>
-             <input type="text" placeholder="Cari nama atau departemen di sini..." onkeyup="filterGamesTab(this.value)">
-           </div>`;
-  html += `<div class="kel-tabs">`;
+  let html = `<div class="kel-tabs">`;
   groups.forEach((g, i) => {
     html += `<button class="kel-tab ${i===0?'active':''}" onclick="switchKelTab(${i}, this)">${escHtml(g.nama)}</button>`;
   });
