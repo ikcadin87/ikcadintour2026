@@ -122,6 +122,69 @@ tr:hover td{background:rgba(255,255,255,.02)}
   .admin-main{padding:14px}
   .sec-header{flex-direction:column;align-items:flex-start}
 }
+
+/* ── CLAIM PANEL ─────────────────────────────────────────────── */
+.claim-panel { max-width:540px; }
+.claim-panel-title { font-size:1.05rem;font-weight:800;color:var(--a);margin-bottom:18px; }
+.claim-meal-row { display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px; }
+.meal-btn {
+  flex:1;min-width:100px;padding:10px 12px;border-radius:var(--r2);
+  border:1px solid var(--border);background:var(--dark);color:var(--muted);
+  cursor:pointer;font-size:.8rem;font-weight:700;transition:.15s;text-align:center;
+}
+.meal-btn:hover { border-color:var(--a);color:var(--a); }
+.meal-btn.active-snack       { background:rgba(212,175,55,.18);border-color:#D4AF37;color:#D4AF37; }
+.meal-btn.active-makan_siang { background:rgba(34,197,94,.15);border-color:#22c55e;color:#22c55e; }
+.meal-btn.active-makan_malam { background:rgba(168,85,247,.15);border-color:#a855f7;color:#a855f7; }
+.meal-btn.active-none        { background:rgba(239,68,68,.12);border-color:#ef4444;color:#ef4444; }
+.meal-btn-tutup { flex:0 0 auto;min-width:auto; }
+
+.claim-scanner-box {
+  background:var(--card2);border:1px solid var(--border);border-radius:var(--r);
+  padding:20px;margin-bottom:16px;
+}
+.claim-scanner-label { font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px; }
+#claimVideo { width:100%;max-height:260px;border-radius:var(--r2);display:none;background:#000; }
+.claim-scan-btns { display:flex;gap:8px;margin-top:10px;flex-wrap:wrap; }
+.btn-scan-start { padding:9px 18px;background:var(--p);border:none;border-radius:var(--r2);color:#fff;font-size:.83rem;font-weight:600;cursor:pointer;transition:.2s; }
+.btn-scan-start:hover { background:#2547B0; }
+.btn-scan-stop  { padding:9px 18px;background:transparent;border:1px solid var(--border);border-radius:var(--r2);color:var(--muted);font-size:.83rem;cursor:pointer;transition:.2s; }
+.btn-scan-stop:hover { border-color:#ef4444;color:#fca5a5; }
+.claim-scan-status { font-size:.75rem;color:var(--muted);margin-top:8px; }
+
+.claim-manual-row { display:flex;gap:8px;margin-top:12px; }
+.claim-manual-input { flex:1;padding:9px 12px;background:var(--dark);border:1px solid var(--border);border-radius:var(--r2);color:var(--text);font-size:.86rem;outline:none; }
+.claim-manual-input:focus { border-color:var(--a); }
+.btn-manual-check { padding:9px 16px;background:var(--p);border:none;border-radius:var(--r2);color:#fff;font-size:.83rem;font-weight:600;cursor:pointer; }
+
+.claim-result-box {
+  background:var(--card2);border:1px solid var(--border);border-radius:var(--r);
+  padding:20px;display:none;
+}
+.claim-result-box.show { display:block;animation:fadeUp .25s ease both; }
+.cres-name  { font-size:1rem;font-weight:800;color:var(--text);margin-bottom:2px; }
+.cres-dept  { font-size:.78rem;color:var(--muted);margin-bottom:4px; }
+.cres-pax   { font-size:.8rem;color:var(--a);font-weight:700;margin-bottom:14px; }
+.cres-meal  { font-size:.88rem;font-weight:700;margin-bottom:10px;color:var(--text); }
+.cres-status-already {
+  display:flex;align-items:center;gap:8px;padding:10px 14px;
+  background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);
+  border-radius:var(--r2);color:#fca5a5;font-size:.83rem;margin-bottom:12px;
+}
+.cres-status-ok {
+  display:flex;align-items:center;gap:8px;padding:10px 14px;
+  background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);
+  border-radius:var(--r2);color:#22c55e;font-size:.83rem;margin-bottom:12px;
+}
+.btn-claim-confirm {
+  width:100%;padding:12px;background:var(--success);border:none;
+  border-radius:var(--r2);color:#fff;font-size:.9rem;font-weight:700;
+  cursor:pointer;transition:.2s;
+}
+.btn-claim-confirm:hover { background:#0e9f6e; }
+.btn-claim-confirm:disabled { opacity:.45;cursor:not-allowed; }
+.btn-scan-again { width:100%;padding:10px;background:transparent;border:1px solid var(--border);border-radius:var(--r2);color:var(--muted);font-size:.83rem;cursor:pointer;margin-top:8px;transition:.15s; }
+.btn-scan-again:hover { border-color:var(--text);color:var(--text); }
 </style>
 </head>
 <body>
@@ -163,6 +226,18 @@ tr:hover td{background:rgba(255,255,255,.02)}
   </symbol>
   <symbol id="icon-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
     <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+  </symbol>
+  <symbol id="icon-ticket" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2z"/><line x1="9" y1="12" x2="15" y2="12" stroke-dasharray="2"/>
+  </symbol>
+  <symbol id="icon-check-circle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+  </symbol>
+  <symbol id="icon-x-circle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
+  </symbol>
+  <symbol id="icon-camera" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>
   </symbol>
 </svg>
 
@@ -230,6 +305,8 @@ const SECTIONS = [
   { key:'custom',     icon:'sparkles',  label:'Custom Sections',  sheet:'Custom Sections' },
   { key:'config',     icon:'settings',  label:'Config',           sheet:'Config'          },
   { key:'hadiah',     icon:'gift',      label:'Hadiah',           sheet:'Hadiah'          },
+  { key:'claim_data', icon:'clipboard', label:'Data Claim',        sheet:'Claim'           },
+  { key:'claim_scan', icon:'ticket',    label:'Verifikasi Claim',  sheet:null              },
 ];
 
 // ── STATE ────────────────────────────────────────────────────────
@@ -285,9 +362,15 @@ window.addEventListener('DOMContentLoaded', function() {
 
 // ── SIDEBAR ──────────────────────────────────────────────────────
 function buildSidebar() {
+  const dataSecs  = SECTIONS.filter(s => s.key !== 'claim_scan' && s.key !== 'claim_data');
+  const claimSecs = SECTIONS.filter(s => s.key === 'claim_data' || s.key === 'claim_scan');
   document.getElementById('adminSidebar').innerHTML =
     '<div class="sb-label">Data Sections</div>' +
-    SECTIONS.map(s =>
+    dataSecs.map(s =>
+      `<button class="sb-btn" data-key="${s.key}" onclick="loadSection('${s.key}')" style="display:flex;align-items:center;gap:8px">${svgIcon(s.icon,'1rem')} ${s.label}</button>`
+    ).join('') +
+    '<div class="sb-label" style="margin-top:12px">Claim Konsumsi</div>' +
+    claimSecs.map(s =>
       `<button class="sb-btn" data-key="${s.key}" onclick="loadSection('${s.key}')" style="display:flex;align-items:center;gap:8px">${svgIcon(s.icon,'1rem')} ${s.label}</button>`
     ).join('');
 }
@@ -298,8 +381,18 @@ function toggleSidebar() {
 
 // ── LOAD SECTION ─────────────────────────────────────────────────
 function loadSection(key) {
+  stopClaimScan();
   document.querySelectorAll('.sb-btn').forEach(b => b.classList.toggle('active', b.dataset.key === key));
   if (window.innerWidth <= 768) document.getElementById('adminSidebar').classList.remove('open');
+
+  // ── CLAIM VERIFIKASI (custom panel) ──────────────────────────
+  if (key === 'claim_scan') {
+    curSection = SECTIONS.find(s => s.key === key);
+    document.getElementById('adminMain').innerHTML = renderClaimPanel();
+    loadActiveMeal();
+    return;
+  }
+
   curSection = SECTIONS.find(s => s.key === key);
   if (!curSection) return;
   document.getElementById('adminMain').innerHTML = `
@@ -449,6 +542,268 @@ function toast(msg, type) {
 document.getElementById('modalBg').addEventListener('click', function(e) {
   if (e.target === this) closeModal();
 });
+
+// ══════════════════════════════════════════════════════════════════
+// CLAIM VERIFICATION PANEL
+// ══════════════════════════════════════════════════════════════════
+
+var claimActiveMeal   = 'none';
+var claimScanStream   = null;
+var claimScanAF       = null;
+var claimScanCanvas   = document.createElement('canvas');
+var claimScanCtx      = claimScanCanvas.getContext('2d');
+var claimLastScanned  = null;
+
+const MEAL_LABELS_ADMIN = {
+  snack:       'Snack',
+  makan_siang: 'Makan Siang',
+  makan_malam: 'Makan Malam',
+  none:        'Tutup'
+};
+
+function renderClaimPanel() {
+  return `
+<div class="claim-panel">
+  <div class="claim-panel-title">${svgIcon('ticket','1.1rem')} Verifikasi Claim Konsumsi</div>
+
+  <div class="claim-scanner-label">Sesi Aktif</div>
+  <div class="claim-meal-row" id="claimMealRow">
+    <button class="meal-btn" data-meal="snack"       onclick="setActiveMeal('snack')">Snack</button>
+    <button class="meal-btn" data-meal="makan_siang" onclick="setActiveMeal('makan_siang')">Makan Siang</button>
+    <button class="meal-btn" data-meal="makan_malam" onclick="setActiveMeal('makan_malam')">Makan Malam</button>
+    <button class="meal-btn meal-btn-tutup" data-meal="none" onclick="setActiveMeal('none')">Tutup</button>
+  </div>
+
+  <div class="claim-scanner-box">
+    <div class="claim-scanner-label">${svgIcon('camera','0.9rem')} Scan QR Peserta</div>
+    <video id="claimVideo" autoplay playsinline muted></video>
+    <div class="claim-scan-status" id="claimScanStatus">Kamera belum aktif.</div>
+    <div class="claim-scan-btns">
+      <button class="btn-scan-start" onclick="startClaimScan()">${svgIcon('camera','0.9rem')} Mulai Kamera</button>
+      <button class="btn-scan-stop"  onclick="stopClaimScan()">Stop</button>
+    </div>
+    <div style="margin-top:12px;font-size:.7rem;color:var(--muted)">— atau input manual —</div>
+    <div class="claim-manual-row">
+      <input class="claim-manual-input" id="claimManualInput"
+        placeholder="Ketik: IKCADIN2026|Nama|Inisial"
+        onkeydown="if(event.key==='Enter')manualClaimCheck()">
+      <button class="btn-manual-check" onclick="manualClaimCheck()">Cek</button>
+    </div>
+  </div>
+
+  <div class="claim-result-box" id="claimResultBox">
+    <div class="cres-name"  id="cresName"></div>
+    <div class="cres-dept"  id="cresDept"></div>
+    <div class="cres-pax"   id="cresPax"></div>
+    <div class="cres-meal"  id="cresMeal"></div>
+    <div id="cresStatus"></div>
+    <button class="btn-claim-confirm" id="btnClaimConfirm" onclick="confirmClaimAdmin()">
+      ${svgIcon('check-circle','1rem')} Konfirmasi Claim
+    </button>
+    <button class="btn-scan-again" onclick="resetClaimResult()">Scan ulang</button>
+  </div>
+</div>`;
+}
+
+function loadActiveMeal() {
+  postGAS({ action:'claim_get_active' })
+    .then(function(r) { if (r.ok) highlightMealBtn(r.active_meal || 'none'); })
+    .catch(function() {});
+}
+
+function highlightMealBtn(meal) {
+  claimActiveMeal = meal;
+  document.querySelectorAll('.meal-btn').forEach(function(b) {
+    b.className = 'meal-btn' + (b.dataset.meal === 'none' ? ' meal-btn-tutup' : '');
+    if (b.dataset.meal === meal) b.classList.add('active-' + meal);
+  });
+}
+
+function setActiveMeal(meal) {
+  postGAS({ action:'claim_set_active', token, meal_type: meal })
+    .then(function(r) {
+      if (r.ok) { highlightMealBtn(meal); toast('Sesi aktif: ' + (MEAL_LABELS_ADMIN[meal]||meal), 'ok'); }
+      else toast('Gagal: ' + (r.error||'?'), 'err');
+    })
+    .catch(function() { toast('Koneksi gagal', 'err'); });
+}
+
+function startClaimScan() {
+  var video = document.getElementById('claimVideo');
+  var status = document.getElementById('claimScanStatus');
+  if (!video) return;
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    if (status) status.textContent = 'Kamera tidak didukung di browser ini.';
+    return;
+  }
+  navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+    .then(function(stream) {
+      claimScanStream = stream;
+      video.srcObject = stream;
+      video.style.display = 'block';
+      if (status) status.textContent = 'Arahkan kamera ke QR Code peserta…';
+      video.play();
+      claimScanAF = requestAnimationFrame(scanClaimFrame);
+    })
+    .catch(function(err) {
+      if (status) status.textContent = 'Gagal akses kamera: ' + err.message;
+    });
+}
+
+function stopClaimScan() {
+  if (claimScanAF) { cancelAnimationFrame(claimScanAF); claimScanAF = null; }
+  if (claimScanStream) {
+    claimScanStream.getTracks().forEach(function(t) { t.stop(); });
+    claimScanStream = null;
+  }
+  var video = document.getElementById('claimVideo');
+  if (video) { video.style.display = 'none'; video.srcObject = null; }
+  var status = document.getElementById('claimScanStatus');
+  if (status) status.textContent = 'Kamera berhenti.';
+}
+
+function scanClaimFrame() {
+  var video = document.getElementById('claimVideo');
+  if (!video || video.readyState !== video.HAVE_ENOUGH_DATA || !window.jsQR) {
+    if (claimScanStream) claimScanAF = requestAnimationFrame(scanClaimFrame);
+    return;
+  }
+  claimScanCanvas.width  = video.videoWidth;
+  claimScanCanvas.height = video.videoHeight;
+  claimScanCtx.drawImage(video, 0, 0, claimScanCanvas.width, claimScanCanvas.height);
+  var imgData = claimScanCtx.getImageData(0, 0, claimScanCanvas.width, claimScanCanvas.height);
+  var code = jsQR(imgData.data, imgData.width, imgData.height, { inversionAttempts:'dontInvert' });
+  if (code && code.data) {
+    var raw = code.data.trim();
+    if (raw !== claimLastScanned) {
+      claimLastScanned = raw;
+      stopClaimScan();
+      processScannedQR(raw);
+    }
+  } else {
+    claimScanAF = requestAnimationFrame(scanClaimFrame);
+  }
+}
+
+function manualClaimCheck() {
+  var val = (document.getElementById('claimManualInput')?.value || '').trim();
+  if (!val) return;
+  processScannedQR(val);
+}
+
+function processScannedQR(raw) {
+  // Format: IKCADIN2026|Nama Lengkap|INI
+  var parts = raw.split('|');
+  var status = document.getElementById('claimScanStatus');
+  if (parts.length < 3 || parts[0] !== 'IKCADIN2026') {
+    if (status) status.textContent = '⚠ QR tidak valid: ' + raw;
+    return;
+  }
+  var nama    = parts[1].trim();
+  var inisial = parts[2].trim();
+  if (status) status.textContent = 'Memverifikasi ' + nama + '…';
+
+  if (!claimActiveMeal || claimActiveMeal === 'none') {
+    showClaimResult({ ok:false, error:'Tidak ada sesi aktif. Set sesi terlebih dahulu.' });
+    return;
+  }
+
+  postGAS({ action:'claim_scan', token, nama, inisial, meal_type: claimActiveMeal })
+    .then(function(r) { showClaimResult(r, nama, inisial); })
+    .catch(function() { showClaimResult({ ok:false, error:'Koneksi gagal' }); });
+}
+
+function showClaimResult(r, nama, inisial) {
+  var box = document.getElementById('claimResultBox');
+  if (!box) return;
+  box.className = 'claim-result-box show';
+
+  var status = document.getElementById('claimScanStatus');
+  if (status) status.textContent = r.ok ? 'QR terbaca.' : 'QR error.';
+
+  if (!r.ok) {
+    box.innerHTML = '<div class="cres-status-already">' + svgIcon('x-circle','1rem') + ' ' + (r.error||'Gagal') + '</div>' +
+      '<button class="btn-scan-again" onclick="resetClaimResult()">Scan ulang</button>';
+    return;
+  }
+
+  document.getElementById('cresName').textContent  = r.nama;
+  document.getElementById('cresDept').textContent  = r.dept || '';
+  document.getElementById('cresPax').innerHTML     = svgIcon('sparkles','13px') + ' ' + r.pax + ' Pax';
+  document.getElementById('cresMeal').textContent  = 'Sesi: ' + (MEAL_LABELS_ADMIN[claimActiveMeal] || claimActiveMeal);
+
+  var statusDiv   = document.getElementById('cresStatus');
+  var confirmBtn  = document.getElementById('btnClaimConfirm');
+  confirmBtn.dataset.nama    = nama || r.nama;
+  confirmBtn.dataset.inisial = inisial || '';
+
+  if (r.already_claimed) {
+    statusDiv.innerHTML = '<div class="cres-status-already">' + svgIcon('x-circle','1rem') +
+      ' Sudah claim pada: <strong>' + r.claim_timestamp + '</strong></div>';
+    confirmBtn.style.display = 'none';
+  } else {
+    statusDiv.innerHTML = '<div class="cres-status-ok">' + svgIcon('check-circle','1rem') +
+      ' Belum claim. Siap dikonfirmasi.</div>';
+    confirmBtn.style.display = 'block';
+    confirmBtn.disabled = false;
+    confirmBtn.textContent = '';
+    confirmBtn.innerHTML = svgIcon('check-circle','1rem') + ' Konfirmasi Claim ' + (MEAL_LABELS_ADMIN[claimActiveMeal]||'');
+  }
+}
+
+function confirmClaimAdmin() {
+  var btn  = document.getElementById('btnClaimConfirm');
+  var nama = btn.dataset.nama;
+  var ini  = btn.dataset.inisial;
+  if (!nama || !claimActiveMeal || claimActiveMeal === 'none') return;
+  btn.disabled = true;
+  btn.textContent = 'Menyimpan…';
+
+  postGAS({ action:'claim_confirm', token, nama, inisial: ini, meal_type: claimActiveMeal })
+    .then(function(r) {
+      if (r.ok) {
+        toast('✓ Claim berhasil — ' + r.nama + ' · ' + (MEAL_LABELS_ADMIN[claimActiveMeal]||''), 'ok');
+        var statusDiv = document.getElementById('cresStatus');
+        if (statusDiv) {
+          statusDiv.innerHTML = '<div class="cres-status-ok">' + svgIcon('check-circle','1rem') +
+            ' Claim dikonfirmasi: <strong>' + r.timestamp + '</strong></div>';
+        }
+        btn.style.display = 'none';
+      } else if (r.already) {
+        toast('Sudah pernah claim: ' + r.timestamp, 'err');
+        btn.disabled = false;
+        btn.innerHTML = svgIcon('check-circle','1rem') + ' Konfirmasi Claim';
+      } else {
+        toast('Error: ' + (r.error||'?'), 'err');
+        btn.disabled = false;
+        btn.innerHTML = svgIcon('check-circle','1rem') + ' Konfirmasi Claim';
+      }
+    })
+    .catch(function() { toast('Koneksi gagal', 'err'); btn.disabled = false; });
+}
+
+function resetClaimResult() {
+  claimLastScanned = null;
+  var box = document.getElementById('claimResultBox');
+  if (box) {
+    box.className = 'claim-result-box';
+    box.innerHTML = `
+      <div class="cres-name"  id="cresName"></div>
+      <div class="cres-dept"  id="cresDept"></div>
+      <div class="cres-pax"   id="cresPax"></div>
+      <div class="cres-meal"  id="cresMeal"></div>
+      <div id="cresStatus"></div>
+      <button class="btn-claim-confirm" id="btnClaimConfirm" onclick="confirmClaimAdmin()">
+        ${svgIcon('check-circle','1rem')} Konfirmasi Claim
+      </button>
+      <button class="btn-scan-again" onclick="resetClaimResult()">Scan ulang</button>`;
+  }
+  var status = document.getElementById('claimScanStatus');
+  if (status) status.textContent = 'Siap scan berikutnya.';
+  var manualInput = document.getElementById('claimManualInput');
+  if (manualInput) manualInput.value = '';
+}
 </script>
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
 </body>
 </html>

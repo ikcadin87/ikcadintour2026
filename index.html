@@ -1332,6 +1332,120 @@ html[data-theme="light"] .footer-credit { color:rgba(15,30,61,.5); }
 html[data-theme="light"] .footer-credit a { color:#9A6E00; }
 html[data-theme="light"] .footer-credit a:hover { color:#7A5600; }
 
+/* ── CLAIM SECTION ─────────────────────────────────────────── */
+.claim-wrap { max-width:480px; margin:0 auto; padding:8px 0; }
+.claim-active-badge {
+  display:inline-flex;align-items:center;gap:6px;
+  padding:6px 14px;border-radius:20px;font-size:.78rem;font-weight:700;
+  margin-bottom:20px;letter-spacing:.02em;
+}
+.claim-active-badge.active-snack        { background:rgba(212,175,55,.15);color:#D4AF37;border:1px solid rgba(212,175,55,.3); }
+.claim-active-badge.active-makan_siang  { background:rgba(34,197,94,.12);color:#22c55e;border:1px solid rgba(34,197,94,.3); }
+.claim-active-badge.active-makan_malam  { background:rgba(168,85,247,.12);color:#a855f7;border:1px solid rgba(168,85,247,.3); }
+.claim-active-badge.active-none         { background:rgba(239,68,68,.1);color:#ef4444;border:1px solid rgba(239,68,68,.25); }
+.claim-search-wrap { position:relative;margin-bottom:8px; }
+.claim-search {
+  width:100%;padding:12px 16px;border-radius:var(--r2);
+  background:var(--card2);border:1px solid var(--border);
+  color:var(--text);font-size:.95rem;outline:none;transition:.2s;
+}
+.claim-search:focus { border-color:var(--a);box-shadow:0 0 0 3px rgba(212,175,55,.12); }
+.claim-dropdown {
+  position:absolute;top:calc(100% + 4px);left:0;right:0;
+  background:var(--card);border:1px solid var(--border);border-radius:var(--r2);
+  max-height:220px;overflow-y:auto;z-index:200;display:none;
+  box-shadow:0 8px 32px rgba(0,0,0,.35);
+}
+.claim-dropdown.open { display:block; }
+.claim-drop-item {
+  padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--border);
+  transition:.12s;
+}
+.claim-drop-item:last-child { border-bottom:none; }
+.claim-drop-item:hover { background:rgba(27,58,140,.15); }
+.claim-drop-nama { font-weight:600;font-size:.88rem;color:var(--text); }
+.claim-drop-dept { font-size:.72rem;color:var(--muted);margin-top:2px; }
+
+/* Modal */
+.claim-modal-overlay {
+  position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:1000;
+  display:flex;align-items:center;justify-content:center;padding:20px;
+  backdrop-filter:blur(4px);
+}
+.claim-modal {
+  background:var(--card);border:1px solid var(--border);border-radius:var(--r);
+  padding:28px 24px;width:100%;max-width:360px;text-align:center;
+  box-shadow:0 20px 60px rgba(0,0,0,.5);
+  animation:fadeUp .25s ease both;
+}
+.claim-modal-title { font-size:1.05rem;font-weight:800;color:var(--text);margin-bottom:4px; }
+.claim-modal-name  { font-size:.82rem;color:var(--a);margin-bottom:16px; }
+.claim-initial-input {
+  width:120px;padding:12px;text-align:center;font-size:1.4rem;font-weight:800;
+  letter-spacing:.25em;background:var(--card2);border:2px solid var(--border);
+  border-radius:var(--r2);color:var(--text);outline:none;transition:.2s;
+  margin-bottom:8px;
+}
+.claim-initial-input:focus { border-color:var(--a);box-shadow:0 0 0 3px rgba(212,175,55,.15); }
+.claim-modal-hint  { font-size:.7rem;color:var(--muted);margin-bottom:14px; }
+.claim-modal-error { font-size:.78rem;color:#fca5a5;min-height:18px;margin-bottom:10px; }
+.claim-modal-btns  { display:flex;gap:10px;justify-content:center; }
+.claim-btn-cancel  { padding:10px 20px;border-radius:var(--r2);border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-size:.88rem;transition:.15s; }
+.claim-btn-cancel:hover { border-color:var(--text);color:var(--text); }
+.claim-btn-ok      { padding:10px 24px;border-radius:var(--r2);border:none;background:var(--p);color:#fff;cursor:pointer;font-size:.88rem;font-weight:700;transition:.15s; }
+.claim-btn-ok:hover { background:#2547B0; }
+.claim-btn-ok:disabled { opacity:.5;cursor:not-allowed; }
+
+/* Result card */
+.claim-result { animation:fadeUp .3s ease both; }
+.claim-qr-wrap {
+  background:#fff;border-radius:var(--r);padding:18px;
+  display:flex;justify-content:center;align-items:center;
+  margin-bottom:16px;box-shadow:0 4px 20px rgba(0,0,0,.25);
+}
+.claim-info-card {
+  background:var(--card2);border:1px solid var(--border);border-radius:var(--r);
+  padding:16px;margin-bottom:14px;
+}
+.claim-info-name  { font-size:1.05rem;font-weight:800;color:var(--text);margin-bottom:2px; }
+.claim-info-dept  { font-size:.78rem;color:var(--muted);margin-bottom:10px; }
+.claim-info-pax   { font-size:.8rem;color:var(--a);font-weight:700;margin-bottom:14px; }
+.claim-status-grid { display:flex;flex-direction:column;gap:8px; }
+.claim-status-row  {
+  display:flex;align-items:center;justify-content:space-between;
+  padding:9px 12px;border-radius:var(--r2);background:var(--card);
+  border:1px solid var(--border);
+}
+.claim-status-label { font-size:.82rem;font-weight:600;color:var(--text); }
+.claim-status-badge {
+  font-size:.7rem;font-weight:700;padding:3px 10px;border-radius:10px;
+  display:flex;align-items:center;gap:4px;
+}
+.claim-status-badge.claimed   { background:rgba(34,197,94,.15);color:#22c55e; }
+.claim-status-badge.unclaimed { background:rgba(100,116,139,.12);color:var(--muted); }
+.claim-status-ts { font-size:.65rem;color:var(--muted);margin-top:3px; }
+.claim-reset-btn {
+  width:100%;padding:11px;border-radius:var(--r2);border:1px solid var(--border);
+  background:transparent;color:var(--muted);cursor:pointer;font-size:.85rem;
+  transition:.15s;margin-top:4px;
+}
+.claim-reset-btn:hover { border-color:var(--text);color:var(--text); }
+
+/* Light mode */
+html[data-theme="light"] .claim-search { background:#fff;border-color:#D0D6E8;color:#0F1E3D; }
+html[data-theme="light"] .claim-search:focus { border-color:var(--a); }
+html[data-theme="light"] .claim-dropdown { background:#fff;border-color:#D0D6E8; }
+html[data-theme="light"] .claim-drop-item:hover { background:#EEF1F9; }
+html[data-theme="light"] .claim-drop-nama { color:#0F1E3D; }
+html[data-theme="light"] .claim-drop-dept { color:#374869; }
+html[data-theme="light"] .claim-modal { background:#fff;border-color:#D0D6E8; }
+html[data-theme="light"] .claim-modal-title { color:#0F1E3D; }
+html[data-theme="light"] .claim-initial-input { background:#F7F8FB;border-color:#D0D6E8;color:#0F1E3D; }
+html[data-theme="light"] .claim-info-card { background:#fff;border-color:#D0D6E8; }
+html[data-theme="light"] .claim-info-name { color:#0F1E3D; }
+html[data-theme="light"] .claim-status-row { background:#F7F8FB;border-color:#D0D6E8; }
+html[data-theme="light"] .claim-status-label { color:#0F1E3D; }
+
 /* ── Theme toggle button ── */
 .theme-toggle {
   width:34px;height:34px;border-radius:8px;
@@ -1445,6 +1559,16 @@ html[data-theme="light"] .theme-toggle:hover { background:#E8EBF3;border-color:v
   </symbol>
   <symbol id="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
     <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+  </symbol>
+  <symbol id="icon-ticket" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2z"/>
+    <line x1="9" y1="12" x2="15" y2="12" stroke-dasharray="2"/>
+  </symbol>
+  <symbol id="icon-check-circle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+  </symbol>
+  <symbol id="icon-x-circle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
   </symbol>
 </svg>
 
@@ -1561,6 +1685,7 @@ const SECTION_META = {
   mobil:   { label:"Mobil Pribadi",icon:"car",       emoji: svgIcon("car"),       render: renderTable },
   denah:   { label:"Peta Kamar",   icon:"map",       emoji: svgIcon("map"),       render: renderDenah },
   panitia: { label:"Panitia",      icon:"crown",     emoji: svgIcon("crown"),     render: renderPanitia },
+  claim:   { label:"Claim",        icon:"ticket",    emoji: svgIcon("ticket"),    render: renderClaim   },
 };
 
 function renderGamesTabbed(raw) {
@@ -1760,7 +1885,7 @@ window.addEventListener("DOMContentLoaded", function() {
     allData = json;
     var cfg = (json.config && json.config.data) ? json.config.data : {};
     applyConfig(cfg);
-    buildNav(cfg.sections_aktif || "rules,rundown,kamar,games,bus,kontak,custom");
+    buildNav(cfg.sections_aktif || "rules,rundown,kamar,games,bus,kontak,custom,claim");
     renderAll("beranda");
     return true;
   }
@@ -1873,6 +1998,7 @@ const TAB_GROUPS = {
   akomodasi: { label: "Akomodasi & Transportasi",  keys: ["denah", "kamar", "bus", "mobil"] }
 };
 const GROUPED_KEYS = ["rundown","games","kamar","bus","mobil","denah"];
+// 'claim' is standalone — excluded from groups, handled specially in switchTab
 
 function buildNav(aktif) {
   const keys = aktif.split(",").map(s=>s.trim()).filter(Boolean);
@@ -1934,7 +2060,7 @@ function renderAll(key) {
     return;
   }
 
-  const aktif = (allData.config?.data?.sections_aktif || "rules,rundown,kamar,games,bus,kontak,custom")
+  const aktif = (allData.config?.data?.sections_aktif || "rules,rundown,kamar,games,bus,kontak,custom,claim")
     .split(",").map(s=>s.trim()).filter(Boolean);
 
   if (TAB_GROUPS[key]) {
@@ -1961,6 +2087,13 @@ function renderAll(key) {
     content.innerHTML = subHtml;
     const h = content.querySelector(".card-header");
     if (h && !h.classList.contains("open")) toggleCard(h);
+    return;
+  }
+
+  // ── CLAIM (special standalone, no card wrapper) ──
+  if (key === 'claim') {
+    content.innerHTML = '<div style="animation:fadeUp .4s ease both">' + renderClaim() + '</div>';
+    setTimeout(initClaimSection, 0);
     return;
   }
 
@@ -2679,6 +2812,247 @@ function initCountdown(dateStr) {
   setInterval(update, 1000);
 }
 
+// ══════════════════════════════════════════════════════════════════
+// CLAIM SYSTEM
+// ══════════════════════════════════════════════════════════════════
+
+var claimList       = [];       // [{nama, dept}]
+var claimSelected   = null;     // {nama, dept}
+var claimVerified   = null;     // verified person from GAS
+var claimListLoaded = false;
+
+const MEAL_LABELS = {
+  snack:       'Snack',
+  makan_siang: 'Makan Siang',
+  makan_malam: 'Makan Malam',
+  none:        'Tidak Ada Sesi Aktif'
+};
+
+function renderClaim() {
+  return `
+<div class="claim-wrap">
+  <div id="claimStep1">
+    <div id="claimActiveBadge" class="claim-active-badge active-none">
+      ${svgIcon('ticket','14px')} Memuat status sesi…
+    </div>
+    <div style="font-size:.8rem;color:var(--muted);margin-bottom:14px">
+      Masukkan nama kamu untuk mendapatkan QR Claim konsumsi.
+    </div>
+    <div class="claim-search-wrap">
+      <input type="text" id="claimSearchInput" class="claim-search"
+        placeholder="Ketik nama kamu…"
+        oninput="filterClaimSearch(this.value)"
+        autocomplete="off" spellcheck="false">
+      <div class="claim-dropdown" id="claimDropdown"></div>
+    </div>
+  </div>
+
+  <!-- Modal inisial -->
+  <div class="claim-modal-overlay" id="claimModal" style="display:none" onclick="if(event.target===this)closeClaimModal()">
+    <div class="claim-modal">
+      <div class="claim-modal-title">Verifikasi Identitas</div>
+      <div class="claim-modal-name" id="claimModalName"></div>
+      <input type="text" id="claimInitialInput" class="claim-initial-input"
+        maxlength="3" placeholder="INI"
+        oninput="this.value=this.value.toUpperCase().replace(/[^A-Z]/g,'')"
+        onkeydown="if(event.key==='Enter')submitClaimVerify()">
+      <div class="claim-modal-hint">Masukkan 3 huruf inisial nama kamu</div>
+      <div class="claim-modal-error" id="claimModalError"></div>
+      <div class="claim-modal-btns">
+        <button class="claim-btn-cancel" onclick="closeClaimModal()">Batal</button>
+        <button class="claim-btn-ok" id="claimVerifyBtn" onclick="submitClaimVerify()">Verifikasi</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Result -->
+  <div class="claim-result" id="claimResult" style="display:none">
+    <div class="claim-qr-wrap" id="claimQrWrap"></div>
+    <div class="claim-info-card" id="claimInfoCard"></div>
+    <button class="claim-reset-btn" onclick="resetClaim()">↩ Cari nama lain</button>
+  </div>
+</div>`;
+}
+
+function initClaimSection() {
+  if (!claimListLoaded) loadClaimList();
+  else refreshClaimBadge();
+}
+
+function loadClaimList() {
+  fetch(WEB_APP_URL + '?type=claimList', { redirect:'follow' })
+    .then(r => r.json())
+    .then(d => {
+      claimList = d.data || [];
+      claimListLoaded = true;
+      updateClaimBadge(d.active_meal || 'none');
+    })
+    .catch(() => updateClaimBadge('none'));
+}
+
+function refreshClaimBadge() {
+  fetch(WEB_APP_URL + '?type=claimList', { redirect:'follow' })
+    .then(r => r.json())
+    .then(d => updateClaimBadge(d.active_meal || 'none'))
+    .catch(() => {});
+}
+
+function updateClaimBadge(meal) {
+  var badge = document.getElementById('claimActiveBadge');
+  if (!badge) return;
+  var cls = 'active-' + meal;
+  badge.className = 'claim-active-badge ' + cls;
+  var icon = meal === 'none' ? 'x-circle' : 'check-circle';
+  badge.innerHTML = svgIcon(icon,'14px') + ' ' +
+    (meal === 'none' ? 'Tidak ada sesi claim aktif saat ini' :
+     'Sesi aktif: <strong style="margin-left:4px">' + (MEAL_LABELS[meal]||meal) + '</strong>');
+}
+
+function filterClaimSearch(val) {
+  var dd = document.getElementById('claimDropdown');
+  if (!dd) return;
+  var q = val.trim().toLowerCase();
+  if (!q) { dd.classList.remove('open'); dd.innerHTML = ''; return; }
+  var matches = claimList.filter(function(p) {
+    return p.nama.toLowerCase().includes(q) || (p.dept||'').toLowerCase().includes(q);
+  }).slice(0, 20);
+  if (!matches.length) { dd.classList.remove('open'); dd.innerHTML = ''; return; }
+  dd.innerHTML = matches.map(function(p) {
+    return '<div class="claim-drop-item" onclick="selectClaimPerson(\'' +
+      escHtml(p.nama).replace(/'/g,"\\x27") + '\',\'' +
+      escHtml(p.dept||'').replace(/'/g,"\\x27") + '\')">' +
+      '<div class="claim-drop-nama">' + escHtml(p.nama) + '</div>' +
+      '<div class="claim-drop-dept">' + escHtml(p.dept||'') + '</div>' +
+      '</div>';
+  }).join('');
+  dd.classList.add('open');
+}
+
+function selectClaimPerson(nama, dept) {
+  claimSelected = { nama: nama, dept: dept };
+  var dd = document.getElementById('claimDropdown');
+  if (dd) { dd.classList.remove('open'); dd.innerHTML = ''; }
+  var inp = document.getElementById('claimSearchInput');
+  if (inp) inp.value = nama;
+  // Open modal
+  var modal = document.getElementById('claimModal');
+  var modalName = document.getElementById('claimModalName');
+  var initInp = document.getElementById('claimInitialInput');
+  var errEl = document.getElementById('claimModalError');
+  if (modalName) modalName.textContent = nama + (dept ? ' · ' + dept : '');
+  if (initInp) { initInp.value = ''; initInp.focus(); }
+  if (errEl) errEl.textContent = '';
+  if (modal) modal.style.display = 'flex';
+}
+
+function closeClaimModal() {
+  var modal = document.getElementById('claimModal');
+  if (modal) modal.style.display = 'none';
+  claimSelected = null;
+}
+
+function submitClaimVerify() {
+  if (!claimSelected) return;
+  var ini = (document.getElementById('claimInitialInput')?.value || '').trim().toUpperCase();
+  var err = document.getElementById('claimModalError');
+  var btn = document.getElementById('claimVerifyBtn');
+  if (!ini || ini.length < 2) { if(err) err.textContent = 'Masukkan minimal 2 huruf inisial.'; return; }
+  if (err) err.textContent = '';
+  if (btn) { btn.disabled = true; btn.textContent = 'Memeriksa…'; }
+
+  postClaim({ action:'claim_verify', nama: claimSelected.nama, inisial: ini })
+    .then(function(r) {
+      if (r.ok) {
+        claimVerified = r;
+        closeClaimModal();
+        showClaimResult(r);
+      } else {
+        if (err) err.textContent = r.error || 'Inisial tidak cocok. Coba lagi.';
+      }
+    })
+    .catch(function() { if(err) err.textContent = 'Gagal koneksi. Coba lagi.'; })
+    .finally(function() { if(btn) { btn.disabled=false; btn.textContent='Verifikasi'; } });
+}
+
+function showClaimResult(r) {
+  var step1  = document.getElementById('claimStep1');
+  var result = document.getElementById('claimResult');
+  var qrWrap = document.getElementById('claimQrWrap');
+  var infoCard = document.getElementById('claimInfoCard');
+  if (step1) step1.style.display = 'none';
+  if (result) result.style.display = 'block';
+
+  // Generate QR code
+  if (qrWrap) {
+    qrWrap.innerHTML = '';
+    var qrDiv = document.createElement('div');
+    qrWrap.appendChild(qrDiv);
+    if (window.QRCode) {
+      new QRCode(qrDiv, {
+        text: 'IKCADIN2026|' + r.nama + '|' + (r.inisial || document.getElementById('claimInitialInput')?.value || ''),
+        width: 200, height: 200,
+        colorDark: '#000000', colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.M
+      });
+    } else {
+      qrDiv.innerHTML = '<div style="font-size:.75rem;color:#999;padding:10px">QR tidak tersedia</div>';
+    }
+  }
+
+  // Info card
+  if (infoCard) {
+    var meals = [
+      { key:'snack',       label:'Snack',       val: r.snack_claim },
+      { key:'makan_siang', label:'Makan Siang',  val: r.makan_siang_claim },
+      { key:'makan_malam', label:'Makan Malam',  val: r.makan_malam_claim },
+    ];
+    var rows = meals.map(function(m) {
+      var claimed = !!m.val;
+      return '<div class="claim-status-row">' +
+        '<div><div class="claim-status-label">' + m.label + '</div>' +
+        (claimed ? '<div class="claim-status-ts">' + escHtml(m.val) + '</div>' : '') +
+        '</div>' +
+        '<span class="claim-status-badge ' + (claimed ? 'claimed' : 'unclaimed') + '">' +
+        svgIcon(claimed ? 'check-circle' : 'x-circle', '12px') +
+        (claimed ? ' Sudah' : ' Belum') + '</span>' +
+        '</div>';
+    }).join('');
+
+    infoCard.innerHTML =
+      '<div class="claim-info-name">' + escHtml(r.nama) + '</div>' +
+      '<div class="claim-info-dept">' + escHtml(r.dept||'') + '</div>' +
+      '<div class="claim-info-pax">' + svgIcon('sparkles','13px') + ' ' + r.pax + ' Pax</div>' +
+      '<div class="claim-status-grid">' + rows + '</div>';
+  }
+}
+
+function resetClaim() {
+  claimSelected = null;
+  claimVerified = null;
+  var step1  = document.getElementById('claimStep1');
+  var result = document.getElementById('claimResult');
+  var inp    = document.getElementById('claimSearchInput');
+  if (step1) step1.style.display = 'block';
+  if (result) result.style.display = 'none';
+  if (inp) { inp.value = ''; inp.focus(); }
+  refreshClaimBadge();
+}
+
+function postClaim(payload) {
+  return fetch(WEB_APP_URL, {
+    method: 'POST', redirect:'follow',
+    headers: { 'Content-Type':'application/json' },
+    body: JSON.stringify(payload)
+  }).then(function(r) { return r.json(); });
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(e) {
+  var dd = document.getElementById('claimDropdown');
+  var wrap = document.querySelector('.claim-search-wrap');
+  if (dd && wrap && !wrap.contains(e.target)) { dd.classList.remove('open'); }
+});
+
 // ── INITIALS AVATAR (pengganti DiceBear, tanpa request external) ─
 function getInitialsAvatar(nama) {
   const colors = ['#1B3A8C','#2E4EAD','#0D6E6E','#7C5CFC','#9B3A3A','#2E7D32','#C47700'];
@@ -2693,7 +3067,6 @@ function getInitialsAvatar(nama) {
 }
 
 </script>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </body>
-
 </html>
