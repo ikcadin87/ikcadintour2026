@@ -754,14 +754,19 @@ function renderClaimPanel() {
 
     <input type="file" id="claimPhotoInput" accept="image/*" capture="environment"
       style="display:none" onchange="scanPhotoQR(this)">
-    <div class="claim-scan-btns">
-      <button class="btn-scan-start" onclick="document.getElementById('claimPhotoInput').click()">${svgIcon('camera','0.9rem')} Foto QR</button>
-      <button class="btn-scan-start" style="background:var(--card3,#142550)" onclick="startClaimScan()">Kamera Live</button>
-      <button class="btn-scan-stop"  onclick="stopClaimScan()">Stop</button>
-    </div>
-    <div style="margin-top:8px;font-size:.68rem;color:var(--muted);line-height:1.4">
-      Di Google Apps Script, "Kamera Live" sering diblokir. Gunakan <strong>Foto QR</strong> (ambil foto pakai kamera HP) — lebih stabil.
-    </div>
+    ${(function(){
+      var inIframe = false; try { inIframe = (window.self !== window.top); } catch(e) { inIframe = true; }
+      var liveStyle  = inIframe ? ' style="background:var(--card3,#142550)"' : '';
+      var photoStyle = inIframe ? '' : ' style="background:var(--card3,#142550)"';
+      var btns =
+        '<button class="btn-scan-start"' + liveStyle + ' onclick="startClaimScan()">' + svgIcon('camera','0.9rem') + ' Kamera Live</button>' +
+        '<button class="btn-scan-start"' + photoStyle + ' onclick="openPhotoInput()">Foto QR</button>' +
+        '<button class="btn-scan-stop" onclick="stopClaimScan()">Stop</button>';
+      var note = inIframe
+        ? '<div style="margin-top:8px;font-size:.68rem;color:var(--muted);line-height:1.4">Mode Apps Script: "Kamera Live" sering diblokir. Pakai <strong>Foto QR</strong> (ambil foto pakai kamera HP) — lebih stabil.</div>'
+        : '';
+      return '<div class="claim-scan-btns">' + btns + '</div>' + note;
+    })()}
 
     <div style="margin-top:12px;font-size:.7rem;color:var(--muted)">— atau input manual —</div>
     <div class="claim-manual-row">
@@ -870,6 +875,11 @@ function manualClaimCheck() {
   var val = (document.getElementById('claimManualInput')?.value || '').trim();
   if (!val) return;
   processScannedQR(val);
+}
+
+function openPhotoInput() {
+  var el = document.getElementById('claimPhotoInput');
+  if (el) el.click();
 }
 
 // Scan QR dari foto (kamera HP via input file) — bekerja di iframe Apps Script
