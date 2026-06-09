@@ -1171,7 +1171,7 @@ footer{text-align:center;padding:28px 16px calc(20px + env(safe-area-inset-botto
 
 // Ganti URL di bawah setelah deploy Web App
 
-const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxKveP4Y4ADKfty7jjS-JOUSC-PPpO3WnNq-Agit_SOPldB9HkB_MRjxX_3xBvdyPpKvw/exec";
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw4VnfSKfmedwxQDisbvmCMVjhOJL4q5srfHI3NHbwdPBKHU3cieCzmFTONXVBP7V_b/exec";
 
 // ── SECTION DEFINITIONS ────────────────────────────────────────
 
@@ -1409,7 +1409,7 @@ window.addEventListener("DOMContentLoaded", function() {
   } catch(lsErr) { /* private-mode / storage-penuh → lanjut ke fetch */ }
 
   // ── 2. Fetch di background (selalu, agar data fresh) ──────────
-  fetch(WEB_APP_URL, { redirect: 'follow' })
+  fetch(WEB_APP_URL + "?type=data", { redirect: 'follow' })
     .then(function(r) {
       if (!r.ok) throw new Error("HTTP " + r.status + " " + r.statusText);
       return r.json();
