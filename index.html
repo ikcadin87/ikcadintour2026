@@ -1336,17 +1336,20 @@ html[data-theme="light"] .footer-credit a:hover { color:#7A5600; }
 /* ── HERO CLAIM MODE ─────────────────────────────────────── */
 .hero-panel { transition: opacity .25s ease, max-height .3s ease; overflow:hidden; }
 .hero-panel.claim-mode { max-height:0 !important; opacity:0; pointer-events:none; }
-/* Isi sisa viewport agar tidak ada ruang kosong besar di bawah */
-body.claim-active { display:flex; flex-direction:column; }
-body.claim-active .content-area { flex:1; display:flex; flex-direction:column; }
-body.claim-active #content { flex:1; }
+/* Claim tab: content area mengisi ruang, footer tetap di bawah */
+body.claim-active { display:flex; flex-direction:column; min-height:100dvh; }
+body.claim-active .content-area { flex:1; display:flex; flex-direction:column; padding-bottom:0; }
+body.claim-active #content { flex:1; display:flex; flex-direction:column; }
+body.claim-active #content > div { flex:1; display:flex; flex-direction:column; }
+body.claim-active .claim-wrap { flex:1; }
 
 /* ── CLAIM SECTION ─────────────────────────────────────────── */
-.claim-wrap { max-width:480px; margin:0 auto; padding:8px 0; }
+.claim-wrap { max-width:480px; margin:0 auto; padding:8px 0 0; display:flex; flex-direction:column; }
+#claimStep1 { display:flex; flex-direction:column; flex:1; }
 .claim-active-badge {
   display:inline-flex;align-items:center;gap:6px;
   padding:6px 14px;border-radius:20px;font-size:.78rem;font-weight:700;
-  margin-bottom:20px;letter-spacing:.02em;
+  margin-bottom:16px;letter-spacing:.02em;
 }
 .claim-active-badge.active-snack        { background:rgba(212,175,55,.15);color:#D4AF37;border:1px solid rgba(212,175,55,.3); }
 .claim-active-badge.active-makan_siang  { background:rgba(34,197,94,.12);color:#22c55e;border:1px solid rgba(34,197,94,.3); }
@@ -1362,46 +1365,53 @@ body.claim-active #content { flex:1; }
 .claim-dropdown {
   position:absolute;top:calc(100% + 4px);left:0;right:0;
   background:var(--card);border:1px solid var(--border);border-radius:var(--r2);
-  max-height:220px;overflow-y:auto;z-index:200;display:none;
-  box-shadow:0 8px 32px rgba(0,0,0,.35);
+  max-height:240px;overflow-y:auto;z-index:200;display:none;
+  box-shadow:0 8px 32px rgba(0,0,0,.4);
 }
 .claim-dropdown.open { display:block; }
 .claim-drop-item {
-  padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--border);
+  padding:11px 14px;cursor:pointer;border-bottom:1px solid var(--border);
   transition:.12s;
 }
 .claim-drop-item:last-child { border-bottom:none; }
-.claim-drop-item:hover { background:rgba(27,58,140,.15); }
+.claim-drop-item:hover,.claim-drop-item:active { background:rgba(27,58,140,.2); }
 .claim-drop-nama { font-weight:600;font-size:.88rem;color:var(--text); }
 .claim-drop-dept { font-size:.72rem;color:var(--muted);margin-top:2px; }
 
-/* Modal */
+/* Modal — fullscreen bottom sheet di mobile */
 .claim-modal-overlay {
-  position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:1000;
-  display:flex;align-items:center;justify-content:center;padding:20px;
-  backdrop-filter:blur(4px);
+  position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:2000;
+  display:flex;align-items:flex-end;justify-content:center;
+  backdrop-filter:blur(6px);
+  padding:0;
 }
 .claim-modal {
-  background:var(--card);border:1px solid var(--border);border-radius:var(--r);
-  padding:28px 24px;width:100%;max-width:360px;text-align:center;
-  box-shadow:0 20px 60px rgba(0,0,0,.5);
-  animation:fadeUp .25s ease both;
+  background:var(--card);border-top:1px solid var(--border);
+  border-radius:var(--r) var(--r) 0 0;
+  padding:20px 24px 32px;width:100%;max-width:500px;
+  box-shadow:0 -10px 50px rgba(0,0,0,.5);
+  animation:slideUp .28s cubic-bezier(.32,1.2,.57,1) both;
 }
-.claim-modal-title { font-size:1.05rem;font-weight:800;color:var(--text);margin-bottom:4px; }
-.claim-modal-name  { font-size:.82rem;color:var(--a);margin-bottom:16px; }
+@keyframes slideUp { from{transform:translateY(100%);opacity:0} to{transform:translateY(0);opacity:1} }
+.claim-modal-handle {
+  width:36px;height:4px;border-radius:2px;background:var(--border);
+  margin:0 auto 16px;
+}
+.claim-modal-title { font-size:1rem;font-weight:800;color:var(--text);margin-bottom:3px; }
+.claim-modal-name  { font-size:.83rem;color:var(--a);font-weight:600;margin-bottom:20px; }
 .claim-initial-input {
-  width:120px;padding:12px;text-align:center;font-size:1.4rem;font-weight:800;
-  letter-spacing:.25em;background:var(--card2);border:2px solid var(--border);
+  width:100%;padding:14px 16px;text-align:center;font-size:1.5rem;font-weight:800;
+  letter-spacing:.3em;background:var(--card2);border:2px solid var(--border);
   border-radius:var(--r2);color:var(--text);outline:none;transition:.2s;
-  margin-bottom:8px;
+  margin-bottom:6px;
 }
 .claim-initial-input:focus { border-color:var(--a);box-shadow:0 0 0 3px rgba(212,175,55,.15); }
-.claim-modal-hint  { font-size:.7rem;color:var(--muted);margin-bottom:14px; }
-.claim-modal-error { font-size:.78rem;color:#fca5a5;min-height:18px;margin-bottom:10px; }
-.claim-modal-btns  { display:flex;gap:10px;justify-content:center; }
-.claim-btn-cancel  { padding:10px 20px;border-radius:var(--r2);border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-size:.88rem;transition:.15s; }
+.claim-modal-hint  { font-size:.72rem;color:var(--muted);margin-bottom:6px;text-align:center; }
+.claim-modal-error { font-size:.78rem;color:#fca5a5;min-height:18px;margin-bottom:12px;text-align:center; }
+.claim-modal-btns  { display:grid;grid-template-columns:1fr 2fr;gap:10px; }
+.claim-btn-cancel  { padding:13px;border-radius:var(--r2);border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-size:.9rem;transition:.15s; }
 .claim-btn-cancel:hover { border-color:var(--text);color:var(--text); }
-.claim-btn-ok      { padding:10px 24px;border-radius:var(--r2);border:none;background:var(--p);color:#fff;cursor:pointer;font-size:.88rem;font-weight:700;transition:.15s; }
+.claim-btn-ok      { padding:13px;border-radius:var(--r2);border:none;background:var(--p);color:#fff;cursor:pointer;font-size:.9rem;font-weight:700;transition:.15s; }
 .claim-btn-ok:hover { background:#2547B0; }
 .claim-btn-ok:disabled { opacity:.5;cursor:not-allowed; }
 
@@ -1462,7 +1472,8 @@ body.claim-active #content { flex:1; }
 /* Light mode */
 html[data-theme="light"] .claim-search { background:#fff;border-color:#D0D6E8;color:#0F1E3D; }
 html[data-theme="light"] .claim-search:focus { border-color:var(--a); }
-html[data-theme="light"] .claim-dropdown { background:#fff;border-color:#D0D6E8; }
+html[data-theme="light"] .claim-list { background:#fff;border-color:#D0D6E8; }
+html[data-theme="light"] .claim-drop-avatar { background:rgba(27,58,140,.08);border-color:rgba(27,58,140,.15); }
 html[data-theme="light"] .claim-drop-item:hover { background:#EEF1F9; }
 html[data-theme="light"] .claim-drop-nama { color:#0F1E3D; }
 html[data-theme="light"] .claim-drop-dept { color:#374869; }
@@ -2059,7 +2070,7 @@ function switchTab(key, btn) {
   activeKey = key;
   document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));
   btn.classList.add("active");
-  // Sembunyikan hero & global search saat tab Claim aktif
+  // Sembunyikan hero, search & footer saat tab Claim aktif
   var isClaim = key === 'claim';
   var hero = document.getElementById('hero');
   if (hero) hero.classList.toggle('claim-mode', isClaim);
@@ -2871,9 +2882,6 @@ function renderClaim() {
     <div id="claimActiveBadge" class="claim-active-badge active-none">
       ${svgIcon('ticket','14px')} Memuat status sesi…
     </div>
-    <div style="font-size:.8rem;color:var(--muted);margin-bottom:14px">
-      Masukkan nama kamu untuk mendapatkan QR Claim konsumsi.
-    </div>
     <div class="claim-search-wrap">
       <input type="text" id="claimSearchInput" class="claim-search"
         placeholder="Ketik nama kamu…"
@@ -2883,16 +2891,17 @@ function renderClaim() {
     </div>
   </div>
 
-  <!-- Modal inisial -->
+  <!-- Modal inisial — bottom sheet -->
   <div class="claim-modal-overlay" id="claimModal" style="display:none" onclick="if(event.target===this)closeClaimModal()">
     <div class="claim-modal">
+      <div class="claim-modal-handle"></div>
       <div class="claim-modal-title">Verifikasi Identitas</div>
       <div class="claim-modal-name" id="claimModalName"></div>
       <input type="text" id="claimInitialInput" class="claim-initial-input"
-        maxlength="3" placeholder="INI"
+        maxlength="3" placeholder="···"
         oninput="this.value=this.value.toUpperCase().replace(/[^A-Z]/g,'')"
         onkeydown="if(event.key==='Enter')submitClaimVerify()">
-      <div class="claim-modal-hint">Masukkan 3 huruf inisial nama kamu</div>
+      <div class="claim-modal-hint">Ketik 3 huruf inisial nama kamu</div>
       <div class="claim-modal-error" id="claimModalError"></div>
       <div class="claim-modal-btns">
         <button class="claim-btn-cancel" onclick="closeClaimModal()">Batal</button>
@@ -2966,8 +2975,6 @@ function filterClaimSearch(val) {
 
 function selectClaimPerson(nama, dept) {
   claimSelected = { nama: nama, dept: dept };
-  var dd = document.getElementById('claimDropdown');
-  if (dd) { dd.classList.remove('open'); dd.innerHTML = ''; }
   var inp = document.getElementById('claimSearchInput');
   if (inp) inp.value = nama;
   // Open modal
@@ -3129,9 +3136,11 @@ function resetClaim() {
   var step1  = document.getElementById('claimStep1');
   var result = document.getElementById('claimResult');
   var inp    = document.getElementById('claimSearchInput');
-  if (step1) step1.style.display = 'block';
+  if (step1) step1.style.display = 'flex';
   if (result) result.style.display = 'none';
   if (inp) { inp.value = ''; inp.focus(); }
+  var dd = document.getElementById('claimDropdown');
+  if (dd) { dd.classList.remove('open'); dd.innerHTML = ''; }
   refreshClaimBadge();
 }
 
@@ -3143,9 +3152,9 @@ function postClaim(payload) {
   }).then(function(r) { return r.json(); });
 }
 
-// Close dropdown when clicking outside
+// Tutup dropdown saat klik di luar
 document.addEventListener('click', function(e) {
-  var dd = document.getElementById('claimDropdown');
+  var dd   = document.getElementById('claimDropdown');
   var wrap = document.querySelector('.claim-search-wrap');
   if (dd && wrap && !wrap.contains(e.target)) { dd.classList.remove('open'); }
 });
