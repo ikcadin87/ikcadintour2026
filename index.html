@@ -3041,7 +3041,7 @@ function resetClaim() {
 function postClaim(payload) {
   return fetch(WEB_APP_URL, {
     method: 'POST', redirect:'follow',
-    headers: { 'Content-Type':'application/json' },
+    headers: { 'Content-Type': 'text/plain' },
     body: JSON.stringify(payload)
   }).then(function(r) { return r.json(); });
 }
