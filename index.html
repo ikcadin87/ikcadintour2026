@@ -346,6 +346,59 @@ tr:hover td{background:rgba(255,255,255,.025)}
 
 .group-card:hover{border-color:rgba(27,58,140,.3);transform:translateY(-2px)}
 
+/* ── Mobil Pribadi cards ── */
+.mobil-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.mobil-card{
+  background:var(--card2);border:1px solid var(--border);border-radius:var(--r);
+  padding:16px;transition:.2s;display:flex;flex-direction:column;
+}
+.mobil-card:hover{border-color:rgba(212,175,55,.4);transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,.25)}
+.mobil-card-top{display:flex;align-items:center;gap:12px}
+.mobil-ico{
+  width:46px;height:46px;border-radius:12px;flex-shrink:0;
+  background:linear-gradient(135deg,rgba(27,58,140,.85),rgba(17,39,112,.85));
+  display:flex;align-items:center;justify-content:center;color:#fff;
+}
+.mobil-ico .svg-icon{width:24px;height:24px}
+.mobil-id{flex:1;min-width:0}
+.mobil-nama{font-weight:800;font-size:1.02rem;color:var(--text);line-height:1.15;word-break:break-word}
+.mobil-jenis{font-size:.78rem;color:var(--muted);margin-top:2px}
+.mobil-plat{
+  flex-shrink:0;align-self:flex-start;
+  font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:800;font-size:.86rem;
+  letter-spacing:.06em;color:#1a1a1a;background:#F4D03F;
+  border:2px solid #1a1a1a;border-radius:7px;padding:5px 9px;
+  box-shadow:0 2px 6px rgba(0,0,0,.25);white-space:nowrap;
+}
+.mobil-details{
+  margin-top:14px;padding-top:12px;border-top:1px solid var(--border);
+  display:flex;flex-direction:column;gap:9px;
+}
+.mobil-detail-row{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;font-size:.82rem}
+.mobil-detail-label{display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-weight:600;flex-shrink:0}
+.mobil-detail-label .svg-icon{width:14px;height:14px;color:var(--a)}
+.mobil-detail-val{color:var(--text);text-align:right;word-break:break-word}
+.mobil-wa{color:#22c55e;font-weight:700;text-decoration:none}
+.mobil-wa:hover{text-decoration:underline}
+.mobil-penum{margin-top:14px;padding-top:12px;border-top:1px solid var(--border)}
+.mobil-penum-title{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:.72rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--a);margin-bottom:9px;
+}
+.mobil-penum-title .svg-icon{width:14px;height:14px}
+.mobil-penum-title span{
+  background:rgba(212,175,55,.18);color:var(--a);
+  padding:1px 7px;border-radius:9px;font-size:.7rem;
+}
+.mobil-penum-list{display:flex;flex-wrap:wrap;gap:6px}
+.mobil-penum-chip{
+  font-size:.78rem;color:var(--text);background:var(--card);
+  border:1px solid var(--border);border-radius:8px;padding:4px 10px;
+}
+html[data-theme="light"] .mobil-card{background:#fff;border-color:#D0D6E8}
+html[data-theme="light"] .mobil-penum-chip{background:#F7F8FB;border-color:#D0D6E8}
+
 .group-name{font-family:var(--font-head);font-weight:700;font-size:1rem;color:#fff;margin-bottom:4px}
 
 .group-leader{font-size:.78rem;color:var(--a);font-weight:600;margin-bottom:8px}
@@ -597,11 +650,11 @@ footer{text-align:center;padding:28px 16px calc(20px + env(safe-area-inset-botto
 .fpm-legend-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0;border:1px solid rgba(255,255,255,.18)}
 .fpm-hint{font-size:.6rem;color:var(--muted);text-align:center;margin-bottom:6px;display:none}
 @media(max-width:700px){.fpm-hint{display:block}}
-.fpm-room{border-radius:5px;border:1px solid;overflow:hidden;transition:.12s;min-width:0}
+.fpm-room{border-radius:5px;border:1px solid rgba(212,175,55,.5);overflow:hidden;transition:.12s;min-width:0}
 .fpm-room:hover{opacity:.8;transform:translateY(-1px)}
 .fpm-num{font-size:.66rem;font-weight:700;padding:3px 3px;color:#fff;text-align:center;font-family:var(--font-head);background:#073763;letter-spacing:.01em}
-.fpm-body{padding:4px 4px;min-height:32px}
-.fpm-name{font-size:.6rem;line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+.fpm-body{padding:4px 4px;min-height:32px;background:rgba(27,58,140,.35)}
+.fpm-name{font-size:.6rem;line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;color:#fff}
 .fpm-empty{font-size:.5rem;opacity:.28;text-align:center;padding:3px 0;color:#999;font-style:italic}
 .fpm-pool{
   border-radius:7px;
@@ -1292,9 +1345,10 @@ html[data-theme="light"] .hadiah-mid-card {
 html[data-theme="light"] .hadiah-mid-nama { color:#0F1E3D; }
 
 /* ── Floor plan ── */
-html[data-theme="light"] .fpm-room { color:#0F1E3D; }
+html[data-theme="light"] .fpm-room { color:#0F1E3D;border-color:rgba(180,134,11,.55); }
 html[data-theme="light"] .fpm-room:hover { border-color:#C9A227;box-shadow:0 0 0 2px rgba(201,162,39,.3); }
 html[data-theme="light"] .fpm-num { background:#9A6E00;color:#fff; }
+html[data-theme="light"] .fpm-body { background:rgba(201,162,39,.10); }
 html[data-theme="light"] .fpm-name { color:#1A2744; }
 html[data-theme="light"] .fpm-pool { background:rgba(80,180,220,.15);border-color:#5fa8c8; }
 
@@ -1322,6 +1376,12 @@ html[data-theme="light"] .group-members { color:#374869; }
 html[data-theme="light"] .kel-stat span { color:#374869; }
 
 /* ── Countdown ── */
+html[data-theme="light"] .countdown-item {
+  background:rgba(255,255,255,.92);
+  border:1px solid rgba(154,110,0,.45);
+  box-shadow:0 2px 10px rgba(15,30,61,.12);
+}
+html[data-theme="light"] .countdown-num   { color:#9A6E00; }
 html[data-theme="light"] .countdown-label { color:#374869; }
 
 /* ── Misc ── */
@@ -1350,6 +1410,14 @@ html[data-theme="light"] .footer-credit a:hover { color:#7A5600; }
 .claim-active-badge.active-makan_malam  { background:rgba(168,85,247,.12);color:#a855f7;border:1px solid rgba(168,85,247,.3); }
 .claim-active-badge.active-none         { background:rgba(239,68,68,.1);color:#ef4444;border:1px solid rgba(239,68,68,.25); }
 .claim-search-wrap { position:relative;margin-bottom:8px; }
+.claim-search-wrap.searching { z-index:600; }
+.claim-search-backdrop {
+  position:fixed;inset:0;z-index:550;
+  background:rgba(5,12,26,.45);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  opacity:0;pointer-events:none;transition:opacity .2s ease;
+}
+.claim-search-backdrop.show { opacity:1;pointer-events:auto; }
+html[data-theme="light"] .claim-search-backdrop { background:rgba(15,30,61,.25); }
 .claim-search {
   width:100%;padding:12px 16px;border-radius:var(--r2);
   background:var(--card2);border:1px solid var(--border);
@@ -1785,7 +1853,7 @@ const SECTION_META = {
   bus:     { label:"List Bus",     icon:"bus",       emoji: svgIcon("bus"),       render: renderGroups  },
   kontak:  { label:"Kontak",       icon:"phone",     emoji: svgIcon("phone"),     render: renderKontak  },
   custom:  { label:"Lainnya",      icon:"sparkles",  emoji: svgIcon("sparkles"),  render: renderCustom  },
-  mobil:   { label:"Mobil Pribadi",icon:"car",       emoji: svgIcon("car"),       render: renderTable },
+  mobil:   { label:"Mobil Pribadi",icon:"car",       emoji: svgIcon("car"),       render: renderMobil },
   denah:   { label:"Peta Kamar",   icon:"map",       emoji: svgIcon("map"),       render: renderDenah },
   panitia: { label:"Panitia",      icon:"crown",     emoji: svgIcon("crown"),     render: renderPanitia },
   claim:   { label:"Claim",        icon:"ticket",    emoji: svgIcon("ticket"),    render: renderClaim   },
@@ -2073,8 +2141,8 @@ function applyConfig(cfg) {
     heroBannerImg.src = cfg.banner_url.trim();
     heroBannerImg.style.display = "block";
   }
-  // Countdown timer
-  if (cfg.tanggal_event) initCountdown(cfg.tanggal_event);
+  // Countdown timer (teks_event = teks manual saat selesai; default "Event Day !")
+  if (cfg.tanggal_event) initCountdown(cfg.tanggal_event, cfg.teks_event);
   // Hero meta badges
   const meta = document.getElementById("heroMeta");
   meta.innerHTML = "";
@@ -2400,6 +2468,79 @@ function renderTable(raw) {
   </table></div>`;
 }
 
+function renderMobil(raw) {
+  const data = raw?.data || [];
+  if (!data.length) return '<div class="empty">Belum ada data mobil pribadi.</div>';
+  const headers = Object.keys(data[0]);
+  const exact = (cands) => headers.find(h => cands.includes(h.toLowerCase().trim())) || null;
+  const has   = (cands) => headers.find(h => cands.some(c => h.toLowerCase().includes(c))) || null;
+  const colNama  = exact(['nama','pemilik','nama pemilik','pemilik mobil','pengemudi','driver']) || has(['pemilik','pengemudi','driver']) || headers[0];
+  const colPlat  = exact(['plat','plat nomor','nomor plat','no plat','nopol','plat no']) || has(['plat','nopol']);
+  const colJenis = exact(['jenis','jenis mobil','mobil','tipe','merk','kendaraan','tipe mobil','model']) || has(['jenis','merk','tipe','kendaraan','mobil','model']);
+  const colKap   = exact(['kapasitas','seat','kursi','jumlah']) || has(['kapasitas','seat','kursi']);
+  const colPenum = exact(['penumpang','anggota','rombongan']) || has(['penumpang','anggota','rombongan']);
+  const colHp    = exact(['no hp','nomor hp','kontak','hp','whatsapp','wa','telepon']) || has(['no hp','whatsapp']);
+  const colKet   = exact(['keterangan','catatan','note','ket']) || has(['keterangan','catatan']);
+  const known = new Set([colNama,colPlat,colJenis,colKap,colPenum,colHp,colKet].filter(Boolean));
+
+  const filtered = data.filter(r => matchSearch(Object.values(r)));
+  if (!filtered.length) return '<div class="empty">Tidak ada hasil pencarian.</div>';
+
+  const cards = filtered.map((r, idx) => {
+    const nama  = (colNama ? r[colNama] : '') || ('Mobil ' + (idx + 1));
+    const plat  = colPlat  ? String(r[colPlat]  || '').trim() : '';
+    const jenis = colJenis ? String(r[colJenis] || '').trim() : '';
+
+    // Penumpang → chips
+    let penumHtml = '';
+    if (colPenum && String(r[colPenum] || '').trim()) {
+      const list = String(r[colPenum]).split(/[,;\n/]+/).map(s => s.trim()).filter(Boolean);
+      if (list.length) {
+        penumHtml = `<div class="mobil-penum">
+          <div class="mobil-penum-title">${svgIcon('users','sm')} Penumpang <span>${list.length}</span></div>
+          <div class="mobil-penum-list">${list.map(p => `<span class="mobil-penum-chip">${escHtml(p)}</span>`).join('')}</div>
+        </div>`;
+      }
+    }
+
+    // Detail rows (kapasitas, kontak, keterangan, + kolom lain yang tak dikenal)
+    const details = [];
+    if (colKap && String(r[colKap] || '').trim())
+      details.push([svgIcon('user','sm'), 'Kapasitas', escHtml(r[colKap])]);
+    if (colHp && String(r[colHp] || '').trim()) {
+      const num = String(r[colHp]).trim();
+      const wa  = 'https://wa.me/62' + num.replace(/^0/,'').replace(/\D/g,'');
+      details.push([svgIcon('smartphone','sm'), 'Kontak',
+        `<a class="mobil-wa" href="${wa}" target="_blank" rel="noopener noreferrer">${escHtml(num)}</a>`]);
+    }
+    if (colKet && String(r[colKet] || '').trim())
+      details.push([svgIcon('info','sm'), 'Keterangan', escHtml(r[colKet])]);
+    headers.forEach(h => {
+      if (!known.has(h) && String(r[h] || '').trim())
+        details.push(['', escHtml(h), escHtml(r[h])]);
+    });
+
+    const detailHtml = details.length ? `<div class="mobil-details">${details.map(d =>
+      `<div class="mobil-detail-row"><span class="mobil-detail-label">${d[0]}${d[1]}</span><span class="mobil-detail-val">${d[2]}</span></div>`
+    ).join('')}</div>` : '';
+
+    return `<div class="mobil-card">
+      <div class="mobil-card-top">
+        <div class="mobil-ico">${svgIcon('car')}</div>
+        <div class="mobil-id">
+          <div class="mobil-nama">${escHtml(nama)}</div>
+          ${jenis ? `<div class="mobil-jenis">${escHtml(jenis)}</div>` : ''}
+        </div>
+        ${plat ? `<div class="mobil-plat">${escHtml(plat)}</div>` : ''}
+      </div>
+      ${detailHtml}
+      ${penumHtml}
+    </div>`;
+  }).join('');
+
+  return `<div class="mobil-grid">${cards}</div>`;
+}
+
 function renderGroups(raw) {
   const data = raw?.data || [];
   if (!data.length) return '<div class="empty">Belum ada data bus.</div>';
@@ -2706,30 +2847,16 @@ function renderDenah(raw) {
     });
   }
 
-  // Warna kamar — theme-aware
-  var _lt = document.documentElement.getAttribute('data-theme') === 'light';
-  var ROOM_CLR = _lt
-    ? {bg:'rgba(201,162,39,.10)', bdr:'rgba(180,134,11,.55)', txt:'#1A2744'}
-    : {bg:'rgba(27,58,140,.35)', bdr:'rgba(212,175,55,.5)', txt:'#FFFFFF'};
-  var TY={
-    sd: ROOM_CLR,
-    dl: ROOM_CLR,
-    su: ROOM_CLR,
-    fa: ROOM_CLR,
-    fl: ROOM_CLR,
-    th: ROOM_CLR,
-  };
-
+  // Warna kamar dikontrol via CSS (theme-aware), bukan inline — agar ikut berubah saat ganti tema
   // rm(nomor, tipe, grid-col, grid-row)
   function rm(num,t,col,row){
-    var c=TY[t]||TY.dl;
     var names=occ[String(num)]||[];
     var body=names.length
-      ? names.map(function(n){return '<div class="fpm-name" style="color:'+c.txt+'">'+escHtml(n)+'</div>';}).join('')
+      ? names.map(function(n){return '<div class="fpm-name">'+escHtml(n)+'</div>';}).join('')
       : '<div class="fpm-empty">—</div>';
-    return '<div class="fpm-room" style="grid-column:'+col+';grid-row:'+row+';border-color:'+c.bdr+'">'
+    return '<div class="fpm-room" style="grid-column:'+col+';grid-row:'+row+'">'
       +'<div class="fpm-num">'+num+'</div>'
-      +'<div class="fpm-body" style="background:'+c.bg+'">'+body+'</div>'
+      +'<div class="fpm-body">'+body+'</div>'
       +'</div>';
   }
 
@@ -2892,16 +3019,18 @@ function closeDrawer() {
 }
 
 // ── COUNTDOWN ──────────────────────────────────────────────────
-function initCountdown(dateStr) {
+function initCountdown(dateStr, doneText) {
   let target;
   try { target = new Date(dateStr); if (isNaN(target.getTime())) return; } catch(e) { return; }
   const container = document.getElementById('heroCountdown');
   if (!container) return;
+  // Teks saat hitung mundur selesai — bisa diatur manual via config; default "Event Day !"
+  const finishText = (doneText && String(doneText).trim()) ? String(doneText).trim() : 'Event Day !';
   function pad(n) { return String(n).padStart(2,'0'); }
   function update() {
     const diff = target - new Date();
     if (diff <= 0) {
-      container.innerHTML = '<div class="countdown-done">&#127881; Event sedang berlangsung!</div>';
+      container.innerHTML = '<div class="countdown-done">&#127881; ' + escHtml(finishText) + '</div>';
       return;
     }
     const d = Math.floor(diff / 864e5);
@@ -2949,6 +3078,7 @@ function renderClaim() {
         autocomplete="off" spellcheck="false">
       <div class="claim-dropdown" id="claimDropdown"></div>
     </div>
+    <div class="claim-search-backdrop" id="claimSearchBackdrop" onclick="closeClaimDropdown()"></div>
 
     <div class="claim-guide">
       <div class="claim-guide-title">${svgIcon('info','14px')} Cara Claim</div>
@@ -3041,16 +3171,29 @@ function updateClaimBadge(meal) {
      'Sesi aktif: <strong style="margin-left:4px">' + (MEAL_LABELS[meal]||meal) + '</strong>');
 }
 
+function setClaimSearchActive(on) {
+  var wrap = document.querySelector('.claim-search-wrap');
+  var bd   = document.getElementById('claimSearchBackdrop');
+  if (wrap) wrap.classList.toggle('searching', on);
+  if (bd)   bd.classList.toggle('show', on);
+}
+
+function closeClaimDropdown() {
+  var dd = document.getElementById('claimDropdown');
+  if (dd) { dd.classList.remove('open'); dd.innerHTML = ''; }
+  setClaimSearchActive(false);
+}
+
 function filterClaimSearch(val) {
   var dd  = document.getElementById('claimDropdown');
   var inp = document.getElementById('claimSearchInput');
   if (!dd || !inp) return;
   var q = val.trim().toLowerCase();
-  if (!q) { dd.classList.remove('open'); dd.innerHTML = ''; return; }
+  if (!q) { closeClaimDropdown(); return; }
   var matches = claimList.filter(function(p) {
     return p.nama.toLowerCase().includes(q) || (p.dept||'').toLowerCase().includes(q);
   }).slice(0, 20);
-  if (!matches.length) { dd.classList.remove('open'); dd.innerHTML = ''; return; }
+  if (!matches.length) { closeClaimDropdown(); return; }
   dd.innerHTML = matches.map(function(p) {
     return '<div class="claim-drop-item" onclick="selectClaimPerson(\'' +
       escHtml(p.nama).replace(/'/g,"\\x27") + '\',\'' +
@@ -3060,6 +3203,7 @@ function filterClaimSearch(val) {
       '</div>';
   }).join('');
   dd.classList.add('open');
+  setClaimSearchActive(true);
 }
 
 function selectClaimPerson(nama, dept) {
@@ -3067,8 +3211,7 @@ function selectClaimPerson(nama, dept) {
   var inp = document.getElementById('claimSearchInput');
   if (inp) inp.value = nama;
   // Tutup dropdown
-  var dd = document.getElementById('claimDropdown');
-  if (dd) { dd.classList.remove('open'); dd.innerHTML = ''; }
+  closeClaimDropdown();
   // Open modal
   var modal = document.getElementById('claimModal');
   var modalName = document.getElementById('claimModalName');
@@ -3280,8 +3423,7 @@ function resetClaim() {
   if (step1) step1.style.display = 'block';
   if (result) result.style.display = 'none';
   if (inp) { inp.value = ''; inp.focus(); }
-  var dd = document.getElementById('claimDropdown');
-  if (dd) { dd.classList.remove('open'); dd.innerHTML = ''; }
+  closeClaimDropdown();
   refreshClaimBadge();
 }
 
@@ -3297,7 +3439,7 @@ function postClaim(payload) {
 document.addEventListener('click', function(e) {
   var dd   = document.getElementById('claimDropdown');
   var wrap = document.querySelector('.claim-search-wrap');
-  if (dd && wrap && !wrap.contains(e.target)) { dd.classList.remove('open'); }
+  if (dd && wrap && !wrap.contains(e.target)) { closeClaimDropdown(); }
 });
 
 // ── INITIALS AVATAR (pengganti DiceBear, tanpa request external) ─
