@@ -472,6 +472,7 @@ function loadSection(key) {
     curSection = SECTIONS.find(s => s.key === key);
     document.getElementById('adminMain').innerHTML = renderClaimPanel();
     loadActiveMeal();
+    loadAdmClaimList();
     return;
   }
 
@@ -808,6 +809,36 @@ function loadActiveMeal() {
     .catch(function() {});
 }
 
+// ── Cache daftar peserta (verifikasi scan instan, tanpa round-trip backend) ──
+var admClaimList = [];
+var admClaimListLoaded = false;
+var admClaimField = { snack:'snack_claim', makan_siang:'makan_siang_claim', makan_malam:'makan_malam_claim' };
+
+function loadAdmClaimList() {
+  fetch(WEB_APP_URL + '?type=claimList', { redirect:'follow' })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (d && d.data) {
+        admClaimList = d.data;
+        admClaimListLoaded = true;
+        var st = document.getElementById('claimScanStatus');
+        if (st && st.textContent.indexOf('Memuat') !== -1) st.textContent = 'Siap. Pilih cara scan.';
+      }
+    })
+    .catch(function() {});
+}
+
+function findAdmPerson(nama, inisial) {
+  var n = String(nama||'').trim().toLowerCase();
+  var i = String(inisial||'').trim().toLowerCase();
+  for (var k = 0; k < admClaimList.length; k++) {
+    var p = admClaimList[k];
+    if (String(p.nama||'').trim().toLowerCase() === n &&
+        String(p.inisial||'').trim().toLowerCase() === i) return p;
+  }
+  return null;
+}
+
 function highlightMealBtn(meal) {
   claimActiveMeal = meal;
   document.querySelectorAll('.meal-btn').forEach(function(b) {
@@ -942,9 +973,25 @@ function processScannedQR(raw) {
     return;
   }
 
+  // ── Verifikasi INSTAN dari cache lokal (tanpa round-trip backend) ──
+  if (admClaimListLoaded) {
+    var person = findAdmPerson(nama, inisial);
+    if (!person) {
+      showClaimResult({ ok:false, error:'Peserta tidak ditemukan / inisial salah.' });
+      return;
+    }
+    var claimedAt = String(person[admClaimField[claimActiveMeal]] || '').trim();
+    if (status) status.textContent = 'QR terbaca.';
+    showClaimResult({
+      ok:true, nama:person.nama, dept:person.dept, pax:person.pax,
+      already_claimed: !!claimedAt, claimed_at: claimedAt
+    }, person.nama, person.inisial);
+    return;
+  }
+
+  // Fallback: cache belum termuat → pakai backend
   if (status) status.textContent = 'QR terbaca — memverifikasi…';
   showClaimLoading(nama);
-
   postGAS({ action:'claim_scan', token, nama, inisial, meal_type: claimActiveMeal })
     .then(function(r) { showClaimResult(r, nama, inisial); })
     .catch(function() { showClaimResult({ ok:false, error:'Koneksi gagal' }); });
@@ -1020,6 +1067,9 @@ function confirmClaimAdmin() {
     .then(function(r) {
       if (r.ok) {
         toast('✓ Claim berhasil — ' + r.nama + ' · ' + (MEAL_LABELS_ADMIN[claimActiveMeal]||''), 'ok');
+        // Update cache lokal agar scan ulang langsung tampil "sudah claim"
+        var p = findAdmPerson(nama, ini);
+        if (p) p[admClaimField[claimActiveMeal]] = r.claimed_at || ' ';
         var statusDiv = document.getElementById('cresStatus');
         if (statusDiv) {
           statusDiv.innerHTML = '<div class="cres-status-ok">' + svgIcon('check-circle','1rem') +
@@ -1027,9 +1077,14 @@ function confirmClaimAdmin() {
         }
         btn.style.display = 'none';
       } else if (!r.ok && r.error && r.error.includes('Sudah')) {
+        // Backend menolak (panitia lain sudah claim) → sinkronkan cache
+        var p2 = findAdmPerson(nama, ini);
+        if (p2 && r.claimed_at) p2[admClaimField[claimActiveMeal]] = r.claimed_at;
         toast('Sudah pernah claim: ' + formatClaimTime(r.claimed_at), 'err');
-        btn.disabled = false;
-        btn.innerHTML = svgIcon('check-circle','1rem') + ' Konfirmasi Claim';
+        var sd = document.getElementById('cresStatus');
+        if (sd) sd.innerHTML = '<div class="cres-status-already">' + svgIcon('x-circle','1rem') +
+          ' Sudah claim pada: <strong>' + formatClaimTime(r.claimed_at) + '</strong></div>';
+        btn.style.display = 'none';
       } else {
         toast('Error: ' + (r.error||'?'), 'err');
         btn.disabled = false;
