@@ -598,8 +598,8 @@ footer{text-align:center;padding:28px 16px calc(20px + env(safe-area-inset-botto
 .fpm-room{border-radius:5px;border:1px solid;overflow:hidden;transition:.12s;min-width:0}
 .fpm-room:hover{opacity:.8;transform:translateY(-1px)}
 .fpm-num{font-size:.66rem;font-weight:700;padding:3px 3px;color:#fff;text-align:center;font-family:var(--font-head);background:#073763;letter-spacing:.01em}
-.fpm-body{padding:3px 4px;min-height:26px}
-.fpm-name{font-size:.54rem;line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500}
+.fpm-body{padding:4px 4px;min-height:32px}
+.fpm-name{font-size:.6rem;line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
 .fpm-empty{font-size:.5rem;opacity:.28;text-align:center;padding:3px 0;color:#999;font-style:italic}
 .fpm-pool{
   border-radius:7px;
@@ -1113,6 +1113,238 @@ footer{text-align:center;padding:28px 16px calc(20px + env(safe-area-inset-botto
   .hadiah-mid-grid { grid-template-columns: 1fr 1fr; }
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   LIGHT THEME — Elegant Navy × Gold
+   ═══════════════════════════════════════════════════════════════ */
+html[data-theme="light"] {
+  --dark:#F0F2F7;--card:#FFFFFF;--card2:#F7F8FB;--card3:#E8EBF3;
+  --text:#0F1E3D;--muted:#374869;--border:#D0D6E8;
+  --a:#9A6E00;--a2:#7A5600;
+  --p:#1B3A8C;
+}
+/* ── Body & background ── */
+html[data-theme="light"] body { background:#EEF0F7; }
+html[data-theme="light"] .app-shell { background:#EEF0F7; }
+
+/* ── Header ── */
+html[data-theme="light"] .app-header {
+  background:#FFFFFF;
+  border-bottom:1px solid #D0D6E8;
+  box-shadow:0 2px 16px rgba(15,30,61,.08);
+}
+html[data-theme="light"] .header-brand-name {
+  background:linear-gradient(135deg,#C9A227 0%,#E8C64A 50%,#A07C18 100%);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+}
+
+/* ── Navigation ── */
+html[data-theme="light"] .nav-btn {
+  color:#5B6E9A;border-color:#D0D6E8;background:#F7F8FB;
+}
+html[data-theme="light"] .nav-btn:hover { color:var(--p);border-color:var(--p);background:#EEF1F9; }
+html[data-theme="light"] .nav-btn.active { background:var(--p);color:#fff;border-color:var(--p); }
+
+/* ── Mobile drawer ── */
+html[data-theme="light"] .drawer { background:#FFFFFF;border-right:1px solid #D0D6E8;box-shadow:4px 0 24px rgba(15,30,61,.12); }
+html[data-theme="light"] .drawer-overlay { background:rgba(15,30,61,.5); }
+html[data-theme="light"] .hamburger { background:#F0F2F7;border-color:#D0D6E8; }
+html[data-theme="light"] .hamburger span { background:#0F1E3D; }
+
+/* ── Search ── */
+html[data-theme="light"] .search-wrap input {
+  background:#fff;border-color:#D0D6E8;color:#0F1E3D;
+  box-shadow:0 1px 4px rgba(15,30,61,.06);
+}
+html[data-theme="light"] .search-wrap input::placeholder { color:#8B9BC0; }
+html[data-theme="light"] .search-wrap input:focus { border-color:var(--p);box-shadow:0 0 0 3px rgba(27,58,140,.1); }
+
+/* ── Sub tabs ── */
+html[data-theme="light"] .sub-tabs { background:#FFFFFF;border-bottom:1px solid #D0D6E8; }
+html[data-theme="light"] .sub-tab {
+  background:#F7F8FB;border-color:#D0D6E8;color:#5B6E9A;
+}
+html[data-theme="light"] .sub-tab:hover { border-color:var(--p);color:var(--p);background:#EEF1F9; }
+html[data-theme="light"] .sub-tab.active {
+  background:var(--p);border-color:var(--p);color:#fff;
+  box-shadow:0 4px 16px rgba(27,58,140,.25);
+}
+
+/* ── Bus tabs ── */
+html[data-theme="light"] .bus-tab { border-color:#D0D6E8;color:#5B6E9A;background:#F7F8FB; }
+html[data-theme="light"] .bus-tab:hover { border-color:var(--p);color:var(--p); }
+html[data-theme="light"] .bus-tab.active { background:var(--p);color:#fff;border-color:var(--p); }
+html[data-theme="light"] .bus-panel-header {
+  background:linear-gradient(135deg,#1B3A8C 0%,#243E90 100%);border-color:#1B3A8C;
+}
+html[data-theme="light"] .bus-panel-name { color:#fff; }
+html[data-theme="light"] .bus-pic-name { color:#E8C64A; }
+html[data-theme="light"] .bus-panel-count { background:rgba(255,255,255,.2);color:#fff; }
+
+/* ── Section cards ── */
+html[data-theme="light"] .section-card {
+  background:#fff;border-color:#D0D6E8;
+  box-shadow:0 1px 6px rgba(15,30,61,.06);
+}
+html[data-theme="light"] .section-card:hover {
+  border-color:rgba(27,58,140,.3);
+  box-shadow:0 6px 24px rgba(27,58,140,.1);
+}
+html[data-theme="light"] .card-header { color:#0F1E3D; }
+html[data-theme="light"] .card-header:hover { background:rgba(27,58,140,.03); }
+html[data-theme="light"] .card-header.open { border-bottom-color:#D0D6E8; }
+html[data-theme="light"] .card-label { color:#0F1E3D; }
+html[data-theme="light"] .card-count { background:rgba(27,58,140,.1);color:var(--p); }
+
+/* ── Pengumuman ── */
+html[data-theme="light"] .pengumuman-item {
+  background:#FFFFFF;
+  border-left-color:var(--p);
+  box-shadow:0 2px 12px rgba(15,30,61,.07);
+}
+html[data-theme="light"] .pengumuman-item::before {
+  background:linear-gradient(90deg,rgba(27,58,140,.12),transparent);
+}
+html[data-theme="light"] .pengumuman-item.warning {
+  background:#FFFFFF;
+  border-left-color:#C9A227;
+}
+html[data-theme="light"] .pengumuman-item.warning::before {
+  background:linear-gradient(90deg,rgba(201,162,39,.12),transparent);
+}
+html[data-theme="light"] .pengumuman-judul { color:#0F1E3D; }
+html[data-theme="light"] .pengumuman-isi { color:#3D4F6E; }
+
+/* ── Table ── */
+html[data-theme="light"] .tbl-wrap { border-color:#D0D6E8;box-shadow:0 1px 6px rgba(15,30,61,.06); }
+html[data-theme="light"] table { background:#fff; }
+html[data-theme="light"] thead tr { background:linear-gradient(90deg,#1B3A8C,#243E90); }
+html[data-theme="light"] th { color:#fff;border-bottom-color:#1B3A8C; }
+html[data-theme="light"] td { color:#0F1E3D;border-bottom-color:#E8EBF3; }
+html[data-theme="light"] tbody tr:hover { background:#EEF1F9; }
+html[data-theme="light"] .td-em { color:var(--p);font-weight:700; }
+
+/* ── Timeline (Rundown) ── */
+html[data-theme="light"] .timeline::before { background:linear-gradient(to bottom,var(--p),transparent); }
+html[data-theme="light"] .tl-dot { border-color:#EEF0F7;box-shadow:0 0 0 3px rgba(27,58,140,.15); }
+html[data-theme="light"] .tl-box { background:#fff;border-color:#D0D6E8;box-shadow:0 1px 6px rgba(15,30,61,.06); }
+html[data-theme="light"] .tl-act { color:#0F1E3D; }
+html[data-theme="light"] .tl-note,.tl-loc { color:#5B6E9A; }
+
+/* ── Member rows ── */
+html[data-theme="light"] .member-row {
+  background:#F7F8FB;border-color:#D0D6E8;
+}
+html[data-theme="light"] .member-row:hover { border-color:rgba(27,58,140,.25);background:#EEF1F9; }
+html[data-theme="light"] .member-no { background:rgba(27,58,140,.12);color:var(--p); }
+html[data-theme="light"] .member-nama { color:#0F1E3D; }
+html[data-theme="light"] .member-kode { color:#8B6508;background:rgba(201,162,39,.12);border-color:rgba(201,162,39,.35); }
+
+/* ── Kontak ── */
+html[data-theme="light"] .kontak-card {
+  background:#fff;border-color:#D0D6E8;
+  box-shadow:0 1px 6px rgba(15,30,61,.06);
+}
+html[data-theme="light"] .kontak-card:hover { border-color:rgba(27,58,140,.3);box-shadow:0 4px 16px rgba(27,58,140,.1); }
+html[data-theme="light"] .kontak-name { color:#0F1E3D; }
+html[data-theme="light"] .kontak-role { color:#5B6E9A; }
+
+/* ── Panitia ── */
+html[data-theme="light"] .panitia-group-header { color:#0F1E3D; }
+html[data-theme="light"] .panitia-card {
+  background:#fff;border-color:#D0D6E8;box-shadow:0 1px 4px rgba(15,30,61,.05);
+}
+html[data-theme="light"] .panitia-card:hover { border-color:rgba(27,58,140,.3);box-shadow:0 4px 16px rgba(27,58,140,.1); }
+html[data-theme="light"] .panitia-nama { color:#0F1E3D; }
+html[data-theme="light"] .panitia-role { color:#374869; }
+html[data-theme="light"] .pnt-section-title { color:var(--p); }
+html[data-theme="light"] .pnt-nama { color:#0F1E3D; }
+html[data-theme="light"] .pnt-role,
+html[data-theme="light"] .pnt-ket { color:#374869; }
+
+/* ── Games / Kelompok ── */
+html[data-theme="light"] .kel-tab { border-color:#D0D6E8;color:#5B6E9A;background:#F7F8FB; }
+html[data-theme="light"] .kel-tab:hover { border-color:var(--p);color:var(--p); }
+html[data-theme="light"] .kel-tab.active { background:var(--p);color:#fff;border-color:var(--p); }
+html[data-theme="light"] .kel-stat { border-color:#D0D6E8;background:#F7F8FB; }
+html[data-theme="light"] .kel-stat strong { color:#0F1E3D; }
+html[data-theme="light"] .group-name { color:#0F1E3D; }
+
+/* ── Rules ── */
+html[data-theme="light"] .rule-item {
+  background:#fff;border-color:#D0D6E8;box-shadow:0 1px 4px rgba(15,30,61,.05);
+}
+html[data-theme="light"] .rule-item:hover { border-color:rgba(27,58,140,.25); }
+html[data-theme="light"] .rule-text h4 { color:#0F1E3D; }
+html[data-theme="light"] .rule-text p { color:#374869; }
+
+/* ── Hadiah / Beranda ── */
+html[data-theme="light"] .hadiah-grand-card {
+  background:linear-gradient(135deg,rgba(201,162,39,.08) 0%,#FFFFFF 100%);
+  border-color:rgba(180,134,11,.45);
+  box-shadow:0 4px 20px rgba(180,134,11,.12);
+}
+html[data-theme="light"] .hadiah-grand-nama { color:#0F1E3D; }
+html[data-theme="light"] .hadiah-mid-card {
+  background:#fff;border-color:#D0D6E8;box-shadow:0 1px 6px rgba(15,30,61,.06);
+}
+html[data-theme="light"] .hadiah-mid-nama { color:#0F1E3D; }
+
+/* ── Floor plan ── */
+html[data-theme="light"] .fpm-room { color:#0F1E3D; }
+html[data-theme="light"] .fpm-room:hover { border-color:#C9A227;box-shadow:0 0 0 2px rgba(201,162,39,.3); }
+html[data-theme="light"] .fpm-num { background:#9A6E00;color:#fff; }
+html[data-theme="light"] .fpm-name { color:#1A2744; }
+html[data-theme="light"] .fpm-pool { background:rgba(80,180,220,.15);border-color:#5fa8c8; }
+
+/* ── Custom Sections ── */
+html[data-theme="light"] .custom-section-card { background:#fff;border-color:#D0D6E8;box-shadow:0 1px 6px rgba(15,30,61,.06); }
+html[data-theme="light"] .custom-item { background:#F7F8FB;border-color:#D0D6E8; }
+html[data-theme="light"] .custom-title { color:#0F1E3D; }
+html[data-theme="light"] .custom-body { color:#374869; }
+
+/* ── Lainnya section heading ── */
+html[data-theme="light"] .custom-sec-nama { color:#0F1E3D !important; }
+
+/* ── Pengumuman board header ── */
+html[data-theme="light"] .pengumuman-board-header { color:#0F1E3D; }
+html[data-theme="light"] .pengumuman-tanggal { color:#374869; }
+html[data-theme="light"] .pengumuman-isi { color:#1A2C4E; }
+
+/* ── Kontak extra ── */
+html[data-theme="light"] .kontak-role { color:#7A5600; }
+html[data-theme="light"] .kontak-num { color:#374869; }
+html[data-theme="light"] .kontak-hp { color:var(--p); }
+
+/* ── Groups / Games ── */
+html[data-theme="light"] .group-members { color:#374869; }
+html[data-theme="light"] .kel-stat span { color:#374869; }
+
+/* ── Countdown ── */
+html[data-theme="light"] .countdown-label { color:#374869; }
+
+/* ── Misc ── */
+html[data-theme="light"] .chevron { color:#374869; }
+html[data-theme="light"] .empty { color:#374869; }
+
+/* ── Footer ── */
+html[data-theme="light"] footer { color:#374869;border-top-color:#D0D6E8; }
+html[data-theme="light"] .footer-credit { color:rgba(15,30,61,.5); }
+html[data-theme="light"] .footer-credit a { color:#9A6E00; }
+html[data-theme="light"] .footer-credit a:hover { color:#7A5600; }
+
+/* ── Theme toggle button ── */
+.theme-toggle {
+  width:34px;height:34px;border-radius:8px;
+  background:rgba(255,255,255,.06);border:1px solid var(--border);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  color:var(--muted);transition:.2s;flex-shrink:0;
+}
+.theme-toggle:hover { background:rgba(212,175,55,.12);border-color:var(--a);color:var(--a); }
+html[data-theme="light"] .theme-toggle {
+  background:#F0F2F7;border-color:#D0D6E8;color:#5B6E9A;
+}
+html[data-theme="light"] .theme-toggle:hover { background:#E8EBF3;border-color:var(--p);color:var(--p); }
+
 </style>
 
 </head>
@@ -1208,6 +1440,12 @@ footer{text-align:center;padding:28px 16px calc(20px + env(safe-area-inset-botto
   <symbol id="icon-announcements" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
     <path d="M22 17H2a3 3 0 0 0 3-3V9a7 7 0 0 1 14 0v5a3 3 0 0 0 3 3z"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
   </symbol>
+  <symbol id="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+  </symbol>
+  <symbol id="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+  </symbol>
 </svg>
 
 <!-- ── APP HEADER ──────────────────────────────────────────────────── -->
@@ -1221,6 +1459,9 @@ footer{text-align:center;padding:28px 16px calc(20px + env(safe-area-inset-botto
       <span id="headerTitle" class="header-brand-name">IKCADIN TOUR 2026</span>
     </div>
     <nav class="header-nav" id="navPills"></nav>
+    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle theme" title="Ganti tema">
+      <svg class="svg-icon md" id="themeIcon"><use href="#icon-moon"/></svg>
+    </button>
   </div>
 </header>
 
@@ -1263,6 +1504,37 @@ footer{text-align:center;padding:28px 16px calc(20px + env(safe-area-inset-botto
   </div>
 </div>
 <script>
+
+// ── THEME ──────────────────────────────────────────────────────
+(function() {
+  var saved = localStorage.getItem('theme');
+  if (saved === 'light') {
+    document.documentElement.setAttribute('data-theme', 'light');
+  }
+})();
+
+function toggleTheme() {
+  var html = document.documentElement;
+  var use  = document.querySelector('#themeIcon use');
+  var isLight = html.getAttribute('data-theme') === 'light';
+  if (isLight) {
+    html.removeAttribute('data-theme');
+    if (use) use.setAttribute('href', '#icon-moon');
+    localStorage.setItem('theme', 'dark');
+  } else {
+    html.setAttribute('data-theme', 'light');
+    if (use) use.setAttribute('href', '#icon-sun');
+    localStorage.setItem('theme', 'light');
+  }
+}
+
+// Apply saved icon after DOM ready
+document.addEventListener('DOMContentLoaded', function() {
+  if (localStorage.getItem('theme') === 'light') {
+    var use = document.querySelector('#themeIcon use');
+    if (use) use.setAttribute('href', '#icon-sun');
+  }
+});
 
 // ── CONFIG ─────────────────────────────────────────────────────
 
@@ -1598,7 +1870,7 @@ const badge = (ico, txt) =>
 // Grup tab: key grup → daftar section keys di dalamnya
 const TAB_GROUPS = {
   acara:     { label: "Acara",                     keys: ["rundown", "games"] },
-  akomodasi: { label: "Akomodasi & Transportasi",  keys: ["kamar", "bus", "mobil", "denah"] }
+  akomodasi: { label: "Akomodasi & Transportasi",  keys: ["denah", "kamar", "bus", "mobil"] }
 };
 const GROUPED_KEYS = ["rundown","games","kamar","bus","mobil","denah"];
 
@@ -1978,7 +2250,7 @@ function renderCustom(raw) {
     <div style="margin-bottom:20px">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
         <span style="font-size:1.3rem;display:flex;align-items:center">${sec.emoji ? escHtml(sec.emoji) : svgIcon("pin","md")}</span>
-        <span style="font-family:var(--font-head);font-weight:700;font-size:.95rem;color:#fff">${escHtml(sec.nama)}</span>
+        <span class="custom-sec-nama" style="font-family:var(--font-head);font-weight:700;font-size:.95rem;color:#fff">${escHtml(sec.nama)}</span>
       </div>
       <div class="custom-list">${items.map(it => `
         <div class="custom-item">
@@ -2195,8 +2467,11 @@ function renderDenah(raw) {
     });
   }
 
-  // Warna kamar — unified navy/gold sesuai tema website
-  var ROOM_CLR = {bg:'rgba(27,58,140,.28)', bdr:'rgba(212,175,55,.5)', txt:'#c8d8ff'};
+  // Warna kamar — theme-aware
+  var _lt = document.documentElement.getAttribute('data-theme') === 'light';
+  var ROOM_CLR = _lt
+    ? {bg:'rgba(201,162,39,.10)', bdr:'rgba(180,134,11,.55)', txt:'#1A2744'}
+    : {bg:'rgba(27,58,140,.35)', bdr:'rgba(212,175,55,.5)', txt:'#FFFFFF'};
   var TY={
     sd: ROOM_CLR,
     dl: ROOM_CLR,
