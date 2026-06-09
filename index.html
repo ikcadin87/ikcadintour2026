@@ -1332,6 +1332,17 @@ html[data-theme="light"] .footer-credit { color:rgba(15,30,61,.5); }
 html[data-theme="light"] .footer-credit a { color:#9A6E00; }
 html[data-theme="light"] .footer-credit a:hover { color:#7A5600; }
 
+/* ── HERO CLAIM MODE ─────────────────────────────────────── */
+.hero-panel { transition: min-height .35s ease; }
+.hero-panel.claim-mode .hero-banner-bg,
+.hero-panel.claim-mode .hero-banner-img {
+  min-height: 72px !important;
+  height: 72px !important;
+  object-position: center 20%;
+}
+.hero-panel.claim-mode .hero-content { display:none; }
+.hero-panel.claim-mode .hero-overlay  { background:rgba(5,12,26,.7); }
+
 /* ── CLAIM SECTION ─────────────────────────────────────────── */
 .claim-wrap { max-width:480px; margin:0 auto; padding:8px 0; }
 .claim-active-badge {
@@ -1430,6 +1441,25 @@ html[data-theme="light"] .footer-credit a:hover { color:#7A5600; }
   transition:.15s;margin-top:4px;
 }
 .claim-reset-btn:hover { border-color:var(--text);color:var(--text); }
+
+/* Realtime confirmed state */
+.claim-confirmed-box {
+  text-align:center;padding:28px 20px;border-radius:var(--r);
+  background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.35);
+  animation:fadeUp .4s ease both;
+}
+.claim-confirmed-icon { font-size:3rem;margin-bottom:12px; }
+.claim-confirmed-title { font-size:1.15rem;font-weight:800;color:#22c55e;margin-bottom:6px; }
+.claim-confirmed-sub   { font-size:.84rem;color:var(--muted);margin-bottom:20px; }
+.claim-poll-indicator  {
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:.75rem;color:var(--muted);margin-top:12px;margin-bottom:8px;
+}
+.claim-poll-dot {
+  width:7px;height:7px;border-radius:50%;background:var(--a);
+  animation:pollBlink 1.4s ease infinite;
+}
+@keyframes pollBlink { 0%,100%{opacity:.3} 50%{opacity:1} }
 
 /* Light mode */
 html[data-theme="light"] .claim-search { background:#fff;border-color:#D0D6E8;color:#0F1E3D; }
@@ -2031,6 +2061,9 @@ function switchTab(key, btn) {
   activeKey = key;
   document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));
   btn.classList.add("active");
+  // Kecilkan hero saat tab Claim aktif
+  var hero = document.getElementById('hero');
+  if (hero) hero.classList.toggle('claim-mode', key === 'claim');
   renderAll(key);
 }
 
@@ -2820,6 +2853,7 @@ var claimList       = [];       // [{nama, dept}]
 var claimSelected   = null;     // {nama, dept}
 var claimVerified   = null;     // verified person from GAS
 var claimListLoaded = false;
+var claimPollTimer  = null;     // interval untuk realtime polling
 
 const MEAL_LABELS = {
   snack:       'Snack',
@@ -2975,11 +3009,11 @@ function submitClaimVerify() {
 }
 
 function showClaimResult(r) {
-  var step1  = document.getElementById('claimStep1');
-  var result = document.getElementById('claimResult');
-  var qrWrap = document.getElementById('claimQrWrap');
+  var step1    = document.getElementById('claimStep1');
+  var result   = document.getElementById('claimResult');
+  var qrWrap   = document.getElementById('claimQrWrap');
   var infoCard = document.getElementById('claimInfoCard');
-  if (step1) step1.style.display = 'none';
+  if (step1)  step1.style.display  = 'none';
   if (result) result.style.display = 'block';
 
   // Generate QR code
@@ -3001,32 +3035,93 @@ function showClaimResult(r) {
 
   // Info card
   if (infoCard) {
-    var meals = [
-      { key:'snack',       label:'Snack',       val: r.snack_claim },
-      { key:'makan_siang', label:'Makan Siang',  val: r.makan_siang_claim },
-      { key:'makan_malam', label:'Makan Malam',  val: r.makan_malam_claim },
-    ];
-    var rows = meals.map(function(m) {
-      var claimed = !!m.val;
-      return '<div class="claim-status-row">' +
-        '<div><div class="claim-status-label">' + m.label + '</div>' +
-        (claimed ? '<div class="claim-status-ts">' + escHtml(m.val) + '</div>' : '') +
-        '</div>' +
-        '<span class="claim-status-badge ' + (claimed ? 'claimed' : 'unclaimed') + '">' +
-        svgIcon(claimed ? 'check-circle' : 'x-circle', '12px') +
-        (claimed ? ' Sudah' : ' Belum') + '</span>' +
-        '</div>';
-    }).join('');
+    renderClaimInfoCard(r);
+  }
 
-    infoCard.innerHTML =
-      '<div class="claim-info-name">' + escHtml(r.nama) + '</div>' +
-      '<div class="claim-info-dept">' + escHtml(r.dept||'') + '</div>' +
-      '<div class="claim-info-pax">' + svgIcon('sparkles','13px') + ' ' + r.pax + ' Pax</div>' +
-      '<div class="claim-status-grid">' + rows + '</div>';
+  // Mulai polling realtime — cek apakah admin sudah konfirmasi
+  var activeMeal = r.active_meal || 'none';
+  if (activeMeal !== 'none') {
+    var fieldMap = { snack:'snack_claim', makan_siang:'makan_siang_claim', makan_malam:'makan_malam_claim' };
+    var field = fieldMap[activeMeal];
+    if (!r[field]) {
+      startClaimPoll(r.nama, r.inisial || (document.getElementById('claimInitialInput')?.value || ''), activeMeal, field);
+    }
   }
 }
 
+function renderClaimInfoCard(r) {
+  var infoCard = document.getElementById('claimInfoCard');
+  if (!infoCard) return;
+  var meals = [
+    { key:'snack',       label:'Snack',      val: r.snack_claim },
+    { key:'makan_siang', label:'Makan Siang', val: r.makan_siang_claim },
+    { key:'makan_malam', label:'Makan Malam', val: r.makan_malam_claim },
+  ];
+  var rows = meals.map(function(m) {
+    var claimed = !!m.val;
+    return '<div class="claim-status-row">' +
+      '<div><div class="claim-status-label">' + m.label + '</div>' +
+      (claimed ? '<div class="claim-status-ts">' + escHtml(m.val) + '</div>' : '') +
+      '</div>' +
+      '<span class="claim-status-badge ' + (claimed ? 'claimed' : 'unclaimed') + '">' +
+      svgIcon(claimed ? 'check-circle' : 'x-circle', '12px') +
+      (claimed ? ' Sudah' : ' Belum') + '</span>' +
+      '</div>';
+  }).join('');
+  infoCard.innerHTML =
+    '<div class="claim-info-name">' + escHtml(r.nama) + '</div>' +
+    '<div class="claim-info-dept">' + escHtml(r.dept||'') + '</div>' +
+    '<div class="claim-info-pax">' + svgIcon('sparkles','13px') + ' ' + r.pax + ' Pax</div>' +
+    '<div class="claim-status-grid">' + rows + '</div>';
+}
+
+// ── Realtime polling ──────────────────────────────────────────
+function startClaimPoll(nama, inisial, mealType, field) {
+  stopClaimPoll();
+  // Tampilkan indikator menunggu
+  var qrWrap = document.getElementById('claimQrWrap');
+  if (qrWrap) {
+    var indicator = document.createElement('div');
+    indicator.id = 'claimPollIndicator';
+    indicator.className = 'claim-poll-indicator';
+    indicator.innerHTML = '<span class="claim-poll-dot"></span> Menunggu konfirmasi admin…';
+    qrWrap.appendChild(indicator);
+  }
+  claimPollTimer = setInterval(function() {
+    fetch(WEB_APP_URL + '?type=claimList', { redirect:'follow' })
+      .then(function(res) { return res.json(); })
+      .then(function(d) {
+        var person = (d.data || []).find(function(p) {
+          return p.nama.toLowerCase() === nama.toLowerCase();
+        });
+        if (!person) return;
+        if (person[field]) {
+          stopClaimPoll();
+          showClaimConfirmed(nama, mealType, person[field]);
+        }
+      })
+      .catch(function() {});
+  }, 4000);
+}
+
+function stopClaimPoll() {
+  if (claimPollTimer) { clearInterval(claimPollTimer); claimPollTimer = null; }
+}
+
+function showClaimConfirmed(nama, mealType, timestamp) {
+  var result = document.getElementById('claimResult');
+  if (!result) return;
+  result.innerHTML =
+    '<div class="claim-confirmed-box">' +
+    '<div class="claim-confirmed-icon">' + svgIcon('check-circle', '3rem') + '</div>' +
+    '<div class="claim-confirmed-title">Claim Berhasil!</div>' +
+    '<div class="claim-confirmed-sub">' + escHtml(nama) + ' · ' + (MEAL_LABELS[mealType]||mealType) + '<br><small>' + timestamp + '</small></div>' +
+    '<button class="claim-reset-btn" onclick="resetClaim()" style="margin-top:16px">↩ Kembali</button>' +
+    '</div>';
+}
+
 function resetClaim() {
+  stopClaimPoll();
   claimSelected = null;
   claimVerified = null;
   var step1  = document.getElementById('claimStep1');

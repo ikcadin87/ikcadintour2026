@@ -123,6 +123,24 @@ tr:hover td{background:rgba(255,255,255,.02)}
   .sec-header{flex-direction:column;align-items:flex-start}
 }
 
+/* ── REKAP CLAIM ─────────────────────────────────────────────── */
+.rekap-stats { display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:4px; }
+@media(max-width:520px){.rekap-stats{grid-template-columns:1fr;}}
+.rekap-stat-card {
+  background:var(--card2);border:1px solid var(--border);border-radius:12px;
+  padding:14px 16px;
+}
+.rekap-stat-label { font-size:.72rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px; }
+.rekap-stat-num   { font-size:1.6rem;font-weight:800;line-height:1; }
+.rekap-stat-num span { font-size:.9rem;font-weight:400;color:var(--muted); }
+.rekap-stat-bar   { height:5px;background:var(--border);border-radius:3px;margin:8px 0 4px; }
+.rekap-stat-fill  { height:100%;border-radius:3px;transition:.4s; }
+.rekap-stat-pct   { font-size:.72rem;color:var(--muted); }
+.rekap-badge { display:inline-flex;align-items:center;gap:4px;font-size:.73rem;padding:3px 8px;border-radius:20px;white-space:nowrap; }
+.rekap-yes  { background:rgba(34,197,94,.12);color:#22c55e;border:1px solid rgba(34,197,94,.25); }
+.rekap-no   { background:rgba(239,68,68,.08);color:#ef4444;border:1px solid rgba(239,68,68,.2); }
+.rekap-row-done td { opacity:.65; }
+
 /* ── CLAIM PANEL ─────────────────────────────────────────────── */
 .claim-panel { max-width:540px; }
 .claim-panel-title { font-size:1.05rem;font-weight:800;color:var(--a);margin-bottom:18px; }
@@ -239,6 +257,9 @@ tr:hover td{background:rgba(255,255,255,.02)}
   <symbol id="icon-camera" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
     <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>
   </symbol>
+  <symbol id="icon-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/>
+  </symbol>
 </svg>
 
 <!-- ── LOGIN ─────────────────────────────────────────────────── -->
@@ -305,8 +326,9 @@ const SECTIONS = [
   { key:'custom',     icon:'sparkles',  label:'Custom Sections',  sheet:'Custom Sections' },
   { key:'config',     icon:'settings',  label:'Config',           sheet:'Config'          },
   { key:'hadiah',     icon:'gift',      label:'Hadiah',           sheet:'Hadiah'          },
-  { key:'claim_data', icon:'clipboard', label:'Data Claim',        sheet:'Claim'           },
-  { key:'claim_scan', icon:'ticket',    label:'Verifikasi Claim',  sheet:null              },
+  { key:'claim_data',  icon:'clipboard', label:'Data Claim',        sheet:'Claim'           },
+  { key:'claim_rekap', icon:'chart',     label:'Rekap Claim',       sheet:'Claim'           },
+  { key:'claim_scan',  icon:'ticket',    label:'Verifikasi Claim',  sheet:null              },
 ];
 
 // ── STATE ────────────────────────────────────────────────────────
@@ -362,8 +384,9 @@ window.addEventListener('DOMContentLoaded', function() {
 
 // ── SIDEBAR ──────────────────────────────────────────────────────
 function buildSidebar() {
-  const dataSecs  = SECTIONS.filter(s => s.key !== 'claim_scan' && s.key !== 'claim_data');
-  const claimSecs = SECTIONS.filter(s => s.key === 'claim_data' || s.key === 'claim_scan');
+  const claimKeys = ['claim_data','claim_rekap','claim_scan'];
+  const dataSecs  = SECTIONS.filter(s => !claimKeys.includes(s.key));
+  const claimSecs = SECTIONS.filter(s => claimKeys.includes(s.key));
   document.getElementById('adminSidebar').innerHTML =
     '<div class="sb-label">Data Sections</div>' +
     dataSecs.map(s =>
@@ -390,6 +413,17 @@ function loadSection(key) {
     curSection = SECTIONS.find(s => s.key === key);
     document.getElementById('adminMain').innerHTML = renderClaimPanel();
     loadActiveMeal();
+    return;
+  }
+
+  // ── REKAP CLAIM ───────────────────────────────────────────────
+  if (key === 'claim_rekap') {
+    curSection = SECTIONS.find(s => s.key === key);
+    document.getElementById('adminMain').innerHTML =
+      '<div class="sec-header"><div class="sec-title">Rekap Claim Konsumsi</div>' +
+      '<button class="btn-add" onclick="loadRekapClaim()">↻ Refresh</button></div>' +
+      '<div id="rekapArea"><div class="tbl-loading">⏳ Memuat…</div></div>';
+    loadRekapClaim();
     return;
   }
 
@@ -544,6 +578,79 @@ document.getElementById('modalBg').addEventListener('click', function(e) {
 });
 
 // ══════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════
+// REKAP CLAIM
+// ══════════════════════════════════════════════════════════════════
+
+function loadRekapClaim() {
+  var area = document.getElementById('rekapArea');
+  if (!area) return;
+  area.innerHTML = '<div class="tbl-loading">⏳ Memuat…</div>';
+  postGAS({ action:'get_admin_data', token, sheet:'Claim' })
+    .then(function(r) {
+      if (!r.ok) { area.innerHTML = '<div class="tbl-empty">Gagal: ' + esc(r.error||'?') + '</div>'; return; }
+      renderRekap(r.headers, r.rows, area);
+    })
+    .catch(function(e) { area.innerHTML = '<div class="tbl-empty">Error: ' + esc(e.message) + '</div>'; });
+}
+
+function renderRekap(headers, rows, area) {
+  // Kolom: A=Nama(0), B=Inisial(1), C=Dept(2), D=Pax(3), E=Snack(4), F=MakanSiang(5), G=MakanMalam(6)
+  var total = rows.length;
+  var snackClaimed = 0, siangClaimed = 0, malamClaimed = 0;
+  rows.forEach(function(row) {
+    if (row.data[4]) snackClaimed++;
+    if (row.data[5]) siangClaimed++;
+    if (row.data[6]) malamClaimed++;
+  });
+
+  function statCard(label, claimed, color) {
+    var pct = total ? Math.round(claimed/total*100) : 0;
+    return '<div class="rekap-stat-card">' +
+      '<div class="rekap-stat-label">' + label + '</div>' +
+      '<div class="rekap-stat-num" style="color:' + color + '">' + claimed + '<span>/' + total + '</span></div>' +
+      '<div class="rekap-stat-bar"><div class="rekap-stat-fill" style="width:' + pct + '%;background:' + color + '"></div></div>' +
+      '<div class="rekap-stat-pct">' + pct + '%</div>' +
+      '</div>';
+  }
+
+  var statsHtml =
+    '<div class="rekap-stats">' +
+    statCard('Snack',       snackClaimed, '#D4AF37') +
+    statCard('Makan Siang', siangClaimed, '#22c55e') +
+    statCard('Makan Malam', malamClaimed, '#a855f7') +
+    '</div>';
+
+  function badge(val) {
+    return val
+      ? '<span class="rekap-badge rekap-yes">' + svgIcon('check-circle','.75rem') + ' ' + esc(val) + '</span>'
+      : '<span class="rekap-badge rekap-no">'  + svgIcon('x-circle','.75rem')     + ' Belum</span>';
+  }
+
+  var tableHtml = '<div class="tbl-wrap"><table><thead><tr>' +
+    '<th>#</th><th>Nama</th><th>Dept</th><th>Pax</th>' +
+    '<th style="color:#D4AF37">Snack</th>' +
+    '<th style="color:#22c55e">Makan Siang</th>' +
+    '<th style="color:#a855f7">Makan Malam</th>' +
+    '</tr></thead><tbody>';
+  rows.forEach(function(row, i) {
+    var allDone = row.data[4] && row.data[5] && row.data[6];
+    tableHtml += '<tr' + (allDone ? ' class="rekap-row-done"' : '') + '>' +
+      '<td style="color:var(--muted);font-size:.78rem">' + (i+1) + '</td>' +
+      '<td style="font-weight:600">' + esc(row.data[0]||'') + '</td>' +
+      '<td style="font-size:.8rem;color:var(--muted)">' + esc(row.data[2]||'') + '</td>' +
+      '<td style="text-align:center">' + esc(row.data[3]||'') + '</td>' +
+      '<td>' + badge(row.data[4]) + '</td>' +
+      '<td>' + badge(row.data[5]) + '</td>' +
+      '<td>' + badge(row.data[6]) + '</td>' +
+      '</tr>';
+  });
+  tableHtml += '</tbody></table></div>';
+
+  area.innerHTML = statsHtml + '<div style="margin-top:20px">' +
+    '<span class="row-count">' + total + ' peserta</span></div>' + tableHtml;
+}
+
 // CLAIM VERIFICATION PANEL
 // ══════════════════════════════════════════════════════════════════
 
