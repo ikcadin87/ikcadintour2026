@@ -719,6 +719,8 @@ var claimScanAF       = null;
 var claimScanCanvas   = document.createElement('canvas');
 var claimScanCtx      = claimScanCanvas.getContext('2d');
 var claimLastScanned  = null;
+var claimLastScanTime = 0;
+var CLAIM_RESCAN_MS   = 2500; // jeda sebelum QR yang sama bisa discan ulang
 
 const MEAL_LABELS_ADMIN = {
   snack:       'Snack',
@@ -834,6 +836,8 @@ function startClaimScan() {
   navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
     .then(function(stream) {
       claimScanStream = stream;
+      claimLastScanned = null;
+      claimLastScanTime = 0;
       video.srcObject = stream;
       video.style.display = 'block';
       if (status) status.textContent = 'Arahkan kamera ke QR Code peserta…';
@@ -858,26 +862,29 @@ function stopClaimScan() {
 }
 
 function scanClaimFrame() {
+  // Berhenti hanya jika stream sudah ditutup (tombol Stop)
+  if (!claimScanStream) { claimScanAF = null; return; }
+
   var video = document.getElementById('claimVideo');
-  if (!video || video.readyState !== video.HAVE_ENOUGH_DATA || !window.jsQR) {
-    if (claimScanStream) claimScanAF = requestAnimationFrame(scanClaimFrame);
-    return;
-  }
-  claimScanCanvas.width  = video.videoWidth;
-  claimScanCanvas.height = video.videoHeight;
-  claimScanCtx.drawImage(video, 0, 0, claimScanCanvas.width, claimScanCanvas.height);
-  var imgData = claimScanCtx.getImageData(0, 0, claimScanCanvas.width, claimScanCanvas.height);
-  var code = jsQR(imgData.data, imgData.width, imgData.height, { inversionAttempts:'dontInvert' });
-  if (code && code.data) {
-    var raw = code.data.trim();
-    if (raw !== claimLastScanned) {
-      claimLastScanned = raw;
-      stopClaimScan();
-      processScannedQR(raw);
+  if (video && video.readyState === video.HAVE_ENOUGH_DATA && window.jsQR) {
+    claimScanCanvas.width  = video.videoWidth;
+    claimScanCanvas.height = video.videoHeight;
+    claimScanCtx.drawImage(video, 0, 0, claimScanCanvas.width, claimScanCanvas.height);
+    var imgData = claimScanCtx.getImageData(0, 0, claimScanCanvas.width, claimScanCanvas.height);
+    var code = jsQR(imgData.data, imgData.width, imgData.height, { inversionAttempts:'attemptBoth' });
+    if (code && code.data) {
+      var raw = code.data.trim();
+      var now = Date.now();
+      // QR baru → langsung proses. QR sama → boleh ulang setelah jeda CLAIM_RESCAN_MS.
+      if (raw !== claimLastScanned || (now - claimLastScanTime) > CLAIM_RESCAN_MS) {
+        claimLastScanned = raw;
+        claimLastScanTime = now;
+        processScannedQR(raw);
+      }
     }
-  } else {
-    claimScanAF = requestAnimationFrame(scanClaimFrame);
   }
+  // Selalu lanjut memindai (kamera tetap terbuka) — continuous scanner
+  claimScanAF = requestAnimationFrame(scanClaimFrame);
 }
 
 function manualClaimCheck() {
