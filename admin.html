@@ -739,7 +739,7 @@ function showClaimResult(r, nama, inisial) {
 
   if (r.already_claimed) {
     statusDiv.innerHTML = '<div class="cres-status-already">' + svgIcon('x-circle','1rem') +
-      ' Sudah claim pada: <strong>' + r.claim_timestamp + '</strong></div>';
+      ' Sudah claim pada: <strong>' + r.claimed_at + '</strong></div>';
     confirmBtn.style.display = 'none';
   } else {
     statusDiv.innerHTML = '<div class="cres-status-ok">' + svgIcon('check-circle','1rem') +
@@ -766,11 +766,11 @@ function confirmClaimAdmin() {
         var statusDiv = document.getElementById('cresStatus');
         if (statusDiv) {
           statusDiv.innerHTML = '<div class="cres-status-ok">' + svgIcon('check-circle','1rem') +
-            ' Claim dikonfirmasi: <strong>' + r.timestamp + '</strong></div>';
+            ' Claim dikonfirmasi: <strong>' + r.claimed_at + '</strong></div>';
         }
         btn.style.display = 'none';
-      } else if (r.already) {
-        toast('Sudah pernah claim: ' + r.timestamp, 'err');
+      } else if (!r.ok && r.error && r.error.includes('Sudah')) {
+        toast('Sudah pernah claim: ' + (r.claimed_at||''), 'err');
         btn.disabled = false;
         btn.innerHTML = svgIcon('check-circle','1rem') + ' Konfirmasi Claim';
       } else {
