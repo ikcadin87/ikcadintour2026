@@ -206,10 +206,19 @@ tr:hover td{background:rgba(255,255,255,.02)}
   padding:20px;display:none;
 }
 .claim-result-box.show { display:block;animation:fadeUp .25s ease both; }
-.cres-name  { font-size:1rem;font-weight:800;color:var(--text);margin-bottom:2px; }
-.cres-dept  { font-size:.78rem;color:var(--muted);margin-bottom:4px; }
-.cres-pax   { font-size:.8rem;color:var(--a);font-weight:700;margin-bottom:14px; }
-.cres-meal  { font-size:.88rem;font-weight:700;margin-bottom:10px;color:var(--text); }
+.cres-head  { display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:14px; }
+.cres-id    { min-width:0; }
+.cres-name  { font-size:1.6rem;font-weight:800;color:var(--text);line-height:1.1;margin-bottom:3px;word-break:break-word; }
+.cres-dept  { font-size:.9rem;color:var(--p,#1b3a8c);font-weight:600; }
+html[data-theme="light"] .cres-dept { color:var(--p,#1b3a8c); }
+.cres-pax   {
+  flex-shrink:0;display:flex;align-items:baseline;gap:5px;
+  background:linear-gradient(135deg,var(--a),#B8941F);color:#fff;
+  font-size:2rem;font-weight:800;line-height:1;
+  padding:16px 22px;border-radius:14px;box-shadow:0 4px 16px rgba(212,175,55,.35);
+}
+.cres-pax span { font-size:1.15rem;font-weight:800; }
+.cres-meal  { font-size:.92rem;font-weight:700;margin-bottom:12px;color:var(--text); }
 .cres-status-already {
   display:flex;align-items:center;gap:8px;padding:10px 14px;
   background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);
@@ -977,9 +986,13 @@ function showClaimResult(r, nama, inisial) {
   }
 
   box.innerHTML =
-    '<div class="cres-name">' + esc(r.nama) + '</div>' +
-    '<div class="cres-dept">' + esc(r.dept || '') + '</div>' +
-    '<div class="cres-pax">' + svgIcon('sparkles','13px') + ' ' + r.pax + ' Pax</div>' +
+    '<div class="cres-head">' +
+      '<div class="cres-id">' +
+        '<div class="cres-name">' + esc(r.nama) + '</div>' +
+        '<div class="cres-dept">Department: ' + esc(r.dept || '-') + '</div>' +
+      '</div>' +
+      '<div class="cres-pax">' + r.pax + ' <span>PAX</span></div>' +
+    '</div>' +
     '<div class="cres-meal">Sesi: ' + esc(MEAL_LABELS_ADMIN[claimActiveMeal] || claimActiveMeal) + '</div>' +
     '<div id="cresStatus">' + statusHtml + '</div>' +
     btnHtml +
