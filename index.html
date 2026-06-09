@@ -1336,6 +1336,10 @@ html[data-theme="light"] .footer-credit a:hover { color:#7A5600; }
 /* ── HERO CLAIM MODE ─────────────────────────────────────── */
 .hero-panel { transition: opacity .25s ease, max-height .3s ease; overflow:hidden; }
 .hero-panel.claim-mode { max-height:0 !important; opacity:0; pointer-events:none; }
+/* Isi sisa viewport agar tidak ada ruang kosong besar di bawah */
+body.claim-active { display:flex; flex-direction:column; }
+body.claim-active .content-area { flex:1; display:flex; flex-direction:column; }
+body.claim-active #content { flex:1; }
 
 /* ── CLAIM SECTION ─────────────────────────────────────────── */
 .claim-wrap { max-width:480px; margin:0 auto; padding:8px 0; }
@@ -2056,10 +2060,12 @@ function switchTab(key, btn) {
   document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));
   btn.classList.add("active");
   // Sembunyikan hero & global search saat tab Claim aktif
+  var isClaim = key === 'claim';
   var hero = document.getElementById('hero');
-  if (hero) hero.classList.toggle('claim-mode', key === 'claim');
+  if (hero) hero.classList.toggle('claim-mode', isClaim);
   var sw = document.querySelector('.search-wrap');
-  if (sw) sw.classList.toggle('hidden', key === 'claim');
+  if (sw) sw.classList.toggle('hidden', isClaim);
+  document.body.classList.toggle('claim-active', isClaim);
   renderAll(key);
 }
 
