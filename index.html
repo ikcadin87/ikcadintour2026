@@ -606,18 +606,55 @@ footer{text-align:center;padding:28px 16px calc(20px + env(safe-area-inset-botto
 
 /* ─── Sub Tabs (di dalam grup tab) ─────────────────────────── */
 .sub-tabs{
-  display:flex;gap:6px;margin-bottom:16px;
-  flex-wrap:wrap;padding-bottom:2px;
-  border-bottom:1px solid var(--border);
-  padding-bottom:12px;
+  display:flex;gap:8px;overflow-x:auto;
+  padding:6px 0 14px;margin-bottom:20px;
+  -webkit-overflow-scrolling:touch;scrollbar-width:none;
+  border-bottom:1.5px solid var(--border);
+  position:sticky;top:calc(var(--header-h) + 0px);z-index:10;
+  background:var(--dark);
 }
+.sub-tabs::-webkit-scrollbar{display:none}
 .sub-tab{
-  padding:7px 18px;border-radius:999px;font-size:.78rem;font-weight:600;
-  border:1.5px solid var(--border);background:transparent;color:var(--muted);
-  cursor:pointer;transition:.2s;white-space:nowrap;font-family:var(--font-body);
+  display:flex;flex-direction:column;align-items:center;gap:5px;
+  padding:10px 20px 9px;border-radius:14px;
+  border:1.5px solid var(--border);
+  background:rgba(255,255,255,.04);color:var(--muted);
+  cursor:pointer;transition:.18s;white-space:nowrap;
+  font-family:var(--font-body);flex-shrink:0;min-width:76px;
 }
-.sub-tab:hover{border-color:var(--p);color:var(--text)}
-.sub-tab.active{background:var(--p);border-color:var(--p);color:#fff;box-shadow:0 3px 12px rgba(27,58,140,.3)}
+.sub-tab .stab-icon{font-size:1.4rem;line-height:1;display:block}
+.sub-tab .stab-lbl{font-size:.68rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.sub-tab:hover{border-color:rgba(27,58,140,.7);color:var(--text);background:rgba(27,58,140,.15)}
+.sub-tab.active{
+  background:linear-gradient(145deg,rgba(27,58,140,.85),rgba(10,24,48,.95));
+  border-color:var(--p);color:#fff;
+  box-shadow:0 4px 18px rgba(27,58,140,.45);
+}
+.sub-tab.active .stab-lbl{color:#fff}
+
+/* ─── Bus Tabs (per-bus navigation inside List Bus) ─────────── */
+.bus-tabs{
+  display:flex;gap:8px;overflow-x:auto;padding:0 0 12px;margin-bottom:18px;
+  -webkit-overflow-scrolling:touch;scrollbar-width:none;
+  border-bottom:1.5px solid var(--border);
+}
+.bus-tabs::-webkit-scrollbar{display:none}
+.bus-tab{
+  padding:8px 22px;border-radius:999px;font-size:.83rem;font-weight:700;
+  border:1.5px solid var(--border);background:transparent;color:var(--muted);
+  cursor:pointer;transition:.18s;white-space:nowrap;font-family:var(--font-body);
+  flex-shrink:0;
+}
+.bus-tab:hover{border-color:rgba(27,58,140,.65);color:var(--text);background:rgba(27,58,140,.12)}
+.bus-tab.active{background:var(--p);border-color:var(--p);color:#fff;box-shadow:0 3px 14px rgba(27,58,140,.45)}
+.bus-panel-header{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:14px;padding:12px 16px;
+  background:rgba(27,58,140,.2);border-radius:12px;
+  border:1px solid rgba(212,175,55,.22);
+}
+.bus-panel-name{font-family:var(--font-head);font-weight:800;font-size:.98rem;color:#fff;}
+.bus-panel-count{background:var(--p);color:#fff;padding:3px 14px;border-radius:20px;font-size:.74rem;font-weight:700;}
 
 /* ─── Papan Pengumuman ──────────────────────────────────────── */
 .pengumuman-wrap{margin-bottom:28px}
@@ -1543,7 +1580,7 @@ function renderAll(key) {
     groupKeys.forEach(k => {
       const m = SECTION_META[k];
       if (!m) return;
-      subHtml += `<button class="sub-tab${k === subKey ? ' active' : ''}" onclick="switchSubTab('${key}','${k}',this)">${m.label}</button>`;
+      subHtml += `<button class="sub-tab${k === subKey ? ' active' : ''}" onclick="switchSubTab('${key}','${k}',this)"><span class="stab-icon">${m.emoji}</span><span class="stab-lbl">${m.label}</span></button>`;
     });
     subHtml += '</div>';
     // Render konten sub-tab aktif
@@ -1756,29 +1793,49 @@ function renderTable(raw) {
 function renderGroups(raw) {
   const data = raw?.data || [];
   if (!data.length) return '<div class="empty">Belum ada data bus.</div>';
-  return `<div class="group-grid">${data.map(bus => `
-    <div class="group-card">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-         <div class="group-name" style="margin-bottom:0;">${escHtml(bus.nama)}</div>
-         <div style="background:var(--p); color:white; padding:2px 10px; border-radius:15px; font-size:0.75rem; font-weight:700;">
-            Total: ${bus.Kapasitas || 0} Orang
-         </div>
+
+  // Tab bar
+  let html = `<div class="bus-tabs">`;
+  data.forEach((bus, i) => {
+    html += `<button class="bus-tab${i === 0 ? ' active' : ''}" onclick="switchBusTab(${i}, this)">🚌 ${escHtml(bus.nama)}</button>`;
+  });
+  html += `</div>`;
+
+  // Panels
+  data.forEach((bus, i) => {
+    const anggota = bus.Anggota || bus.anggota || [];
+    const total = bus.Kapasitas || anggota.length || 0;
+    const filtered = anggota.filter(p => matchSearch(Object.values(p)));
+    html += `<div class="bus-panel" id="bus-panel-${i}" style="display:${i===0?'block':'none'}">
+      <div class="bus-panel-header">
+        <span class="bus-panel-name">🚌 ${escHtml(bus.nama)}</span>
+        <span class="bus-panel-count">Total: ${total} Orang</span>
       </div>
       <div class="member-list">
-        ${bus.Anggota.map((p, i) => `
+        ${filtered.length ? filtered.map((p, j) => `
           <div class="member-row">
-            <div class="member-no">${i + 1}</div>
+            <div class="member-no">${j + 1}</div>
             <div class="member-nama">${escHtml(p.nama)}</div>
-            <div style="font-size:0.65rem; color:#888; margin: 0 8px;">(D:${p.dewasa} A:${p.anak})</div>
+            <div style="font-size:.65rem;color:#888;margin:0 8px">(D:${p.dewasa||0} A:${p.anak||0})</div>
             ${p.department ? `<div class="member-kode">${escHtml(p.department)}</div>` : ""}
-          </div>
-        `).join("")}
+          </div>`).join("") : '<div class="empty" style="padding:12px 0">Tidak ada hasil pencarian.</div>'}
       </div>
-      <!-- Keterangan Notasi -->
-      <div style="font-size: 0.65rem; color: var(--muted); margin-top: 12px; border-top: 1px solid var(--border); padding-top: 8px; font-style: italic;">
-        *D = Dewasa, A = Anak >5 tahun
+      <div style="font-size:.65rem;color:var(--muted);margin-top:12px;border-top:1px solid var(--border);padding-top:8px;font-style:italic;">
+        *D = Dewasa, A = Anak &gt;5 tahun
       </div>
-    </div>`).join("")}</div>`;
+    </div>`;
+  });
+
+  return html;
+}
+
+function switchBusTab(index, btn) {
+  const wrap = btn.closest('.card-body') || btn.closest('.section-card') || document.getElementById('content');
+  wrap.querySelectorAll('.bus-tab').forEach(b => b.classList.remove('active'));
+  wrap.querySelectorAll('.bus-panel').forEach(p => p.style.display = 'none');
+  btn.classList.add('active');
+  const panel = wrap.querySelector(`#bus-panel-${index}`);
+  if (panel) { panel.style.display = 'block'; panel.style.animation = 'none'; void panel.offsetWidth; panel.style.animation = 'fadeUp .25s ease both'; }
 }
 
 function renderKontak(raw) {
