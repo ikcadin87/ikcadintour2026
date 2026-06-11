@@ -150,6 +150,47 @@ tr:hover td{background:rgba(255,255,255,.02)}
 .rekap-yes  { background:rgba(34,197,94,.12);color:#22c55e;border:1px solid rgba(34,197,94,.25); }
 .rekap-no   { background:rgba(239,68,68,.08);color:#ef4444;border:1px solid rgba(239,68,68,.2); }
 .rekap-row-done td { opacity:.65; }
+.rekap-stat-card.rk-selectable { cursor:pointer;transition:.15s;border:1px solid transparent; }
+.rekap-stat-card.rk-selectable:hover { border-color:var(--border); }
+.rekap-stat-card.rk-active { border-color:var(--a);box-shadow:0 0 0 2px rgba(212,175,55,.18); }
+
+/* ── Rekap: kontrol + daftar peserta (mobile friendly) ── */
+.rk-controls { margin:18px 0 12px; }
+.rk-tabs { display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px; }
+.rk-tab {
+  padding:10px 8px;border-radius:var(--r2);border:1px solid var(--border);
+  background:var(--dark);color:var(--muted);cursor:pointer;font-size:.8rem;font-weight:700;
+  text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:.15s;
+}
+.rk-tab small { display:block;font-size:.68rem;font-weight:600;opacity:.8;margin-top:2px; }
+.rk-tab.active-snack       { background:rgba(212,175,55,.16);border-color:#D4AF37;color:#D4AF37; }
+.rk-tab.active-makan_siang { background:rgba(34,197,94,.14);border-color:#22c55e;color:#22c55e; }
+.rk-tab.active-makan_malam { background:rgba(168,85,247,.14);border-color:#a855f7;color:#a855f7; }
+.rk-row2 { display:flex;gap:8px;flex-wrap:wrap;align-items:center; }
+.rk-search { flex:1;min-width:140px;padding:9px 12px;background:var(--dark);border:1px solid var(--border);border-radius:var(--r2);color:var(--text);font-size:.85rem;outline:none; }
+.rk-search:focus { border-color:var(--a); }
+.rk-chips { display:flex;gap:6px; }
+.rk-chip { padding:8px 13px;border-radius:20px;border:1px solid var(--border);background:var(--dark);color:var(--muted);cursor:pointer;font-size:.78rem;font-weight:700;transition:.15s; }
+.rk-chip.active { background:var(--p);border-color:var(--p);color:#fff; }
+.rk-summary { font-size:.82rem;color:var(--muted);margin:6px 2px 12px; }
+.rk-summary strong { color:var(--text); }
+.rk-list { display:flex;flex-direction:column;gap:8px; }
+.rk-item {
+  display:flex;align-items:center;gap:12px;
+  padding:12px 14px;border-radius:var(--r2);
+  background:var(--card2);border:1px solid var(--border);border-left-width:4px;
+}
+.rk-item.done   { border-left-color:#22c55e; }
+.rk-item.undone { border-left-color:#ef4444; }
+.rk-item-main { flex:1;min-width:0; }
+.rk-item-name { font-size:.92rem;font-weight:700;color:var(--text); }
+.rk-item-sub  { font-size:.74rem;color:var(--muted);margin-top:2px; }
+.rk-item-st { flex-shrink:0;text-align:right; }
+.rk-st-badge { display:inline-flex;align-items:center;gap:4px;font-size:.74rem;font-weight:700;padding:4px 10px;border-radius:14px;white-space:nowrap; }
+.rk-st-badge.yes { background:rgba(34,197,94,.14);color:#22c55e; }
+.rk-st-badge.no  { background:rgba(239,68,68,.1);color:#ef4444; }
+.rk-st-time { font-size:.66rem;color:var(--muted);margin-top:3px; }
+.rk-empty { text-align:center;color:var(--muted);padding:24px;font-size:.85rem; }
 
 /* ── CLAIM PANEL ─────────────────────────────────────────────── */
 .claim-panel { max-width:540px;margin:0 auto; }
@@ -654,61 +695,121 @@ function loadRekapClaim() {
     .catch(function(e) { area.innerHTML = '<div class="tbl-empty">Error: ' + esc(e.message) + '</div>'; });
 }
 
+// State rekap
+var rekapRows  = [];
+var rekapMeal  = 'snack';   // sesi yang sedang ditampilkan di daftar
+var rekapFilter = 'all';    // all | yes | no
+var rekapSearch = '';
+var REKAP_COL  = { snack:4, makan_siang:5, makan_malam:6 };
+var REKAP_LABEL = { snack:'Snack', makan_siang:'Makan Siang', makan_malam:'Makan Malam' };
+
 function renderRekap(headers, rows, area) {
-  // Kolom: A=Nama(0), B=Inisial(1), C=Dept(2), D=Pax(3), E=Snack(4), F=MakanSiang(5), G=MakanMalam(6)
+  // Kolom: Nama(0), Inisial(1), Dept(2), Pax(3), Snack(4), MakanSiang(5), MakanMalam(6)
+  rekapRows = rows;
   var total = rows.length;
-  var snackClaimed = 0, siangClaimed = 0, malamClaimed = 0;
+  var c = { snack:0, makan_siang:0, makan_malam:0 };
   rows.forEach(function(row) {
-    if (row.data[4]) snackClaimed++;
-    if (row.data[5]) siangClaimed++;
-    if (row.data[6]) malamClaimed++;
+    if (row.data[4]) c.snack++;
+    if (row.data[5]) c.makan_siang++;
+    if (row.data[6]) c.makan_malam++;
   });
 
-  function statCard(label, claimed, color) {
+  // Default sesi = sesi aktif jika valid, kalau tidak Snack
+  if (['snack','makan_siang','makan_malam'].indexOf(claimActiveMeal) !== -1) rekapMeal = claimActiveMeal;
+
+  function statCard(meal, label, color) {
+    var claimed = c[meal];
     var pct = total ? Math.round(claimed/total*100) : 0;
-    return '<div class="rekap-stat-card">' +
+    return '<div class="rekap-stat-card rk-selectable' + (meal===rekapMeal?' rk-active':'') + '" onclick="setRekapMeal(\'' + meal + '\')">' +
       '<div class="rekap-stat-label">' + label + '</div>' +
       '<div class="rekap-stat-num" style="color:' + color + '">' + claimed + '<span>/' + total + '</span></div>' +
       '<div class="rekap-stat-bar"><div class="rekap-stat-fill" style="width:' + pct + '%;background:' + color + '"></div></div>' +
-      '<div class="rekap-stat-pct">' + pct + '%</div>' +
+      '<div class="rekap-stat-pct">' + pct + '% sudah ambil</div>' +
       '</div>';
   }
 
   var statsHtml =
     '<div class="rekap-stats">' +
-    statCard('Snack',       snackClaimed, '#D4AF37') +
-    statCard('Makan Siang', siangClaimed, '#22c55e') +
-    statCard('Makan Malam', malamClaimed, '#a855f7') +
+    statCard('snack',       'Snack',       '#D4AF37') +
+    statCard('makan_siang', 'Makan Siang', '#22c55e') +
+    statCard('makan_malam', 'Makan Malam', '#a855f7') +
     '</div>';
 
-  function badge(val) {
-    return val
-      ? '<span class="rekap-badge rekap-yes">' + svgIcon('check-circle','.75rem') + ' ' + esc(val) + '</span>'
-      : '<span class="rekap-badge rekap-no">'  + svgIcon('x-circle','.75rem')     + ' Belum</span>';
-  }
+  var controlsHtml =
+    '<div class="rk-controls">' +
+      '<div class="rk-tabs" id="rkTabs">' +
+        '<button class="rk-tab" data-meal="snack"       onclick="setRekapMeal(\'snack\')">Snack<small>' + c.snack + '/' + total + '</small></button>' +
+        '<button class="rk-tab" data-meal="makan_siang" onclick="setRekapMeal(\'makan_siang\')">Makan Siang<small>' + c.makan_siang + '/' + total + '</small></button>' +
+        '<button class="rk-tab" data-meal="makan_malam" onclick="setRekapMeal(\'makan_malam\')">Makan Malam<small>' + c.makan_malam + '/' + total + '</small></button>' +
+      '</div>' +
+      '<div class="rk-row2">' +
+        '<input class="rk-search" id="rkSearch" placeholder="Cari nama / departemen…" oninput="onRekapSearch(this.value)">' +
+        '<div class="rk-chips" id="rkChips">' +
+          '<button class="rk-chip" data-f="all" onclick="setRekapFilter(\'all\')">Semua</button>' +
+          '<button class="rk-chip" data-f="no"  onclick="setRekapFilter(\'no\')">Belum</button>' +
+          '<button class="rk-chip" data-f="yes" onclick="setRekapFilter(\'yes\')">Sudah</button>' +
+        '</div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="rk-summary" id="rkSummary"></div>' +
+    '<div class="rk-list" id="rkList"></div>';
 
-  var tableHtml = '<div class="tbl-wrap"><table><thead><tr>' +
-    '<th>#</th><th>Nama</th><th>Dept</th><th>Pax</th>' +
-    '<th style="color:#D4AF37">Snack</th>' +
-    '<th style="color:#22c55e">Makan Siang</th>' +
-    '<th style="color:#a855f7">Makan Malam</th>' +
-    '</tr></thead><tbody>';
-  rows.forEach(function(row, i) {
-    var allDone = row.data[4] && row.data[5] && row.data[6];
-    tableHtml += '<tr' + (allDone ? ' class="rekap-row-done"' : '') + '>' +
-      '<td style="color:var(--muted);font-size:.78rem">' + (i+1) + '</td>' +
-      '<td style="font-weight:600">' + esc(row.data[0]||'') + '</td>' +
-      '<td style="font-size:.8rem;color:var(--muted)">' + esc(row.data[2]||'') + '</td>' +
-      '<td style="text-align:center">' + esc(row.data[3]||'') + '</td>' +
-      '<td>' + badge(row.data[4]) + '</td>' +
-      '<td>' + badge(row.data[5]) + '</td>' +
-      '<td>' + badge(row.data[6]) + '</td>' +
-      '</tr>';
+  area.innerHTML = statsHtml + controlsHtml;
+  renderRekapList();
+}
+
+function setRekapMeal(meal) { rekapMeal = meal; renderRekapList(); }
+function setRekapFilter(f)  { rekapFilter = f; renderRekapList(); }
+function onRekapSearch(v)   { rekapSearch = v; renderRekapList(); }
+
+function renderRekapList() {
+  var list = document.getElementById('rkList');
+  var summary = document.getElementById('rkSummary');
+  if (!list) return;
+  var col = REKAP_COL[rekapMeal];
+
+  // highlight tab & chips aktif
+  document.querySelectorAll('#rkTabs .rk-tab').forEach(function(b){
+    b.className = 'rk-tab' + (b.dataset.meal === rekapMeal ? ' active-' + rekapMeal : '');
   });
-  tableHtml += '</tbody></table></div>';
+  document.querySelectorAll('#rkChips .rk-chip').forEach(function(b){
+    b.classList.toggle('active', b.dataset.f === rekapFilter);
+  });
+  // sync stat-card highlight
+  document.querySelectorAll('.rekap-stat-card.rk-selectable').forEach(function(card){
+    card.classList.toggle('rk-active', card.getAttribute('onclick').indexOf("'"+rekapMeal+"'") !== -1);
+  });
 
-  area.innerHTML = statsHtml + '<div style="margin-top:20px">' +
-    '<span class="row-count">' + total + ' peserta</span></div>' + tableHtml;
+  var q = rekapSearch.trim().toLowerCase();
+  var done = 0, shown = 0, html = '';
+  rekapRows.forEach(function(row) {
+    var claimed = !!row.data[col];
+    if (claimed) done++;
+    if (rekapFilter === 'yes' && !claimed) return;
+    if (rekapFilter === 'no'  &&  claimed) return;
+    var nama = String(row.data[0]||''), dept = String(row.data[2]||''), pax = String(row.data[3]||'');
+    if (q && (nama.toLowerCase().indexOf(q) === -1 && dept.toLowerCase().indexOf(q) === -1)) return;
+    shown++;
+    html += '<div class="rk-item ' + (claimed?'done':'undone') + '">' +
+      '<div class="rk-item-main">' +
+        '<div class="rk-item-name">' + esc(nama) + '</div>' +
+        '<div class="rk-item-sub">' + esc(dept || '-') + (pax ? ' · ' + esc(pax) + ' pax' : '') + '</div>' +
+      '</div>' +
+      '<div class="rk-item-st">' +
+        (claimed
+          ? '<span class="rk-st-badge yes">' + svgIcon('check-circle','.75rem') + ' Sudah</span>' +
+            '<div class="rk-st-time">' + formatClaimTime(row.data[col]) + '</div>'
+          : '<span class="rk-st-badge no">' + svgIcon('x-circle','.75rem') + ' Belum</span>') +
+      '</div>' +
+    '</div>';
+  });
+
+  var total = rekapRows.length;
+  if (summary) {
+    summary.innerHTML = REKAP_LABEL[rekapMeal] + ': <strong>' + done + '</strong> sudah · <strong>' +
+      (total - done) + '</strong> belum (dari ' + total + ' peserta)';
+  }
+  list.innerHTML = shown ? html : '<div class="rk-empty">Tidak ada peserta yang cocok.</div>';
 }
 
 // CLAIM VERIFICATION PANEL
