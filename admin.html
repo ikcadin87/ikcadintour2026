@@ -155,7 +155,13 @@ tr:hover td{background:rgba(255,255,255,.02)}
 .rekap-stat-card.rk-active { border-color:var(--a);box-shadow:0 0 0 2px rgba(212,175,55,.18); }
 
 /* ── Rekap: kontrol + daftar peserta (mobile friendly) ── */
-.rk-controls { margin:18px 0 12px; }
+.rk-controls {
+  position:sticky;top:var(--header-h);z-index:90;
+  margin:18px -24px 0;padding:12px 24px;
+  background:var(--dark);border-bottom:1px solid var(--border);
+  box-shadow:0 6px 14px rgba(0,0,0,.35);
+}
+@media(max-width:768px){ .rk-controls{ margin-left:-14px;margin-right:-14px;padding-left:14px;padding-right:14px; } }
 .rk-tabs { display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px; }
 .rk-tab {
   padding:10px 8px;border-radius:var(--r2);border:1px solid var(--border);
