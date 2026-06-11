@@ -71,7 +71,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--dark);color
 .sb-btn.active{background:rgba(27,58,140,.3);color:var(--a);font-weight:600;border-left:3px solid var(--a);padding-left:11px}
 
 /* Main */
-.admin-main{flex:1;padding:24px;overflow-x:hidden;min-width:0}
+.admin-main{flex:1;padding:24px;overflow-x:hidden;overflow-y:auto;height:calc(100vh - var(--header-h));min-width:0}
 .sec-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px}
 .sec-title{font-size:1.05rem;font-weight:700;color:var(--a)}
 .btn-add{padding:8px 18px;background:var(--p);border:none;border-radius:var(--r2);color:#fff;font-size:.83rem;font-weight:600;cursor:pointer;transition:.2s}
@@ -129,7 +129,8 @@ tr:hover td{background:rgba(255,255,255,.02)}
   .sidebar-toggle{display:block}
   .admin-sidebar{position:fixed;top:var(--header-h);left:-260px;width:260px;z-index:99;transition:left .3s;height:calc(100dvh - var(--header-h))}
   .admin-sidebar.open{left:0;box-shadow:4px 0 24px rgba(0,0,0,.5)}
-  .admin-main{padding:14px}
+  .admin-main{padding:14px;height:calc(100dvh - var(--header-h))}
+  .rk-controls{margin-left:-14px;margin-right:-14px;padding-left:14px;padding-right:14px}
   .sec-header{flex-direction:column;align-items:flex-start}
 }
 
@@ -156,7 +157,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
 
 /* ── Rekap: kontrol + daftar peserta (mobile friendly) ── */
 .rk-controls {
-  position:sticky;top:var(--header-h);z-index:90;
+  position:sticky;top:0;z-index:90;
   margin:18px -24px 0;padding:12px 24px;
   background:var(--dark);border-bottom:1px solid var(--border);
   box-shadow:0 6px 14px rgba(0,0,0,.35);
