@@ -199,6 +199,25 @@ tr:hover td{background:rgba(255,255,255,.02)}
 .rk-st-time { font-size:.66rem;color:var(--muted);margin-top:3px; }
 .rk-empty { text-align:center;color:var(--muted);padding:24px;font-size:.85rem; }
 
+/* ── Data Claim: kartu rapi ── */
+.cd-controls{position:sticky;top:0;z-index:90;margin:0 -24px 14px;padding:12px 24px;background:var(--dark);border-bottom:1px solid var(--border);box-shadow:0 6px 14px rgba(0,0,0,.25)}
+@media(max-width:768px){.cd-controls{margin-left:-14px;margin-right:-14px;padding-left:14px;padding-right:14px}}
+.cd-count{font-size:.78rem;color:var(--muted);margin:0 2px 12px}
+.cd-count strong{color:var(--text)}
+.cd-list{display:flex;flex-direction:column;gap:10px}
+.cd-card{display:flex;align-items:center;gap:12px;padding:13px 14px;border-radius:var(--r2);background:var(--card2);border:1px solid var(--border)}
+.cd-main{flex:1;min-width:0}
+.cd-name{font-size:.95rem;font-weight:700;color:var(--text);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.cd-ini{font-size:.64rem;font-weight:700;letter-spacing:.08em;color:var(--a);background:rgba(212,175,55,.12);border:1px solid rgba(212,175,55,.3);padding:2px 7px;border-radius:6px}
+.cd-sub{font-size:.75rem;color:var(--muted);margin:3px 0 9px}
+.cd-meals{display:flex;flex-wrap:wrap;gap:6px}
+.cd-chip{display:inline-flex;align-items:center;gap:4px;font-size:.7rem;font-weight:700;padding:4px 9px;border-radius:12px;white-space:nowrap}
+.cd-chip.yes{background:rgba(34,197,94,.14);color:#22c55e}
+.cd-chip.no{background:rgba(100,116,139,.16);color:var(--muted)}
+.cd-chip svg{width:.72rem;height:.72rem}
+.cd-actions{display:flex;flex-direction:column;gap:6px;flex-shrink:0}
+.cd-actions .btn-edit,.cd-actions .btn-del{display:inline-flex;align-items:center;justify-content:center;gap:4px;padding:6px 12px}
+
 /* ── CLAIM PANEL ─────────────────────────────────────────────── */
 .claim-panel { max-width:540px;margin:0 auto; }
 .claim-panel-title { font-size:1.05rem;font-weight:800;color:var(--a);margin-bottom:18px; }
@@ -286,6 +305,33 @@ html[data-theme="light"] .cres-dept { color:var(--p,#1b3a8c); }
 .btn-claim-confirm:disabled { opacity:.45;cursor:not-allowed; }
 .btn-scan-again { width:100%;padding:10px;background:transparent;border:1px solid var(--border);border-radius:var(--r2);color:var(--muted);font-size:.83rem;cursor:pointer;margin-top:8px;transition:.15s; }
 .btn-scan-again:hover { border-color:var(--text);color:var(--text); }
+
+/* ── Theme toggle button ── */
+.theme-toggle{width:34px;height:34px;border-radius:7px;background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--muted);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:.2s;flex-shrink:0}
+.theme-toggle:hover{color:var(--a);border-color:var(--a)}
+.theme-toggle svg{width:17px;height:17px}
+
+/* ── LIGHT MODE ───────────────────────────────────────────────── */
+html[data-theme="light"]{
+  --dark:#EEF1F8;--card:#FFFFFF;--card2:#F7F9FC;
+  --border:#D7DEEC;--text:#0F1E3D;--muted:#5A6E96;--a:#9A6E00;
+}
+html[data-theme="light"] body{background:var(--dark)}
+html[data-theme="light"] .admin-header{background:rgba(255,255,255,.95)}
+html[data-theme="light"] .sidebar-toggle{background:#F0F2F7}
+html[data-theme="light"] .theme-toggle{background:#F0F2F7}
+html[data-theme="light"] .sb-btn:hover{background:#EEF1F9}
+html[data-theme="light"] .sb-btn.active{background:rgba(27,58,140,.1)}
+html[data-theme="light"] thead tr{background:#EDF1FA}
+html[data-theme="light"] tr:hover td{background:#F5F7FC}
+html[data-theme="light"] .info-note{background:#EDF1FA;border-color:#CDD9F2}
+html[data-theme="light"] .info-note strong{color:var(--p)}
+html[data-theme="light"] .btn-edit{background:#E7EDFB;border-color:#C5D3F1;color:var(--p)}
+html[data-theme="light"] .btn-edit:hover{background:#D6E0F7}
+html[data-theme="light"] .modal-bg{background:rgba(15,30,61,.45)}
+html[data-theme="light"] .row-count{background:#EDF1FA}
+html[data-theme="light"] .rekap-stat-num[style*="D4AF37"]{color:#9A6E00 !important}
+html[data-theme="light"] .toast.ok{color:#0a7d52}
 </style>
 </head>
 <body>
@@ -369,6 +415,7 @@ html[data-theme="light"] .cres-dept { color:var(--p,#1b3a8c); }
       <svg style="width:1.1rem;height:1.1rem" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
     </button>
     <div class="admin-header-brand"><span>IKCADIN TOUR 2026</span> — Admin</div>
+    <button class="theme-toggle" id="themeToggleAdmin" onclick="toggleAdminTheme()" title="Ganti tema" aria-label="Ganti tema"></button>
     <button class="btn-logout" onclick="doLogout()">Keluar</button>
   </header>
   <div class="admin-body">
@@ -482,7 +529,24 @@ function showApp() {
   loadSection('claim_scan');
 }
 
+// ── THEME ─────────────────────────────────────────────────────
+var SUN_SVG  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
+var MOON_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';
+function applyAdminTheme(t) {
+  if (t === 'light') document.documentElement.setAttribute('data-theme', 'light');
+  else document.documentElement.removeAttribute('data-theme');
+  var btn = document.getElementById('themeToggleAdmin');
+  if (btn) btn.innerHTML = (t === 'light') ? MOON_SVG : SUN_SVG;
+}
+function toggleAdminTheme() {
+  var isLight = document.documentElement.getAttribute('data-theme') === 'light';
+  var next = isLight ? 'dark' : 'light';
+  try { localStorage.setItem('admTheme', next); } catch(e) {}
+  applyAdminTheme(next);
+}
+
 window.addEventListener('DOMContentLoaded', function() {
+  applyAdminTheme(localStorage.getItem('admTheme') || 'dark');
   const saved = sessionStorage.getItem('adm');
   if (saved) { token = saved; showApp(); }
   document.getElementById('loginPw').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
@@ -524,6 +588,22 @@ function loadSection(key) {
     return;
   }
 
+  // ── DATA CLAIM (kartu rapi + cari) ───────────────────────────
+  if (key === 'claim_data') {
+    curSection = SECTIONS.find(s => s.key === key);
+    cdSearch = '';
+    document.getElementById('adminMain').innerHTML =
+      '<div class="sec-header"><div class="sec-title">Data Claim</div>' +
+      '<div style="display:flex;gap:8px">' +
+        '<button class="btn-add" onclick="openAdd()">+ Tambah</button>' +
+        '<button class="btn-logout" onclick="fetchData()">↻ Refresh</button>' +
+      '</div></div>' +
+      '<div class="cd-controls"><input class="rk-search" id="cdSearch" placeholder="Cari nama / inisial / departemen…" oninput="onCdSearch(this.value)"></div>' +
+      '<div id="cdArea"><div class="tbl-loading">⏳ Memuat…</div></div>';
+    fetchData();
+    return;
+  }
+
   // ── REKAP CLAIM ───────────────────────────────────────────────
   if (key === 'claim_rekap') {
     curSection = SECTIONS.find(s => s.key === key);
@@ -555,9 +635,46 @@ function fetchData() {
       if (!r.ok) { toast('Gagal memuat: ' + (r.error||'?'), 'err'); return; }
       curHeaders = r.headers;
       curRows    = r.rows;
-      renderTable();
+      if (curSection.key === 'claim_data') renderClaimDataCards();
+      else renderTable();
     })
     .catch(e => toast('Error: ' + e.message, 'err'));
+}
+
+// ── DATA CLAIM cards ──
+var cdSearch = '';
+function onCdSearch(v){ cdSearch = v; renderClaimDataCards(); }
+function renderClaimDataCards() {
+  var area = document.getElementById('cdArea');
+  if (!area) return;
+  if (!curRows.length) { area.innerHTML = '<div class="tbl-empty">Belum ada data di sheet ini.</div>'; return; }
+  var meals = [[4,'Snack'],[5,'Makan Siang'],[6,'Makan Malam']];
+  var q = cdSearch.trim().toLowerCase();
+  var shown = 0, html = '';
+  curRows.forEach(function(row) {
+    var nama = String(row.data[0]||''), ini = String(row.data[1]||''),
+        dept = String(row.data[2]||''), pax = String(row.data[3]||'');
+    if (q && nama.toLowerCase().indexOf(q)===-1 && ini.toLowerCase().indexOf(q)===-1 && dept.toLowerCase().indexOf(q)===-1) return;
+    shown++;
+    var chips = meals.map(function(m){
+      var ok = !!row.data[m[0]];
+      return '<span class="cd-chip ' + (ok?'yes':'no') + '">' +
+        svgIcon(ok?'check-circle':'x-circle','.7rem') + ' ' + m[1] + '</span>';
+    }).join('');
+    html += '<div class="cd-card">' +
+      '<div class="cd-main">' +
+        '<div class="cd-name">' + esc(nama) + (ini?'<span class="cd-ini">' + esc(ini) + '</span>':'') + '</div>' +
+        '<div class="cd-sub">' + esc(dept||'-') + (pax?' · ' + esc(pax) + ' pax':'') + '</div>' +
+        '<div class="cd-meals">' + chips + '</div>' +
+      '</div>' +
+      '<div class="cd-actions">' +
+        '<button class="btn-edit" onclick="openEdit(' + row.rowIndex + ')">' + svgIcon('pencil','.8rem') + ' Edit</button>' +
+        '<button class="btn-del" onclick="delRow(' + row.rowIndex + ')">' + svgIcon('trash','.8rem') + ' Hapus</button>' +
+      '</div>' +
+    '</div>';
+  });
+  area.innerHTML = '<div class="cd-count"><strong>' + shown + '</strong> dari ' + curRows.length + ' peserta</div>' +
+    '<div class="cd-list">' + (shown ? html : '<div class="rk-empty">Tidak ada yang cocok.</div>') + '</div>';
 }
 
 function renderTable() {
