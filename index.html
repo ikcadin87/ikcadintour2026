@@ -766,6 +766,10 @@ footer{text-align:center;padding:28px 16px calc(20px + env(safe-area-inset-botto
 .pengumuman-tanggal{font-size:.68rem;color:var(--muted);margin-bottom:6px;display:flex;align-items:center;gap:4px}
 .pengumuman-judul{font-weight:800;font-size:1rem;color:#fff;margin-bottom:7px;font-family:var(--font-head);line-height:1.3}
 .pengumuman-isi{font-size:.85rem;color:rgba(232,239,248,.82);line-height:1.65}
+.pengumuman-isi ul,.pengumuman-isi ol{margin:6px 0 6px 20px;padding:0}
+.pengumuman-isi li{margin:3px 0}
+.pengumuman-isi .rt-line{margin:3px 0}
+.pengumuman-isi .rt-line:empty{display:none}
 .pengumuman-board-header svg{filter:drop-shadow(0 0 6px rgba(212,175,55,.6))}
 
 /* ─── Panitia ────────────────────────────────────────────────── */
@@ -1947,7 +1951,7 @@ function renderBeranda(raw) {
       html += `<div class="pengumuman-badge ${escHtml(tipe)}" style="display:flex;align-items:center;gap:4px">${BADGE_ICON[tipe]||BADGE_ICON.info}${BADGE_LABEL[tipe]||'INFO'}</div>`;
       if (tanggal) html += `<div class="pengumuman-tanggal" style="display:flex;align-items:center;gap:4px">${svgIcon("calendar","sm")} ${escHtml(tanggal)}</div>`;
       if (judul)   html += `<div class="pengumuman-judul">${escHtml(judul)}</div>`;
-      if (isi)     html += `<div class="pengumuman-isi">${linkify(escHtml(isi))}</div>`;
+      if (isi)     html += `<div class="pengumuman-isi">${formatRichText(isi)}</div>`;
       html += `</div>`;
     });
     html += `</div>`;
@@ -2793,6 +2797,35 @@ function escHtml(s) {
 
 function linkify(text) {
   return text.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank">$1</a>');
+}
+
+// Ubah teks multi-baris dari spreadsheet menjadi HTML rapi:
+// baris diawali - * • → <ul>, diawali "1." / "1)" → <ol>, lainnya jadi baris biasa.
+function formatRichText(raw) {
+  const lines = String(raw).replace(/\r\n?/g, '\n').split('\n');
+  let html = '', listType = null, buf = [];
+  function flush() {
+    if (buf.length) { html += '<' + listType + '>' + buf.join('') + '</' + listType + '>'; buf = []; }
+    listType = null;
+  }
+  lines.forEach(function(line) {
+    const t = line.trim();
+    if (t === '') { flush(); return; }
+    const ul = t.match(/^[-*•·]\s+(.*)$/);
+    const ol = t.match(/^\d+[.)]\s+(.*)$/);
+    if (ul) {
+      if (listType !== 'ul') { flush(); listType = 'ul'; }
+      buf.push('<li>' + linkify(escHtml(ul[1])) + '</li>');
+    } else if (ol) {
+      if (listType !== 'ol') { flush(); listType = 'ol'; }
+      buf.push('<li>' + linkify(escHtml(ol[1])) + '</li>');
+    } else {
+      flush();
+      html += '<div class="rt-line">' + linkify(escHtml(t)) + '</div>';
+    }
+  });
+  flush();
+  return html;
 }
 
 function shadeColor(hex, pct) {
