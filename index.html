@@ -1403,6 +1403,19 @@ html[data-theme="light"] .footer-credit a:hover { color:#7A5600; }
 .hero-panel.claim-mode { max-height:0 !important; opacity:0; pointer-events:none; }
 
 /* ── CLAIM SECTION ─────────────────────────────────────────── */
+/* Popup gambar */
+.img-popup-overlay{position:fixed;inset:0;z-index:5000;display:none;align-items:center;justify-content:center;
+  padding:20px;background:rgba(5,12,26,.72);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);}
+.img-popup-overlay.show{display:flex;animation:fadeIn .25s ease both;}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.img-popup-box{position:relative;max-width:480px;width:100%;animation:popIn .3s cubic-bezier(.34,1.56,.64,1) both;}
+@keyframes popIn{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
+.img-popup-box img{width:100%;height:auto;display:block;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.5);}
+.img-popup-close{position:absolute;top:-14px;right:-14px;width:38px;height:38px;border-radius:50%;
+  background:#fff;color:#0A1428;border:none;font-size:1.5rem;line-height:1;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(0,0,0,.4);transition:.15s;}
+.img-popup-close:hover{transform:scale(1.08);}
+
 .claim-wrap { max-width:480px; margin:0 auto; padding:8px 0; }
 /* Mode toggle Konsumsi / Kunci */
 .claim-mode-tabs { display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px;
@@ -1671,6 +1684,16 @@ html[data-theme="light"] .theme-toggle:hover { background:#E8EBF3;border-color:v
 </head>
 
 <body>
+
+<!-- ── POPUP GAMBAR ─────────────────────────────────────────────────── -->
+<div class="img-popup-overlay" id="imgPopupOverlay" onclick="if(event.target===this)closeImagePopup()">
+  <div class="img-popup-box">
+    <button class="img-popup-close" onclick="closeImagePopup()" aria-label="Tutup">&times;</button>
+    <a id="imgPopupLink" href="#" target="_blank" rel="noopener noreferrer" style="display:block">
+      <img id="imgPopupImg" alt="Pengumuman" loading="eager">
+    </a>
+  </div>
+</div>
 
 <!-- ── SVG ICON SPRITE ─────────────────────────────────────────────── -->
 <svg xmlns="http://www.w3.org/2000/svg" style="display:none">
@@ -2179,6 +2202,8 @@ function applyConfig(cfg) {
   }
   // Countdown timer (teks_event = teks manual saat selesai; default "Event Day !")
   if (cfg.tanggal_event) initCountdown(cfg.tanggal_event, cfg.teks_event);
+  // Popup gambar (popup_url; opsional popup_link untuk klik)
+  if (cfg.popup_url && cfg.popup_url.trim()) showImagePopup(cfg.popup_url.trim(), (cfg.popup_link||'').trim());
   // Hero meta badges
   const meta = document.getElementById("heroMeta");
   meta.innerHTML = "";
@@ -3102,6 +3127,27 @@ function parseEventDate(str) {
   if (m) { var mo = bln[m[2].slice(0,3).toLowerCase()]; if (mo !== undefined) return new Date(+m[3], mo, +m[1], +(m[4]||0), +(m[5]||0)); }
   // fallback
   return new Date(s);
+}
+
+// ── POPUP GAMBAR ──────────────────────────────────────────────
+function showImagePopup(url, link) {
+  // tampil sekali per sesi (per URL) — ganti URL di Config untuk munculkan lagi
+  try { if (sessionStorage.getItem('popupSeen') === url) return; } catch(e) {}
+  var overlay = document.getElementById('imgPopupOverlay');
+  var img = document.getElementById('imgPopupImg');
+  var a   = document.getElementById('imgPopupLink');
+  if (!overlay || !img) return;
+  img.onerror = function(){ closeImagePopup(); }; // gambar gagal → jangan blokir layar
+  img.src = url;
+  if (link) { a.href = link; a.style.pointerEvents = 'auto'; a.style.cursor = 'pointer'; }
+  else { a.removeAttribute('href'); a.style.pointerEvents = 'none'; a.style.cursor = 'default'; }
+  overlay.classList.add('show');
+}
+function closeImagePopup() {
+  var overlay = document.getElementById('imgPopupOverlay');
+  if (overlay) overlay.classList.remove('show');
+  var img = document.getElementById('imgPopupImg');
+  try { if (img && img.src) sessionStorage.setItem('popupSeen', img.src); } catch(e) {}
 }
 
 function initCountdown(dateStr, doneText) {
