@@ -3084,9 +3084,29 @@ function closeDrawer() {
 }
 
 // ── COUNTDOWN ──────────────────────────────────────────────────
+// Parse tanggal event sebagai waktu LOKAL (WIB di HP peserta), bukan UTC.
+// ISO "2026-06-06" oleh new Date() dibaca sebagai UTC → bergeser 7 jam. Ini menghindari itu.
+function parseEventDate(str) {
+  var s = String(str || '').trim();
+  if (!s) return new Date(NaN);
+  var m;
+  // ISO: YYYY-MM-DD optional THH:mm(:ss) — tanpa zona → anggap lokal
+  m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})(?:[ T](\d{1,2}):(\d{2})(?::(\d{2}))?)?$/);
+  if (m) return new Date(+m[1], +m[2]-1, +m[3], +(m[4]||0), +(m[5]||0), +(m[6]||0));
+  // DD/MM/YYYY atau DD-MM-YYYY optional HH:mm
+  m = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})(?:[ T](\d{1,2}):(\d{2}))?$/);
+  if (m) return new Date(+m[3], +m[2]-1, +m[1], +(m[4]||0), +(m[5]||0));
+  // "D Bulan YYYY" (Indonesia/Inggris) optional HH:mm
+  var bln = { jan:0,feb:1,mar:2,apr:3,mei:4,may:4,jun:5,jul:6,agu:7,aug:7,agt:7,sep:8,okt:9,oct:9,nov:10,des:11,dec:11 };
+  m = s.match(/^(\d{1,2})\s+([A-Za-z]+)\s+(\d{4})(?:\s+(\d{1,2}):(\d{2}))?$/);
+  if (m) { var mo = bln[m[2].slice(0,3).toLowerCase()]; if (mo !== undefined) return new Date(+m[3], mo, +m[1], +(m[4]||0), +(m[5]||0)); }
+  // fallback
+  return new Date(s);
+}
+
 function initCountdown(dateStr, doneText) {
   let target;
-  try { target = new Date(dateStr); if (isNaN(target.getTime())) return; } catch(e) { return; }
+  try { target = parseEventDate(dateStr); if (isNaN(target.getTime())) return; } catch(e) { return; }
   const container = document.getElementById('heroCountdown');
   if (!container) return;
   // Teks saat hitung mundur selesai — bisa diatur manual via config; default "Event Day !"
