@@ -1404,6 +1404,38 @@ html[data-theme="light"] .footer-credit a:hover { color:#7A5600; }
 
 /* ── CLAIM SECTION ─────────────────────────────────────────── */
 .claim-wrap { max-width:480px; margin:0 auto; padding:8px 0; }
+/* Mode toggle Konsumsi / Kunci */
+.claim-mode-tabs { display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px;
+  background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:5px; }
+.claim-mode-tab { display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  padding:11px 8px;border-radius:10px;border:none;background:transparent;color:var(--muted);
+  font-size:.9rem;font-weight:700;cursor:pointer;transition:.18s; }
+.claim-mode-tab.active { background:var(--p);color:#fff;box-shadow:0 3px 12px rgba(27,58,140,.35); }
+.claim-mode-tab .svg-icon { width:1em;height:1em; }
+html[data-theme="light"] .claim-mode-tabs { background:#fff;border-color:#D0D6E8; }
+
+/* Kartu kamar (kunci) */
+.key-room-card { background:var(--card2);border:1px solid var(--border);border-radius:var(--r);
+  padding:14px 16px;margin-bottom:12px; }
+.key-room-head { display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px; }
+.key-room-num { font-size:1.15rem;font-weight:800;color:var(--text);display:flex;align-items:center;gap:8px; }
+.key-room-key-ico { color:var(--a); }
+.key-room-type { font-size:.72rem;font-weight:700;color:var(--a);background:rgba(212,175,55,.12);
+  border:1px solid rgba(212,175,55,.3);padding:3px 9px;border-radius:20px; }
+.key-occ-title { font-size:.68rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:6px; }
+.key-occ-list { display:flex;flex-direction:column;gap:5px;margin-bottom:10px; }
+.key-occ { display:flex;align-items:center;gap:8px;font-size:.84rem;color:var(--text); }
+.key-occ-kode { font-size:.66rem;font-weight:700;color:var(--muted);background:var(--card);
+  border:1px solid var(--border);border-radius:5px;padding:1px 6px;min-width:30px;text-align:center; }
+.key-room-status { display:flex;align-items:center;gap:6px;font-size:.78rem;font-weight:700;
+  padding:8px 12px;border-radius:var(--r2);justify-content:center; }
+.key-room-status.taken { background:rgba(34,197,94,.12);color:#22c55e; }
+.key-room-status.waiting { background:rgba(100,116,139,.12);color:var(--muted); }
+.key-pic-head { font-size:1.05rem;font-weight:800;color:var(--text);margin-bottom:2px; }
+.key-pic-sub { font-size:.8rem;color:var(--muted);margin-bottom:14px; }
+html[data-theme="light"] .key-room-card { background:#fff;border-color:#D0D6E8; }
+html[data-theme="light"] .key-occ-kode { background:#F7F8FB;border-color:#D0D6E8; }
 .claim-active-badge {
   display:inline-flex;align-items:center;gap:6px;
   padding:6px 14px;border-radius:20px;font-size:.78rem;font-weight:700;
@@ -3100,6 +3132,12 @@ const MEAL_LABELS = {
 function renderClaim() {
   return `
 <div class="claim-wrap">
+  <div class="claim-mode-tabs">
+    <button class="claim-mode-tab active" id="modeTabKonsumsi" onclick="setClaimMode('konsumsi')">${svgIcon('ticket','15px')} Konsumsi</button>
+    <button class="claim-mode-tab" id="modeTabKunci" onclick="setClaimMode('kunci')">${svgIcon('home','15px')} Kunci Kamar</button>
+  </div>
+
+  <div id="claimModeKonsumsi">
   <div id="claimStep1">
     <div id="claimActiveBadge" class="claim-active-badge active-none">
       ${svgIcon('ticket','14px')} Memuat status sesi…
@@ -3167,10 +3205,76 @@ function renderClaim() {
     <div class="claim-info-card" id="claimInfoCard"></div>
     <button class="claim-reset-btn" onclick="resetClaim()">↩ Cari nama lain</button>
   </div>
+  </div><!-- /claimModeKonsumsi -->
+
+  <!-- ===================== MODE KUNCI KAMAR ===================== -->
+  <div id="claimModeKunci" style="display:none">
+    <div id="keyStep1">
+      <div class="claim-active-badge active-snack" style="background:rgba(27,58,140,.18);color:#7ba7ff;border-color:rgba(27,58,140,.4)">
+        ${svgIcon('home','14px')} Khusus PIC Kamar — ambil kunci
+      </div>
+      <div class="claim-search-wrap">
+        <input type="text" id="keySearchInput" class="claim-search"
+          placeholder="Ketik nama PIC kamar…"
+          oninput="filterKeySearch(this.value)"
+          autocomplete="off" spellcheck="false">
+        <div class="claim-dropdown" id="keyDropdown"></div>
+      </div>
+      <div class="claim-search-backdrop" id="keySearchBackdrop" onclick="closeKeyDropdown()"></div>
+
+      <div class="claim-guide">
+        <div class="claim-guide-title">${svgIcon('info','14px')} Cara Ambil Kunci</div>
+        <div class="claim-guide-step">
+          <div class="claim-guide-num">1</div>
+          <div class="claim-guide-ico">${svgIcon('search','22px')}</div>
+          <div class="claim-guide-text"><strong>Cari nama kamu</strong> (PIC Kamar) pada kolom pencarian.</div>
+        </div>
+        <div class="claim-guide-step">
+          <div class="claim-guide-num">2</div>
+          <div class="claim-guide-ico">${svgIcon('check-circle','22px')}</div>
+          <div class="claim-guide-text">Masukkan <strong>inisial</strong> kamu untuk verifikasi.</div>
+        </div>
+        <div class="claim-guide-step">
+          <div class="claim-guide-num">3</div>
+          <div class="claim-guide-ico">${svgIcon('home','22px')}</div>
+          <div class="claim-guide-text">Tunjukkan <strong>barcode</strong> ke Panitia untuk ambil <strong>kunci kamar</strong> kamu.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal inisial kunci -->
+    <div class="claim-modal-overlay" id="keyModal" style="display:none" onclick="if(event.target===this)closeKeyModal()">
+      <div class="claim-modal">
+        <div class="claim-modal-handle"></div>
+        <div class="claim-modal-title">Verifikasi PIC Kamar</div>
+        <div class="claim-modal-name" id="keyModalName"></div>
+        <input type="text" id="keyInitialInput" class="claim-initial-input"
+          maxlength="3" placeholder="···"
+          oninput="this.value=this.value.toUpperCase().replace(/[^A-Z]/g,'')"
+          onkeydown="if(event.key==='Enter')submitKeyVerify()">
+        <div class="claim-modal-hint">Ketik inisial kamu sesuai pencatatan</div>
+        <div class="claim-modal-error" id="keyModalError"></div>
+        <div class="claim-modal-btns">
+          <button class="claim-btn-cancel" onclick="closeKeyModal()">Batal</button>
+          <button class="claim-btn-ok" id="keyVerifyBtn" onclick="submitKeyVerify()">Verifikasi</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Result kunci -->
+    <div class="claim-result" id="keyResult" style="display:none">
+      <div class="claim-qr-wrap" id="keyQrWrap"></div>
+      <div id="keyInfoCard"></div>
+      <button class="claim-reset-btn" onclick="resetKey()">↩ Cari nama lain</button>
+    </div>
+  </div><!-- /claimModeKunci -->
 </div>`;
 }
 
 function initClaimSection() {
+  claimMode = 'konsumsi';
+  keyListLoaded = false; keyList = [];
+  stopKeyPoll();
   if (!claimListLoaded) loadClaimList();
   else refreshClaimBadge();
 }
@@ -3468,11 +3572,227 @@ function postClaim(payload) {
   }).then(function(r) { return r.json(); });
 }
 
+// ══════════════════════════════════════════════════════════════════
+// CLAIM KUNCI KAMAR (PIC)
+// ══════════════════════════════════════════════════════════════════
+var claimMode      = 'konsumsi';
+var keyList        = [];
+var keyListLoaded  = false;
+var keySelected    = null;
+var keyVerified    = null;
+var keyPollTimer   = null;
+
+function setClaimMode(mode) {
+  claimMode = mode;
+  var k = document.getElementById('claimModeKonsumsi');
+  var u = document.getElementById('claimModeKunci');
+  var tk = document.getElementById('modeTabKonsumsi');
+  var tu = document.getElementById('modeTabKunci');
+  if (k) k.style.display = (mode === 'konsumsi') ? 'block' : 'none';
+  if (u) u.style.display = (mode === 'kunci') ? 'block' : 'none';
+  if (tk) tk.classList.toggle('active', mode === 'konsumsi');
+  if (tu) tu.classList.toggle('active', mode === 'kunci');
+  if (mode === 'kunci') { if (!keyListLoaded) loadKeyList(); }
+  else { stopKeyPoll(); }
+}
+
+function loadKeyList() {
+  fetch(WEB_APP_URL + '?type=keyList', { redirect:'follow' })
+    .then(function(r){ return r.json(); })
+    .then(function(d){ keyList = d.data || []; keyListLoaded = true; })
+    .catch(function(){});
+}
+
+function setKeySearchActive(on) {
+  var inp  = document.getElementById('keySearchInput');
+  var wrap = inp ? inp.closest('.claim-search-wrap') : null;
+  var bd   = document.getElementById('keySearchBackdrop');
+  if (wrap) wrap.classList.toggle('searching', on);
+  if (bd)   bd.classList.toggle('show', on);
+}
+function closeKeyDropdown() {
+  var dd = document.getElementById('keyDropdown');
+  if (dd) { dd.classList.remove('open'); dd.innerHTML = ''; }
+  setKeySearchActive(false);
+}
+function filterKeySearch(val) {
+  var dd  = document.getElementById('keyDropdown');
+  if (!dd) return;
+  var q = val.trim().toLowerCase();
+  if (!q) { closeKeyDropdown(); return; }
+  var matches = keyList.filter(function(p){ return p.nama.toLowerCase().includes(q); }).slice(0, 20);
+  if (!matches.length) { closeKeyDropdown(); return; }
+  dd.innerHTML = matches.map(function(p){
+    var rooms = (p.rooms||[]).join(', ');
+    return '<div class="claim-drop-item" onclick="selectKeyPerson(\'' +
+      escHtml(p.nama).replace(/'/g,"\\x27") + '\')">' +
+      '<div class="claim-drop-nama">' + escHtml(p.nama) + '</div>' +
+      '<div class="claim-drop-dept">Kamar ' + escHtml(rooms) + '</div>' +
+      '</div>';
+  }).join('');
+  dd.classList.add('open');
+  setKeySearchActive(true);
+}
+function selectKeyPerson(nama) {
+  keySelected = { nama: nama };
+  var inp = document.getElementById('keySearchInput');
+  if (inp) inp.value = nama;
+  closeKeyDropdown();
+  var modal = document.getElementById('keyModal');
+  var mn = document.getElementById('keyModalName');
+  var ki = document.getElementById('keyInitialInput');
+  var er = document.getElementById('keyModalError');
+  if (mn) mn.textContent = nama;
+  if (ki) { ki.value = ''; ki.focus(); }
+  if (er) er.textContent = '';
+  if (modal) modal.style.display = 'flex';
+}
+function closeKeyModal() {
+  var modal = document.getElementById('keyModal');
+  if (modal) modal.style.display = 'none';
+}
+function submitKeyVerify() {
+  if (!keySelected) return;
+  var ini = (document.getElementById('keyInitialInput')?.value || '').trim().toUpperCase();
+  var err = document.getElementById('keyModalError');
+  var btn = document.getElementById('keyVerifyBtn');
+  if (!ini || ini.length < 2) { if(err) err.textContent = 'Masukkan minimal 2 huruf inisial.'; return; }
+  if (err) err.textContent = '';
+  if (btn) { btn.disabled = true; btn.textContent = 'Memeriksa…'; }
+  postClaim({ action:'key_verify', nama: keySelected.nama, inisial: ini })
+    .then(function(r){
+      if (r.ok) { keyVerified = r; keyVerified.inisial = r.inisial || ini; closeKeyModal(); showKeyResult(keyVerified); }
+      else { if (err) err.textContent = r.error || 'Inisial tidak cocok. Coba lagi.'; }
+    })
+    .catch(function(){ if(err) err.textContent = 'Gagal koneksi. Coba lagi.'; })
+    .finally(function(){ if(btn){ btn.disabled=false; btn.textContent='Verifikasi'; } });
+}
+
+function showKeyResult(r) {
+  var step1  = document.getElementById('keyStep1');
+  var result = document.getElementById('keyResult');
+  if (step1)  step1.style.display = 'none';
+  if (result) {
+    result.innerHTML =
+      '<div class="claim-qr-wrap" id="keyQrWrap"></div>' +
+      '<div id="keyInfoCard"></div>' +
+      '<button class="claim-reset-btn" onclick="resetKey()">↩ Cari nama lain</button>';
+    result.style.display = 'block';
+  }
+  var qrWrap = document.getElementById('keyQrWrap');
+  if (qrWrap) {
+    qrWrap.innerHTML = '';
+    var qrDiv = document.createElement('div');
+    qrWrap.appendChild(qrDiv);
+    if (window.QRCode) {
+      new QRCode(qrDiv, { text: 'IKCADIN2026|KEY|' + r.nama + '|' + (r.inisial||''),
+        width:200, height:200, colorDark:'#000000', colorLight:'#ffffff', correctLevel: QRCode.CorrectLevel.M });
+    }
+  }
+  renderKeyInfoCard(r);
+  if (!r.all_claimed) startKeyPoll(r.nama, r.inisial || '');
+}
+
+function renderKeyInfoCard(r) {
+  var card = document.getElementById('keyInfoCard');
+  if (!card) return;
+  var rooms = r.rooms || [];
+  var roomsHtml = rooms.map(function(rm){
+    var taken = !!rm.claimed_at;
+    var occ = (rm.occupants||[]).map(function(o){
+      return '<div class="key-occ"><span class="key-occ-kode">' + escHtml(o.kode||'-') + '</span>' + escHtml(o.name) + '</div>';
+    }).join('');
+    return '<div class="key-room-card">' +
+      '<div class="key-room-head">' +
+        '<div class="key-room-num">' + svgIcon('home','18px') + ' Kamar ' + escHtml(String(rm.room)) + '</div>' +
+        (rm.type ? '<div class="key-room-type">' + escHtml(rm.type) + '</div>' : '') +
+      '</div>' +
+      '<div class="key-occ-title">Penghuni</div>' +
+      '<div class="key-occ-list">' + occ + '</div>' +
+      '<div class="key-room-status ' + (taken?'taken':'waiting') + '">' +
+        svgIcon(taken?'check-circle':'x-circle','14px') + ' ' +
+        (taken ? 'Kunci sudah diserahkan · ' + formatClaimTime(rm.claimed_at) : 'Kunci belum diserahkan') +
+      '</div>' +
+    '</div>';
+  }).join('');
+  card.innerHTML =
+    '<div class="key-pic-head">' + escHtml(r.nama) + '</div>' +
+    '<div class="key-pic-sub">PIC Kamar · ' + rooms.length + ' kamar</div>' +
+    roomsHtml;
+}
+
+function startKeyPoll(nama, inisial) {
+  stopKeyPoll();
+  var qrWrap = document.getElementById('keyQrWrap');
+  if (qrWrap) {
+    var ind = document.createElement('div');
+    ind.id = 'keyPollIndicator'; ind.className = 'claim-poll-indicator';
+    ind.innerHTML = '<span class="claim-poll-dot"></span> Menunggu penyerahan kunci…';
+    qrWrap.appendChild(ind);
+  }
+  keyPollTimer = setInterval(function(){
+    postClaim({ action:'key_verify', nama: nama, inisial: inisial })
+      .then(function(r){
+        if (!r.ok) return;
+        renderKeyInfoCard(r);
+        if (r.all_claimed) { stopKeyPoll(); showKeyConfirmed(r); }
+        else {
+          var qw = document.getElementById('keyQrWrap');
+          if (qw && !document.getElementById('keyPollIndicator')) {
+            var ind2 = document.createElement('div');
+            ind2.id='keyPollIndicator'; ind2.className='claim-poll-indicator';
+            ind2.innerHTML='<span class="claim-poll-dot"></span> Menunggu penyerahan kunci…';
+            qw.appendChild(ind2);
+          }
+        }
+      }).catch(function(){});
+  }, 4000);
+}
+function stopKeyPoll() { if (keyPollTimer) { clearInterval(keyPollTimer); keyPollTimer = null; } }
+
+function showKeyConfirmed(r) {
+  var result = document.getElementById('keyResult');
+  if (!result) return;
+  var roomNums = (r.rooms||[]).map(function(rm){ return 'Kamar ' + rm.room; }).join(' & ');
+  result.innerHTML =
+    '<div class="claim-confirmed-box">' +
+      '<div class="claim-confirmed-icon">' + svgIcon('check-circle') + '</div>' +
+      '<div class="claim-confirmed-thanks">Terima kasih,</div>' +
+      '<div class="claim-confirmed-title">Kunci Diserahkan !</div>' +
+      '<div class="claim-confirmed-sub">' + escHtml(roomNums) + '</div>' +
+      '<div class="claim-confirmed-info">' +
+        '<div class="claim-cinfo-row">' + svgIcon('user') +
+          '<span class="claim-cinfo-label">PIC</span>' +
+          '<span class="claim-cinfo-value">' + escHtml(r.nama) + '</span></div>' +
+        '<div class="claim-cinfo-row">' + svgIcon('home') +
+          '<span class="claim-cinfo-label">Kamar</span>' +
+          '<span class="claim-cinfo-value">' + (r.rooms||[]).map(function(rm){return escHtml(String(rm.room));}).join(', ') + '</span></div>' +
+      '</div>' +
+      '<button class="claim-home-btn" onclick="resetKey()">← Cari nama lain</button>' +
+    '</div>';
+}
+
+function resetKey() {
+  stopKeyPoll();
+  keySelected = null; keyVerified = null;
+  var step1  = document.getElementById('keyStep1');
+  var result = document.getElementById('keyResult');
+  var inp    = document.getElementById('keySearchInput');
+  if (step1) step1.style.display = 'block';
+  if (result) result.style.display = 'none';
+  if (inp) { inp.value = ''; inp.focus(); }
+  closeKeyDropdown();
+}
+
 // Tutup dropdown saat klik di luar
 document.addEventListener('click', function(e) {
   var dd   = document.getElementById('claimDropdown');
   var wrap = document.querySelector('.claim-search-wrap');
   if (dd && wrap && !wrap.contains(e.target)) { closeClaimDropdown(); }
+  var kdd  = document.getElementById('keyDropdown');
+  var kwrap = document.getElementById('keySearchInput');
+  kwrap = kwrap ? kwrap.closest('.claim-search-wrap') : null;
+  if (kdd && kwrap && !kwrap.contains(e.target)) { closeKeyDropdown(); }
 });
 
 // ── INITIALS AVATAR (pengganti DiceBear, tanpa request external) ─

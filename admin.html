@@ -306,6 +306,21 @@ html[data-theme="light"] .cres-dept { color:var(--p,#1b3a8c); }
 .btn-scan-again { width:100%;padding:10px;background:transparent;border:1px solid var(--border);border-radius:var(--r2);color:var(--muted);font-size:.83rem;cursor:pointer;margin-top:8px;transition:.15s; }
 .btn-scan-again:hover { border-color:var(--text);color:var(--text); }
 
+/* Kartu kamar (verifikasi kunci) */
+.key-pic-head { font-size:1.25rem;font-weight:800;color:var(--text);margin-bottom:2px; }
+.key-pic-sub  { font-size:.8rem;color:var(--muted);margin-bottom:14px; }
+.key-room-card { background:var(--card);border:1px solid var(--border);border-radius:var(--r2);padding:13px 14px;margin-bottom:10px; }
+.key-room-head { display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px; }
+.key-room-num { font-size:1.05rem;font-weight:800;color:var(--text);display:flex;align-items:center;gap:7px; }
+.key-room-type { font-size:.68rem;font-weight:700;color:var(--a);background:rgba(212,175,55,.12);border:1px solid rgba(212,175,55,.3);padding:3px 9px;border-radius:20px; }
+.key-occ-title { font-size:.64rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:5px; }
+.key-occ-list { display:flex;flex-direction:column;gap:4px;margin-bottom:9px; }
+.key-occ { display:flex;align-items:center;gap:8px;font-size:.82rem;color:var(--text); }
+.key-occ-kode { font-size:.64rem;font-weight:700;color:var(--muted);background:var(--card2);border:1px solid var(--border);border-radius:5px;padding:1px 6px;min-width:30px;text-align:center; }
+.key-room-status { display:flex;align-items:center;gap:6px;font-size:.76rem;font-weight:700;padding:7px 11px;border-radius:var(--r2);justify-content:center; }
+.key-room-status.taken { background:rgba(34,197,94,.12);color:#22c55e; }
+.key-room-status.waiting { background:rgba(100,116,139,.14);color:var(--muted); }
+
 /* ── Theme toggle button ── */
 .theme-toggle{width:34px;height:34px;border-radius:7px;background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--muted);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:.2s;flex-shrink:0}
 .theme-toggle:hover{color:var(--a);border-color:var(--a)}
@@ -376,6 +391,15 @@ html[data-theme="light"] .toast.ok{color:#0a7d52}
   </symbol>
   <symbol id="icon-ticket" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
     <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2z"/><line x1="9" y1="12" x2="15" y2="12" stroke-dasharray="2"/>
+  </symbol>
+  <symbol id="icon-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3 9.5 12 3l9 6.5"/><path d="M5 9v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9"/><path d="M9 21v-6h6v6"/>
+  </symbol>
+  <symbol id="icon-key" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="7.5" cy="15.5" r="4.5"/><path d="M10.5 12.5 21 2"/><path d="M16 7l3 3"/><path d="M14 9l2 2"/>
+  </symbol>
+  <symbol id="icon-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
   </symbol>
   <symbol id="icon-check-circle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
     <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
@@ -464,6 +488,7 @@ const SECTIONS = [
   { key:'claim_data',  icon:'clipboard', label:'Data Claim',        sheet:'Claim'           },
   { key:'claim_rekap', icon:'chart',     label:'Rekap Claim',       sheet:'Claim'           },
   { key:'claim_scan',  icon:'ticket',    label:'Verifikasi Claim',  sheet:null              },
+  { key:'key_scan',    icon:'home',      label:'Verifikasi Kunci',  sheet:null              },
 ];
 
 // ── STATE ────────────────────────────────────────────────────────
@@ -556,11 +581,17 @@ window.addEventListener('DOMContentLoaded', function() {
 function buildSidebar() {
   // Urutan Claim Konsumsi: Verifikasi Claim → Rekap Claim → Data Claim
   const claimOrder = ['claim_scan','claim_rekap','claim_data'];
-  const dataSecs   = SECTIONS.filter(s => !claimOrder.includes(s.key));
+  const keyOrder   = ['key_scan'];
+  const dataSecs   = SECTIONS.filter(s => !claimOrder.includes(s.key) && !keyOrder.includes(s.key));
   const claimSecs  = claimOrder.map(k => SECTIONS.find(s => s.key === k)).filter(Boolean);
+  const keySecs    = keyOrder.map(k => SECTIONS.find(s => s.key === k)).filter(Boolean);
   document.getElementById('adminSidebar').innerHTML =
     '<div class="sb-label">Claim Konsumsi</div>' +
     claimSecs.map(s =>
+      `<button class="sb-btn" data-key="${s.key}" onclick="loadSection('${s.key}')" style="display:flex;align-items:center;gap:8px">${svgIcon(s.icon,'1rem')} ${s.label}</button>`
+    ).join('') +
+    '<div class="sb-label" style="margin-top:12px">Kunci Kamar</div>' +
+    keySecs.map(s =>
       `<button class="sb-btn" data-key="${s.key}" onclick="loadSection('${s.key}')" style="display:flex;align-items:center;gap:8px">${svgIcon(s.icon,'1rem')} ${s.label}</button>`
     ).join('') +
     '<div class="sb-label" style="margin-top:12px">Data Sections</div>' +
@@ -582,9 +613,18 @@ function loadSection(key) {
   // ── CLAIM VERIFIKASI (custom panel) ──────────────────────────
   if (key === 'claim_scan') {
     curSection = SECTIONS.find(s => s.key === key);
+    scanHandler = processScannedQR;
     document.getElementById('adminMain').innerHTML = renderClaimPanel();
     loadActiveMeal();
     loadAdmClaimList();
+    return;
+  }
+
+  // ── VERIFIKASI KUNCI KAMAR ───────────────────────────────────
+  if (key === 'key_scan') {
+    curSection = SECTIONS.find(s => s.key === key);
+    scanHandler = processKeyQR;
+    document.getElementById('adminMain').innerHTML = renderKeyPanel();
     return;
   }
 
@@ -947,6 +987,7 @@ var claimScanCtx      = claimScanCanvas.getContext('2d');
 var claimLastScanned  = null;
 var claimLastScanTime = 0;
 var CLAIM_RESCAN_MS   = 2500; // jeda sebelum QR yang sama bisa discan ulang
+var scanHandler       = null; // diset per panel (meal / key)
 
 const MEAL_LABELS_ADMIN = {
   snack:       'Snack',
@@ -1135,7 +1176,7 @@ function scanClaimFrame() {
       if (raw !== claimLastScanned || (now - claimLastScanTime) > CLAIM_RESCAN_MS) {
         claimLastScanned = raw;
         claimLastScanTime = now;
-        processScannedQR(raw);
+        (scanHandler || processScannedQR)(raw);
       }
     }
   }
@@ -1173,7 +1214,7 @@ function scanPhotoQR(input) {
     URL.revokeObjectURL(img.src);
     input.value = '';
     if (code && code.data) {
-      processScannedQR(code.data.trim());
+      (scanHandler || processScannedQR)(code.data.trim());
     } else {
       if (status) status.textContent = '⚠ QR tidak terbaca dari foto. Coba foto lebih dekat & terang.';
     }
@@ -1339,6 +1380,164 @@ function resetClaimResult() {
   if (status) status.textContent = 'Siap scan berikutnya.';
   var manualInput = document.getElementById('claimManualInput');
   if (manualInput) manualInput.value = '';
+}
+
+// ══════════════════════════════════════════════════════════════════
+// VERIFIKASI KUNCI KAMAR (admin)
+// ══════════════════════════════════════════════════════════════════
+function renderKeyPanel() {
+  return `
+<div class="claim-panel">
+  <div class="claim-panel-title">${svgIcon('home','1.1rem')} Verifikasi Kunci Kamar</div>
+
+  <div class="claim-scanner-box">
+    <div class="claim-scanner-label">${svgIcon('camera','0.9rem')} Scan QR PIC Kamar</div>
+    <video id="claimVideo" autoplay playsinline muted></video>
+    <div class="claim-scan-status" id="claimScanStatus">Pilih cara scan di bawah.</div>
+
+    <input type="file" id="claimPhotoInput" accept="image/*" capture="environment"
+      style="display:none" onchange="scanPhotoQR(this)">
+    ${(function(){
+      var inIframe = false; try { inIframe = (window.self !== window.top); } catch(e) { inIframe = true; }
+      var liveStyle  = inIframe ? ' style="background:var(--card3,#142550)"' : '';
+      var photoStyle = inIframe ? '' : ' style="background:var(--card3,#142550)"';
+      var btns =
+        '<button class="btn-scan-start"' + liveStyle + ' onclick="startClaimScan()">' + svgIcon('camera','0.9rem') + ' Kamera Live</button>' +
+        '<button class="btn-scan-start"' + photoStyle + ' onclick="openPhotoInput()">Foto QR</button>' +
+        '<button class="btn-scan-stop" onclick="stopClaimScan()">Stop</button>';
+      var note = inIframe
+        ? '<div style="margin-top:8px;font-size:.68rem;color:var(--muted);line-height:1.4">Mode Apps Script: "Kamera Live" sering diblokir. Pakai <strong>Foto QR</strong> — lebih stabil.</div>'
+        : '';
+      return '<div class="claim-scan-btns">' + btns + '</div>' + note;
+    })()}
+
+    <div style="margin-top:12px;font-size:.7rem;color:var(--muted)">— atau input manual —</div>
+    <div class="claim-manual-row">
+      <input class="claim-manual-input" id="keyManualInput"
+        placeholder="Ketik nama PIC kamar"
+        onkeydown="if(event.key==='Enter')onKeyManual()">
+      <button class="btn-manual-check" onclick="onKeyManual()">Cek</button>
+    </div>
+  </div>
+
+  <div class="claim-result-box" id="keyResultBox"></div>
+</div>`;
+}
+
+function onKeyManual() {
+  var val = (document.getElementById('keyManualInput')?.value || '').trim();
+  if (!val) return;
+  // input manual: "Nama" atau "Nama|Inisial" atau format QR penuh
+  var parts = val.split('|');
+  if (parts[0] === 'IKCADIN2026') { processKeyQR(val); return; }
+  // tanpa inisial → minta lewat prompt sederhana
+  var nama = parts[0].trim();
+  var ini  = (parts[1] || '').trim();
+  if (!ini) { ini = (prompt('Inisial PIC ' + nama + ':') || '').trim(); }
+  if (!ini) return;
+  runKeyScan(nama, ini);
+}
+
+function processKeyQR(raw) {
+  // Format: IKCADIN2026|KEY|Nama|Inisial  (toleran juga IKCADIN2026|Nama|Inisial)
+  var parts = raw.split('|');
+  var status = document.getElementById('claimScanStatus');
+  if (parts[0] !== 'IKCADIN2026' || parts.length < 3) {
+    if (status) status.textContent = '⚠ QR tidak valid: ' + raw;
+    return;
+  }
+  var nama, ini;
+  if (String(parts[1]).toUpperCase() === 'KEY') { nama = (parts[2]||'').trim(); ini = (parts[3]||'').trim(); }
+  else { nama = (parts[1]||'').trim(); ini = (parts[2]||'').trim(); }
+  runKeyScan(nama, ini);
+}
+
+function runKeyScan(nama, ini) {
+  var status = document.getElementById('claimScanStatus');
+  if (status) status.textContent = 'QR terbaca — memverifikasi…';
+  showKeyAdminLoading(nama);
+  postGAS({ action:'key_scan', token, nama:nama, inisial:ini })
+    .then(function(r){ r._ini = ini; showKeyAdminResult(r, nama, ini); })
+    .catch(function(){ showKeyAdminResult({ ok:false, error:'Koneksi gagal' }); });
+}
+
+function showKeyAdminLoading(nama) {
+  var box = document.getElementById('keyResultBox');
+  if (!box) return;
+  box.className = 'claim-result-box show';
+  box.innerHTML = '<div class="claim-loading"><div class="claim-spinner"></div>' +
+    '<div class="claim-loading-txt">Memverifikasi ' + (nama?'<strong>'+esc(nama)+'</strong>':'') + '…</div></div>';
+  try { box.scrollIntoView({ behavior:'smooth', block:'nearest' }); } catch(e){}
+}
+
+function showKeyAdminResult(r, nama, ini) {
+  var box = document.getElementById('keyResultBox');
+  if (!box) return;
+  box.className = 'claim-result-box show';
+  var status = document.getElementById('claimScanStatus');
+  if (status) status.textContent = r.ok ? 'QR terbaca.' : 'QR error.';
+
+  if (!r.ok) {
+    box.innerHTML = '<div class="cres-status-already">' + svgIcon('x-circle','1rem') + ' ' + esc(r.error||'Gagal') + '</div>' +
+      '<button class="btn-scan-again" onclick="resetKeyResult()">Scan ulang</button>';
+    return;
+  }
+
+  var rooms = r.rooms || [];
+  var anyWaiting = rooms.some(function(rm){ return !rm.claimed_at; });
+  var roomsHtml = rooms.map(function(rm){
+    var taken = !!rm.claimed_at;
+    var occ = (rm.occupants||[]).map(function(o){
+      return '<div class="key-occ"><span class="key-occ-kode">' + esc(o.kode||'-') + '</span>' + esc(o.name) + '</div>';
+    }).join('');
+    return '<div class="key-room-card">' +
+      '<div class="key-room-head"><div class="key-room-num">' + svgIcon('home','17px') + ' Kamar ' + esc(String(rm.room)) + '</div>' +
+        (rm.type?'<div class="key-room-type">' + esc(rm.type) + '</div>':'') + '</div>' +
+      '<div class="key-occ-title">Penghuni</div><div class="key-occ-list">' + occ + '</div>' +
+      '<div class="key-room-status ' + (taken?'taken':'waiting') + '">' + svgIcon(taken?'check-circle':'x-circle','14px') + ' ' +
+        (taken ? 'Sudah diserahkan · ' + formatClaimTime(rm.claimed_at) : 'Belum diserahkan') + '</div>' +
+    '</div>';
+  }).join('');
+
+  var btn = anyWaiting
+    ? '<button class="btn-claim-confirm" id="btnKeyConfirm" onclick="confirmKeyAdmin()" data-nama="' + esc(nama||r.nama) + '" data-ini="' + esc(ini||r._ini||'') + '">' +
+        svgIcon('key','1rem') + ' Serahkan Kunci (' + rooms.length + ' kamar)</button>'
+    : '<div class="cres-status-ok">' + svgIcon('check-circle','1rem') + ' Semua kunci sudah diserahkan</div>';
+
+  box.innerHTML =
+    '<div class="key-pic-head">' + esc(r.nama) + '</div>' +
+    '<div class="key-pic-sub">PIC Kamar · ' + rooms.length + ' kamar</div>' +
+    roomsHtml + btn +
+    '<button class="btn-scan-again" onclick="resetKeyResult()">Scan ulang</button>';
+  try { box.scrollIntoView({ behavior:'smooth', block:'nearest' }); } catch(e){}
+}
+
+function confirmKeyAdmin() {
+  var btn = document.getElementById('btnKeyConfirm');
+  if (!btn) return;
+  var nama = btn.dataset.nama, ini = btn.dataset.ini;
+  btn.disabled = true; btn.textContent = 'Menyimpan…';
+  postGAS({ action:'key_confirm', token, nama:nama, inisial:ini })
+    .then(function(r){
+      if (r.ok) {
+        toast('✓ Kunci diserahkan — ' + r.nama, 'ok');
+        runKeyScan(nama, ini); // refresh tampilan status
+      } else {
+        toast('Gagal: ' + (r.error||'?'), 'err');
+        btn.disabled = false; btn.innerHTML = svgIcon('key','1rem') + ' Serahkan Kunci';
+      }
+    })
+    .catch(function(){ toast('Koneksi gagal', 'err'); btn.disabled = false; });
+}
+
+function resetKeyResult() {
+  claimLastScanned = null;
+  var box = document.getElementById('keyResultBox');
+  if (box) { box.className = 'claim-result-box'; box.innerHTML = ''; }
+  var status = document.getElementById('claimScanStatus');
+  if (status) status.textContent = 'Siap scan berikutnya.';
+  var mi = document.getElementById('keyManualInput');
+  if (mi) mi.value = '';
 }
 </script>
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
