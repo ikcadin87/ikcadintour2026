@@ -306,6 +306,18 @@ html[data-theme="light"] .cres-dept { color:var(--p,#1b3a8c); }
 .btn-scan-again { width:100%;padding:10px;background:transparent;border:1px solid var(--border);border-radius:var(--r2);color:var(--muted);font-size:.83rem;cursor:pointer;margin-top:8px;transition:.15s; }
 .btn-scan-again:hover { border-color:var(--text);color:var(--text); }
 
+/* Pencarian nama PIC (admin) */
+.key-name-search { position:relative; }
+.key-name-dropdown { display:none;position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:50;
+  background:var(--card);border:1px solid var(--border);border-radius:var(--r2);max-height:260px;overflow-y:auto;
+  box-shadow:0 8px 28px rgba(0,0,0,.4); }
+.key-name-dropdown.open { display:block; }
+.key-name-item { padding:10px 13px;cursor:pointer;border-bottom:1px solid var(--border);transition:.12s; }
+.key-name-item:last-child { border-bottom:none; }
+.key-name-item:hover { background:rgba(27,58,140,.18); }
+.key-name-nm { font-size:.88rem;font-weight:700;color:var(--text); }
+.key-name-rm { font-size:.72rem;color:var(--muted);margin-top:2px; }
+
 /* Kartu kamar (verifikasi kunci) */
 .key-pic-head { font-size:1.25rem;font-weight:800;color:var(--text);margin-bottom:2px; }
 .key-pic-sub  { font-size:.8rem;color:var(--muted);margin-bottom:14px; }
@@ -627,6 +639,7 @@ function loadSection(key) {
     curSection = SECTIONS.find(s => s.key === key);
     scanHandler = processKeyQR;
     document.getElementById('adminMain').innerHTML = renderKeyPanel();
+    loadAdmKeyList();
     return;
   }
 
@@ -1437,17 +1450,58 @@ function renderKeyPanel() {
       return '<div class="claim-scan-btns">' + btns + '</div>' + note;
     })()}
 
-    <div style="margin-top:12px;font-size:.7rem;color:var(--muted)">— atau input manual —</div>
-    <div class="claim-manual-row">
-      <input class="claim-manual-input" id="keyManualInput"
-        placeholder="Ketik nama PIC kamar"
-        onkeydown="if(event.key==='Enter')onKeyManual()">
-      <button class="btn-manual-check" onclick="onKeyManual()">Cek</button>
+    <div style="margin-top:12px;font-size:.7rem;color:var(--muted)">— atau cari nama PIC kamar —</div>
+    <div class="key-name-search">
+      <input class="claim-manual-input" id="keyNameSearch" autocomplete="off"
+        placeholder="Ketik nama PIC kamar…"
+        oninput="filterKeyNameSearch(this.value)">
+      <div class="key-name-dropdown" id="keyNameDropdown"></div>
+    </div>
+    <div style="margin-top:8px;font-size:.68rem;color:var(--muted);line-height:1.4">
+      PIC sibuk? Cari nama PIC-nya di sini — panitia bisa serahkan kunci ke penghuni kamar mana pun yang datang.
     </div>
   </div>
 
   <div class="claim-result-box" id="keyResultBox"></div>
 </div>`;
+}
+
+var admKeyList = [];
+var admKeyListLoaded = false;
+function loadAdmKeyList() {
+  fetch(WEB_APP_URL + '?type=keyList', { redirect:'follow' })
+    .then(function(r){ return r.json(); })
+    .then(function(d){ admKeyList = d.data || []; admKeyListLoaded = true; })
+    .catch(function(){});
+}
+function filterKeyNameSearch(val) {
+  var dd = document.getElementById('keyNameDropdown');
+  if (!dd) return;
+  var q = String(val||'').trim().toLowerCase();
+  if (!q) { dd.classList.remove('open'); dd.innerHTML = ''; return; }
+  var matches = admKeyList.filter(function(p){ return p.nama.toLowerCase().indexOf(q) !== -1; }).slice(0, 25);
+  if (!matches.length) { dd.classList.remove('open'); dd.innerHTML = ''; return; }
+  dd.innerHTML = matches.map(function(p){
+    var nums = (p.rooms||[]).join(', ');
+    return '<div class="key-name-item" onclick="pickKeyName(\'' + esc(p.nama).replace(/'/g,"\\x27") + '\')">' +
+      '<div class="key-name-nm">' + esc(p.nama) + '</div>' +
+      '<div class="key-name-rm">Kamar ' + esc(nums) + '</div></div>';
+  }).join('');
+  dd.classList.add('open');
+}
+function pickKeyName(nama) {
+  var inp = document.getElementById('keyNameSearch');
+  if (inp) inp.value = nama;
+  var dd = document.getElementById('keyNameDropdown');
+  if (dd) { dd.classList.remove('open'); dd.innerHTML = ''; }
+  runKeyLookup(nama);
+}
+function runKeyLookup(nama) {
+  var status = document.getElementById('claimScanStatus');
+  showKeyAdminLoading(nama);
+  postGAS({ action:'key_lookup', token, nama:nama })
+    .then(function(r){ showKeyAdminResult(r, nama, ''); })
+    .catch(function(){ showKeyAdminResult({ ok:false, error:'Koneksi gagal' }); });
 }
 
 function onKeyManual() {
