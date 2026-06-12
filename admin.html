@@ -332,6 +332,7 @@ html[data-theme="light"] .cres-dept { color:var(--p,#1b3a8c); }
 .key-room-status { display:flex;align-items:center;gap:6px;font-size:.76rem;font-weight:700;padding:7px 11px;border-radius:var(--r2);justify-content:center; }
 .key-room-status.taken { background:rgba(34,197,94,.12);color:#22c55e; }
 .key-room-status.waiting { background:rgba(100,116,139,.14);color:var(--muted); }
+.key-data-list { display:flex;flex-direction:column;gap:10px; }
 
 /* ── Theme toggle button ── */
 .theme-toggle{width:34px;height:34px;border-radius:7px;background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--muted);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:.2s;flex-shrink:0}
@@ -1430,7 +1431,7 @@ function renderKeyPanel() {
   <div class="claim-panel-title">${svgIcon('home','1.1rem')} Verifikasi Kunci Kamar</div>
 
   <div class="claim-scanner-box">
-    <div class="claim-scanner-label">${svgIcon('camera','0.9rem')} Scan QR PIC Kamar</div>
+    <div class="claim-scanner-label">${svgIcon('camera','0.9rem')} Scan QR Kunci Kamar</div>
     <video id="claimVideo" autoplay playsinline muted></video>
     <div class="claim-scan-status" id="claimScanStatus">Pilih cara scan di bawah.</div>
 
@@ -1450,15 +1451,15 @@ function renderKeyPanel() {
       return '<div class="claim-scan-btns">' + btns + '</div>' + note;
     })()}
 
-    <div style="margin-top:12px;font-size:.7rem;color:var(--muted)">— atau cari nama PIC kamar —</div>
+    <div style="margin-top:12px;font-size:.7rem;color:var(--muted)">— atau cari nama penghuni —</div>
     <div class="key-name-search">
       <input class="claim-manual-input" id="keyNameSearch" autocomplete="off"
-        placeholder="Ketik nama PIC kamar…"
+        placeholder="Ketik nama penghuni…"
         oninput="filterKeyNameSearch(this.value)">
       <div class="key-name-dropdown" id="keyNameDropdown"></div>
     </div>
     <div style="margin-top:8px;font-size:.68rem;color:var(--muted);line-height:1.4">
-      PIC sibuk? Cari nama PIC-nya di sini — panitia bisa serahkan kunci ke penghuni kamar mana pun yang datang.
+      Cari nama penghuni mana pun. Kunci per kamar — sekali diambil, sekamarnya otomatis terkunci.
     </div>
   </div>
 
@@ -1570,23 +1571,24 @@ function showKeyAdminResult(r, nama, ini) {
     var occ = (rm.occupants||[]).map(function(o){
       return '<div class="key-occ"><span class="key-occ-kode">' + esc(o.kode||'-') + '</span>' + esc(o.name) + '</div>';
     }).join('');
+    var st = taken
+      ? 'Sudah diambil' + (rm.claimed_by?' oleh ' + esc(rm.claimed_by):'') + ' · ' + formatClaimTime(rm.claimed_at)
+      : 'Belum diambil';
     return '<div class="key-room-card">' +
-      '<div class="key-room-head"><div class="key-room-num">' + svgIcon('home','17px') + ' Kamar ' + esc(String(rm.room)) + '</div>' +
-        (rm.type?'<div class="key-room-type">' + esc(rm.type) + '</div>':'') + '</div>' +
+      '<div class="key-room-head"><div class="key-room-num">' + svgIcon('home','17px') + ' Kamar ' + esc(String(rm.room)) + '</div></div>' +
       '<div class="key-occ-title">Penghuni</div><div class="key-occ-list">' + occ + '</div>' +
-      '<div class="key-room-status ' + (taken?'taken':'waiting') + '">' + svgIcon(taken?'check-circle':'x-circle','14px') + ' ' +
-        (taken ? 'Sudah diserahkan · ' + formatClaimTime(rm.claimed_at) : 'Belum diserahkan') + '</div>' +
+      '<div class="key-room-status ' + (taken?'taken':'waiting') + '">' + svgIcon(taken?'check-circle':'x-circle','14px') + ' ' + st + '</div>' +
     '</div>';
   }).join('');
 
   var btn = anyWaiting
     ? '<button class="btn-claim-confirm" id="btnKeyConfirm" onclick="confirmKeyAdmin()" data-nama="' + esc(nama||r.nama) + '" data-ini="' + esc(ini||r._ini||'') + '">' +
-        svgIcon('key','1rem') + ' Serahkan Kunci (' + rooms.length + ' kamar)</button>'
-    : '<div class="cres-status-ok">' + svgIcon('check-circle','1rem') + ' Semua kunci sudah diserahkan</div>';
+        svgIcon('key','1rem') + ' Serahkan Kunci (' + rooms.filter(function(rm){return !rm.claimed_at;}).length + ' kamar)</button>'
+    : '<div class="cres-status-ok">' + svgIcon('check-circle','1rem') + ' Semua kunci kamarnya sudah diambil</div>';
 
   box.innerHTML =
     '<div class="key-pic-head">' + esc(r.nama) + '</div>' +
-    '<div class="key-pic-sub">PIC Kamar · ' + rooms.length + ' kamar</div>' +
+    '<div class="key-pic-sub">Penghuni · ' + rooms.length + ' kamar</div>' +
     roomsHtml + btn +
     '<button class="btn-scan-again" onclick="resetKeyResult()">Scan ulang</button>';
   try { box.scrollIntoView({ behavior:'smooth', block:'nearest' }); } catch(e){}
@@ -1601,7 +1603,7 @@ function confirmKeyAdmin() {
     .then(function(r){
       if (r.ok) {
         toast('✓ Kunci diserahkan — ' + r.nama, 'ok');
-        runKeyScan(nama, ini); // refresh tampilan status
+        if (ini) runKeyScan(nama, ini); else runKeyLookup(nama); // refresh sesuai jalur
       } else {
         toast('Gagal: ' + (r.error||'?'), 'err');
         btn.disabled = false; btn.innerHTML = svgIcon('key','1rem') + ' Serahkan Kunci';
@@ -1620,9 +1622,9 @@ function resetKeyResult() {
   if (mi) mi.value = '';
 }
 
-// ── REKAP & DATA KUNCI ──────────────────────────────────────────
+// ── REKAP & DATA KUNCI (per kamar) ──────────────────────────────
 var keyRekapData = [];
-var keyRekapTotals = { pics:0, rooms:0, takenRooms:0, takenPics:0 };
+var keyRekapTotals = { rooms:0, takenRooms:0 };
 var keyRekapMode = 'rekap';
 var keyRekapFilter = 'all';
 var keyRekapSearch = '';
@@ -1636,7 +1638,7 @@ function loadKeyRekap() {
     .then(function(r){
       if (!r.ok) { area.innerHTML = '<div class="tbl-empty">Gagal: ' + esc(r.error||'?') + '</div>'; return; }
       keyRekapData = r.data || [];
-      keyRekapTotals = r.totals || { pics:0, rooms:0, takenRooms:0, takenPics:0 };
+      keyRekapTotals = r.totals || { rooms:0, takenRooms:0 };
       if (keyRekapMode === 'data') renderKeyDataView(area);
       else renderKeyRekapView(area);
     })
@@ -1645,22 +1647,18 @@ function loadKeyRekap() {
 
 function renderKeyRekapView(area) {
   var t = keyRekapTotals;
-  function stat(label, done, total, color) {
-    var pct = total ? Math.round(done/total*100) : 0;
-    return '<div class="rekap-stat-card">' +
-      '<div class="rekap-stat-label">' + label + '</div>' +
-      '<div class="rekap-stat-num" style="color:' + color + '">' + done + '<span>/' + total + '</span></div>' +
-      '<div class="rekap-stat-bar"><div class="rekap-stat-fill" style="width:' + pct + '%;background:' + color + '"></div></div>' +
-      '<div class="rekap-stat-pct">' + pct + '%</div></div>';
-  }
+  var pct = t.rooms ? Math.round(t.takenRooms/t.rooms*100) : 0;
   area.innerHTML =
-    '<div class="rekap-stats" style="grid-template-columns:repeat(2,1fr)">' +
-      stat('PIC selesai', t.takenPics, t.pics, '#D4AF37') +
-      stat('Kamar diserahkan', t.takenRooms, t.rooms, '#22c55e') +
+    '<div class="rekap-stats" style="grid-template-columns:1fr">' +
+      '<div class="rekap-stat-card">' +
+        '<div class="rekap-stat-label">Kunci kamar sudah diambil</div>' +
+        '<div class="rekap-stat-num" style="color:#22c55e">' + t.takenRooms + '<span>/' + t.rooms + ' kamar</span></div>' +
+        '<div class="rekap-stat-bar"><div class="rekap-stat-fill" style="width:' + pct + '%;background:#22c55e"></div></div>' +
+        '<div class="rekap-stat-pct">' + pct + '%</div></div>' +
     '</div>' +
     '<div class="rk-controls">' +
       '<div class="rk-row2">' +
-        '<input class="rk-search" id="keyRkSearch" placeholder="Cari nama PIC…" oninput="onKeyRekapSearch(this.value)">' +
+        '<input class="rk-search" id="keyRkSearch" placeholder="Cari kamar / penghuni…" oninput="onKeyRekapSearch(this.value)">' +
         '<div class="rk-chips" id="keyRkChips">' +
           '<button class="rk-chip" data-f="all" onclick="setKeyRekapFilter(\'all\')">Semua</button>' +
           '<button class="rk-chip" data-f="no"  onclick="setKeyRekapFilter(\'no\')">Belum</button>' +
@@ -1676,6 +1674,13 @@ function renderKeyRekapView(area) {
 function onKeyRekapSearch(v){ keyRekapSearch = v; renderKeyRekapList(); }
 function setKeyRekapFilter(f){ keyRekapFilter = f; renderKeyRekapList(); }
 
+function keyRoomMatch(room, q) {
+  if (!q) return true;
+  if (String(room.room).toLowerCase().indexOf(q) !== -1) return true;
+  if ((room.claimed_by||'').toLowerCase().indexOf(q) !== -1) return true;
+  return (room.occupants||[]).some(function(n){ return String(n).toLowerCase().indexOf(q) !== -1; });
+}
+
 function renderKeyRekapList() {
   var list = document.getElementById('keyRkList');
   var summary = document.getElementById('keyRkSummary');
@@ -1685,33 +1690,36 @@ function renderKeyRekapList() {
   });
   var q = keyRekapSearch.trim().toLowerCase();
   var shown = 0, html = '';
-  keyRekapData.forEach(function(p){
-    if (keyRekapFilter === 'yes' && !p.all_claimed) return;
-    if (keyRekapFilter === 'no'  &&  p.all_claimed) return;
-    if (q && p.nama.toLowerCase().indexOf(q) === -1) return;
+  keyRekapData.forEach(function(rm){
+    var taken = !!rm.claimed_at;
+    if (keyRekapFilter === 'yes' && !taken) return;
+    if (keyRekapFilter === 'no'  &&  taken) return;
+    if (!keyRoomMatch(rm, q)) return;
     shown++;
-    var nums = p.rooms.map(function(r){ return r.room; }).join(', ');
-    var badge = p.all_claimed
-      ? '<span class="rk-st-badge yes">' + svgIcon('check-circle','.75rem') + ' Lengkap</span>'
-      : '<span class="rk-st-badge no">' + svgIcon('x-circle','.75rem') + ' ' + p.takenCount + '/' + p.roomCount + '</span>';
-    html += '<div class="rk-item ' + (p.all_claimed?'done':'undone') + '">' +
+    var badge = taken
+      ? '<span class="rk-st-badge yes">' + svgIcon('check-circle','.75rem') + ' Diambil</span>'
+      : '<span class="rk-st-badge no">' + svgIcon('x-circle','.75rem') + ' Belum</span>';
+    var sub = taken
+      ? 'oleh ' + esc(rm.claimed_by||'-') + ' · ' + formatClaimTime(rm.claimed_at)
+      : (rm.occupants||[]).length + ' penghuni';
+    html += '<div class="rk-item ' + (taken?'done':'undone') + '">' +
       '<div class="rk-item-main">' +
-        '<div class="rk-item-name">' + esc(p.nama) + '</div>' +
-        '<div class="rk-item-sub">Kamar ' + esc(nums) + '</div>' +
+        '<div class="rk-item-name">Kamar ' + esc(String(rm.room)) + '</div>' +
+        '<div class="rk-item-sub">' + sub + '</div>' +
       '</div>' +
       '<div class="rk-item-st">' + badge + '</div>' +
     '</div>';
   });
   if (summary) {
-    summary.innerHTML = '<strong>' + keyRekapTotals.takenPics + '</strong> PIC selesai · <strong>' +
-      (keyRekapTotals.pics - keyRekapTotals.takenPics) + '</strong> belum (dari ' + keyRekapTotals.pics + ' PIC)';
+    summary.innerHTML = '<strong>' + keyRekapTotals.takenRooms + '</strong> kamar sudah · <strong>' +
+      (keyRekapTotals.rooms - keyRekapTotals.takenRooms) + '</strong> belum (dari ' + keyRekapTotals.rooms + ' kamar)';
   }
   list.innerHTML = shown ? html : '<div class="rk-empty">Tidak ada yang cocok.</div>';
 }
 
 function renderKeyDataView(area) {
   area.innerHTML =
-    '<div class="cd-controls"><input class="rk-search" id="keyDataSearch" placeholder="Cari nama PIC / kamar…" oninput="onKeyDataSearch(this.value)"></div>' +
+    '<div class="cd-controls"><input class="rk-search" id="keyDataSearch" placeholder="Cari kamar / penghuni…" oninput="onKeyDataSearch(this.value)"></div>' +
     '<div id="keyDataList"></div>';
   renderKeyDataList();
 }
@@ -1721,25 +1729,23 @@ function renderKeyDataList() {
   if (!area) return;
   var q = keyRekapSearch.trim().toLowerCase();
   var shown = 0, html = '';
-  keyRekapData.forEach(function(p){
-    var nums = p.rooms.map(function(r){ return String(r.room); }).join(' ');
-    if (q && p.nama.toLowerCase().indexOf(q) === -1 && nums.toLowerCase().indexOf(q) === -1) return;
+  keyRekapData.forEach(function(rm){
+    if (!keyRoomMatch(rm, q)) return;
     shown++;
-    var chips = p.rooms.map(function(r){
-      var ok = !!r.claimed_at;
-      return '<span class="cd-chip ' + (ok?'yes':'no') + '" title="' + (ok?esc(r.claimed_at):'Belum') + '">' +
-        svgIcon('home','.7rem') + ' Kamar ' + esc(String(r.room)) + ' ' + svgIcon(ok?'check-circle':'x-circle','.7rem') + '</span>';
+    var taken = !!rm.claimed_at;
+    var occ = (rm.occupants||[]).map(function(n){
+      return '<div class="key-occ"><span class="key-occ-kode">' + svgIcon('user','.7rem') + '</span>' + esc(n) + '</div>';
     }).join('');
-    html += '<div class="cd-card">' +
-      '<div class="cd-main">' +
-        '<div class="cd-name">' + esc(p.nama) + (p.inisial?'<span class="cd-ini">' + esc(p.inisial) + '</span>':'') + '</div>' +
-        '<div class="cd-sub">' + p.roomCount + ' kamar · ' + p.takenCount + ' kunci diserahkan</div>' +
-        '<div class="cd-meals">' + chips + '</div>' +
-      '</div>' +
+    var st = taken
+      ? '<div class="key-room-status taken">' + svgIcon('check-circle','14px') + ' Diambil oleh ' + esc(rm.claimed_by||'-') + ' · ' + formatClaimTime(rm.claimed_at) + '</div>'
+      : '<div class="key-room-status waiting">' + svgIcon('x-circle','14px') + ' Belum diambil</div>';
+    html += '<div class="key-room-card">' +
+      '<div class="key-room-head"><div class="key-room-num">' + svgIcon('home','17px') + ' Kamar ' + esc(String(rm.room)) + '</div></div>' +
+      '<div class="key-occ-title">Penghuni</div><div class="key-occ-list">' + occ + '</div>' + st +
     '</div>';
   });
-  area.innerHTML = '<div class="cd-count"><strong>' + shown + '</strong> dari ' + keyRekapData.length + ' PIC</div>' +
-    '<div class="cd-list">' + (shown ? html : '<div class="rk-empty">Tidak ada yang cocok.</div>') + '</div>';
+  area.innerHTML = '<div class="cd-count"><strong>' + shown + '</strong> dari ' + keyRekapData.length + ' kamar</div>' +
+    '<div class="key-data-list">' + (shown ? html : '<div class="rk-empty">Tidak ada yang cocok.</div>') + '</div>';
 }
 </script>
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>

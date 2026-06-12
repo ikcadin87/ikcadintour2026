@@ -3211,11 +3211,11 @@ function renderClaim() {
   <div id="claimModeKunci" style="display:none">
     <div id="keyStep1">
       <div class="claim-active-badge active-snack" style="background:rgba(27,58,140,.18);color:#7ba7ff;border-color:rgba(27,58,140,.4)">
-        ${svgIcon('home','14px')} Khusus PIC Kamar — ambil kunci
+        ${svgIcon('home','14px')} Ambil kunci kamar kamu
       </div>
       <div class="claim-search-wrap">
         <input type="text" id="keySearchInput" class="claim-search"
-          placeholder="Ketik nama PIC kamar…"
+          placeholder="Ketik nama kamu…"
           oninput="filterKeySearch(this.value)"
           autocomplete="off" spellcheck="false">
         <div class="claim-dropdown" id="keyDropdown"></div>
@@ -3227,7 +3227,7 @@ function renderClaim() {
         <div class="claim-guide-step">
           <div class="claim-guide-num">1</div>
           <div class="claim-guide-ico">${svgIcon('search','22px')}</div>
-          <div class="claim-guide-text"><strong>Cari nama kamu</strong> (PIC Kamar) pada kolom pencarian.</div>
+          <div class="claim-guide-text"><strong>Cari nama kamu</strong> pada kolom pencarian.</div>
         </div>
         <div class="claim-guide-step">
           <div class="claim-guide-num">2</div>
@@ -3237,7 +3237,7 @@ function renderClaim() {
         <div class="claim-guide-step">
           <div class="claim-guide-num">3</div>
           <div class="claim-guide-ico">${svgIcon('home','22px')}</div>
-          <div class="claim-guide-text">Tunjukkan <strong>barcode</strong> ke Panitia untuk ambil <strong>kunci kamar</strong> kamu.</div>
+          <div class="claim-guide-text">Tunjukkan <strong>barcode</strong> ke Panitia untuk ambil <strong>kunci kamar</strong>. Cukup 1 orang per kamar.</div>
         </div>
       </div>
     </div>
@@ -3246,7 +3246,7 @@ function renderClaim() {
     <div class="claim-modal-overlay" id="keyModal" style="display:none" onclick="if(event.target===this)closeKeyModal()">
       <div class="claim-modal">
         <div class="claim-modal-handle"></div>
-        <div class="claim-modal-title">Verifikasi PIC Kamar</div>
+        <div class="claim-modal-title">Verifikasi Identitas</div>
         <div class="claim-modal-name" id="keyModalName"></div>
         <input type="text" id="keyInitialInput" class="claim-initial-input"
           maxlength="3" placeholder="···"
@@ -3672,12 +3672,14 @@ function showKeyResult(r) {
   var step1  = document.getElementById('keyStep1');
   var result = document.getElementById('keyResult');
   if (step1)  step1.style.display = 'none';
+  if (result) result.style.display = 'block';
+  // Semua kamar sudah diambil → langsung tampilkan status, tanpa barcode
+  if (r.all_claimed) { showKeyConfirmed(r); return; }
   if (result) {
     result.innerHTML =
       '<div class="claim-qr-wrap" id="keyQrWrap"></div>' +
       '<div id="keyInfoCard"></div>' +
       '<button class="claim-reset-btn" onclick="resetKey()">↩ Cari nama lain</button>';
-    result.style.display = 'block';
   }
   var qrWrap = document.getElementById('keyQrWrap');
   if (qrWrap) {
@@ -3702,6 +3704,9 @@ function renderKeyInfoCard(r) {
     var occ = (rm.occupants||[]).map(function(o){
       return '<div class="key-occ"><span class="key-occ-kode">' + escHtml(o.kode||'-') + '</span>' + escHtml(o.name) + '</div>';
     }).join('');
+    var statusTxt = taken
+      ? 'Kunci sudah diambil' + (rm.claimed_by ? ' oleh ' + escHtml(rm.claimed_by) : '') + ' · ' + formatClaimTime(rm.claimed_at)
+      : 'Kunci belum diambil';
     return '<div class="key-room-card">' +
       '<div class="key-room-head">' +
         '<div class="key-room-num">' + svgIcon('home','18px') + ' Kamar ' + escHtml(String(rm.room)) + '</div>' +
@@ -3709,14 +3714,13 @@ function renderKeyInfoCard(r) {
       '<div class="key-occ-title">Penghuni</div>' +
       '<div class="key-occ-list">' + occ + '</div>' +
       '<div class="key-room-status ' + (taken?'taken':'waiting') + '">' +
-        svgIcon(taken?'check-circle':'x-circle','14px') + ' ' +
-        (taken ? 'Kunci sudah diserahkan · ' + formatClaimTime(rm.claimed_at) : 'Kunci belum diserahkan') +
+        svgIcon(taken?'check-circle':'x-circle','14px') + ' ' + statusTxt +
       '</div>' +
     '</div>';
   }).join('');
   card.innerHTML =
     '<div class="key-pic-head">' + escHtml(r.nama) + '</div>' +
-    '<div class="key-pic-sub">PIC Kamar · ' + rooms.length + ' kamar</div>' +
+    '<div class="key-pic-sub">' + rooms.length + ' kamar</div>' +
     roomsHtml;
 }
 
@@ -3752,21 +3756,21 @@ function stopKeyPoll() { if (keyPollTimer) { clearInterval(keyPollTimer); keyPol
 function showKeyConfirmed(r) {
   var result = document.getElementById('keyResult');
   if (!result) return;
-  var roomNums = (r.rooms||[]).map(function(rm){ return 'Kamar ' + rm.room; }).join(' & ');
+  var rooms = r.rooms || [];
+  var roomNums = rooms.map(function(rm){ return 'Kamar ' + rm.room; }).join(' & ');
+  var rowsInfo = rooms.map(function(rm){
+    return '<div class="claim-cinfo-row">' + svgIcon('home') +
+      '<span class="claim-cinfo-label">Kamar ' + escHtml(String(rm.room)) + '</span>' +
+      '<span class="claim-cinfo-value">' + (rm.claimed_by ? 'oleh ' + escHtml(rm.claimed_by) : 'diserahkan') +
+      (rm.claimed_at ? ' · ' + formatClaimTime(rm.claimed_at) : '') + '</span></div>';
+  }).join('');
   result.innerHTML =
     '<div class="claim-confirmed-box">' +
       '<div class="claim-confirmed-icon">' + svgIcon('check-circle') + '</div>' +
-      '<div class="claim-confirmed-thanks">Terima kasih,</div>' +
-      '<div class="claim-confirmed-title">Kunci Diserahkan !</div>' +
+      '<div class="claim-confirmed-thanks">Kunci kamar</div>' +
+      '<div class="claim-confirmed-title">Sudah Diambil !</div>' +
       '<div class="claim-confirmed-sub">' + escHtml(roomNums) + '</div>' +
-      '<div class="claim-confirmed-info">' +
-        '<div class="claim-cinfo-row">' + svgIcon('user') +
-          '<span class="claim-cinfo-label">PIC</span>' +
-          '<span class="claim-cinfo-value">' + escHtml(r.nama) + '</span></div>' +
-        '<div class="claim-cinfo-row">' + svgIcon('home') +
-          '<span class="claim-cinfo-label">Kamar</span>' +
-          '<span class="claim-cinfo-value">' + (r.rooms||[]).map(function(rm){return escHtml(String(rm.room));}).join(', ') + '</span></div>' +
-      '</div>' +
+      '<div class="claim-confirmed-info">' + rowsInfo + '</div>' +
       '<button class="claim-home-btn" onclick="resetKey()">← Cari nama lain</button>' +
     '</div>';
 }
